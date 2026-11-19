@@ -31,7 +31,7 @@
 
   const qs = new URLSearchParams(location.search);
   const FAKE = (() => { try { return window.top !== window && window.top.__fakeDB || null; } catch (e) { return null; } })();
-  const LSP = FAKE ? (window.name || 'f') + ':' : '';
+  const LSP = FAKE ? (window.name || 'f') + ':' : (qs.get('fresh') === '1' ? 'fresh' + Math.random().toString(36).slice(2, 8) + ':' : '');
   const LS = {
     get: k => { try { return localStorage.getItem('dko_' + LSP + k); } catch (e) { return null; } },
     set: (k, v) => { try { localStorage.setItem('dko_' + LSP + k, v); } catch (e) { } },
