@@ -1,0 +1,39 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>اختبار قواعد الأمان (مؤقت)</title></head><body style="font-family:Tahoma;padding:16px">
+<h2>اختبار قواعد الأمان — صفحة مؤقتة للمطوّر</h2><pre id="out">...</pre>
+<script type="module">
+const SDK='https://www.gstatic.com/firebasejs/10.12.2/';
+const cfg={apiKey:"AIzaSyBNqR6lQo0iqJyQX4sq4iqw2RgN5nP4Yds",authDomain:"dream-kingdom-5fe4e.firebaseapp.com",databaseURL:"https://dream-kingdom-5fe4e-default-rtdb.europe-west1.firebasedatabase.app",projectId:"dream-kingdom-5fe4e",appId:"1:388627209191:web:a58075e0e426bb9f7f7b42"};
+const out=document.getElementById('out');const lines=[];const log=(ok,t)=>{lines.push((ok?'PASS ':'FAIL ')+t);out.textContent=lines.join('\n')};
+const [A0,A,D]=await Promise.all([import(SDK+'firebase-app.js'),import(SDK+'firebase-auth.js'),import(SDK+'firebase-database.js')]);
+const app=A0.initializeApp(cfg);const auth=A.getAuth(app);await A.setPersistence(auth,A.inMemoryPersistence);
+const u=(await A.signInAnonymously(auth)).user;const db=D.getDatabase(app);const r=p=>D.ref(db,p);
+const code=new URLSearchParams(location.search).get('room');const R='rooms/'+code+'/';
+async function expectDenied(name,fn){try{await fn();log(false,name+' — كان يجب رفضه لكنه نجح!')}catch(e){log(/permission/i.test(e.message),name+' — رُفض ('+e.message.slice(0,40)+')')}}
+async function expectOk(name,fn){try{await fn();log(true,name+' — نجح')}catch(e){log(false,name+' — رُفض: '+e.message)}}
+await expectDenied('قراءة قائمة كل الغرف',()=>D.get(r('rooms')));
+await expectOk('قراءة غرفة بكودها',()=>D.get(r(R+'meta')));
+const meta=(await D.get(r(R+'meta'))).val();log(true,'حالة الغرفة: '+meta.status+' qKey='+meta.qKey+' allowJoin='+meta.allowJoin);
+if(meta.allowJoin) await expectOk('الانضمام كلاعب',()=>D.set(r(R+'players/'+u.uid),{name:'مختبِر',avatar:'🧪',online:true}));
+else await expectDenied('الانضمام بعد إغلاق الباب',()=>D.set(r(R+'players/'+u.uid),{name:'مختبِر',avatar:'🧪',online:true}));
+await expectDenied('تعديل ذهبي بنفسي',()=>D.set(r(R+'kingdoms/'+u.uid+'/gold'),99999));
+const others=Object.keys((await D.get(r(R+'players'))).val()||{}).filter(x=>x!==u.uid);
+if(others[0]){await expectDenied('تعديل ذهب لاعب آخر',()=>D.set(r(R+'kingdoms/'+others[0]+'/gold'),0));await expectDenied('تغيير اسم لاعب آخر',()=>D.update(r(R+'players/'+others[0]),{name:'مخترق'}));}
+await expectDenied('تغيير حالة اللعبة',()=>D.update(r(R+'meta'),{status:'end'}));
+await expectDenied('كتابة نتيجة الكشف',()=>D.set(r(R+'reveal'),{correct:0}));
+await expectDenied('تعديل السؤال الحالي',()=>D.update(r(R+'question'),{endsAt:9e15}));
+await expectDenied('ادعاء ملكية الغرفة',()=>D.set(r(R+'host'),u.uid));
+await expectDenied('حذف الغرفة',()=>D.remove(r('rooms/'+code)));
+await expectDenied('رفع الحظر عن نفسي',()=>D.set(r(R+'banned/'+u.uid),null).then(()=>D.set(r(R+'banned/'+u.uid),false)));
+await expectDenied('إرسال طلب باسم لاعب آخر',()=>D.push(r(R+'requests'),{uid:others[0]||'x',t:'b',id:'farm'}));
+const q=(await D.get(r(R+'question'))).val();
+log(true,'هل الإجابة الصحيحة موجودة في بيانات السؤال؟ '+(q&&('correct' in q||'a' in q)?'نعم ✗':'لا ✓'));
+if(meta.status==='question'&&meta.allowJoin){
+  await expectDenied('إجابة بتوقيت مزوّر (at=0)',()=>D.set(r(R+'answers/'+meta.qKey+'/'+u.uid),{c:0,at:0}));
+  await expectDenied('إجابة باسم لاعب آخر',()=>D.set(r(R+'answers/'+meta.qKey+'/'+(others[0]||'x')),{c:0,at:D.serverTimestamp()}));
+  await expectDenied('إجابة لسؤال غير الحالي',()=>D.set(r(R+'answers/q999/'+u.uid),{c:0,at:D.serverTimestamp()}));
+  await expectOk('إجابتي الأولى',()=>D.set(r(R+'answers/'+meta.qKey+'/'+u.uid),{c:1,at:D.serverTimestamp()}));
+  await expectDenied('تغيير إجابتي بعد إرسالها',()=>D.set(r(R+'answers/'+meta.qKey+'/'+u.uid),{c:2,at:D.serverTimestamp()}));
+}else log(true,'(اختبارات الإجابة تحتاج سؤالًا نشطًا والانضمام مفتوحًا)');
+log(true,'انتهى الاختبار');
+await D.update(r(R+'players/'+u.uid),{online:false}).catch(()=>{});
+</script></body></html>
