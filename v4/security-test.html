@@ -1,0 +1,32 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>اختبار قواعد الأمان 2 (مؤقت)</title></head><body style="font-family:Tahoma;padding:16px">
+<h2>اختبار قواعد الأمان — المرحلة 2 (صفحة مؤقتة للمطوّر)</h2><pre id="out">...</pre>
+<script type="module">
+const SDK='https://www.gstatic.com/firebasejs/10.12.2/';
+const cfg={apiKey:"AIzaSyBNqR6lQo0iqJyQX4sq4iqw2RgN5nP4Yds",authDomain:"dream-kingdom-5fe4e.firebaseapp.com",databaseURL:"https://dream-kingdom-5fe4e-default-rtdb.europe-west1.firebasedatabase.app",projectId:"dream-kingdom-5fe4e",appId:"1:388627209191:web:a58075e0e426bb9f7f7b42"};
+const out=document.getElementById('out');const lines=[];const log=(ok,t)=>{lines.push((ok?'PASS ':'FAIL ')+t);out.textContent=lines.join('\n')};
+const [A0,A,D]=await Promise.all([import(SDK+'firebase-app.js'),import(SDK+'firebase-auth.js'),import(SDK+'firebase-database.js')]);
+const app=A0.initializeApp(cfg);const auth=A.getAuth(app);await auth.authStateReady();
+const u=auth.currentUser||(await A.signInAnonymously(auth)).user;const db=D.getDatabase(app);const r=p=>D.ref(db,p);
+const code=new URLSearchParams(location.search).get('room');const R='rooms/'+code+'/';
+async function denied(name,fn){try{await fn();log(false,name+' — كان يجب رفضه لكنه نجح!')}catch(e){log(/permission/i.test(e.message),name+' — رُفض')}}
+async function allowed(name,fn){try{await fn();log(true,name+' — نجح')}catch(e){log(false,name+' — رُفض: '+e.message)}}
+const meta=(await D.get(r(R+'meta'))).val();const me=(await D.get(r(R+'players/'+u.uid))).val();const st=(await D.get(r(R+'stats/'+u.uid))).val()||{};
+log(true,`الحالة: ${meta.status} · ${meta.qKey} · النمط: ${meta.settings.mode} · only: ${JSON.stringify(meta.only||null)} · خارج: ${!!st.out}`);
+if(!me) await allowed('الانضمام كلاعب مختبِر',()=>D.set(r(R+'players/'+u.uid),{name:'مختبِر',avatar:'🧪',online:true}));
+await denied('منح نفسي بطاقات (stats)',()=>D.set(r(R+'stats/'+u.uid+'/cards/fifty'),99));
+await denied('إلغاء خروجي من المنافسة',()=>D.set(r(R+'stats/'+u.uid+'/out'),false));
+await denied('كتابة تلميح حذف الخيارين لنفسي',()=>D.set(r(R+'hints/'+meta.qKey+'/'+u.uid),[0,1]));
+await denied('تسجيل استخدام بطاقة دون المضيف',()=>D.set(r(R+'uses/'+meta.qKey+'/'+u.uid+'/double'),true));
+await denied('تغيير فرق اللاعبين',()=>D.set(r(R+'teams/map/'+u.uid),'t1'));
+await denied('طلب بنوع طويل غير صالح',()=>D.push(r(R+'requests'),{uid:u.uid,t:'xxxxxxxxxxxxxxxxxxxx'}));
+await allowed('إرسال طلب صالح (يقرره المضيف)',()=>D.push(r(R+'requests'),{uid:u.uid,t:'b',id:'farm',at:D.serverTimestamp()}));
+if(meta.status==='question'){
+  const A=R+'answers/'+meta.qKey+'/'+u.uid;
+  await denied('إجابة بحقل إضافي (reward)',()=>D.set(r(A),{c:0,at:D.serverTimestamp(),reward:999}));
+  await denied('إجابة برقم خيار غير موجود (9)',()=>D.set(r(A),{c:9,at:D.serverTimestamp()}));
+  const excluded=(meta.only&&!meta.only[u.uid])||st.out;
+  if(excluded) await denied('الإجابة وأنا خارج المنافسة أو خارج التحدي المباشر',()=>D.set(r(A),{c:0,at:D.serverTimestamp()}));
+  else { await allowed('إجابة بفرصتين (c و c2)',()=>D.set(r(A),{c:0,c2:1,at:D.serverTimestamp()})); await denied('تغيير الإجابة بعد إرسالها',()=>D.set(r(A),{c:2,at:D.serverTimestamp()})); }
+}
+log(true,'انتهى الاختبار');
+</script></body></html>
