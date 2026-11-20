@@ -11,7 +11,7 @@ const code=new URLSearchParams(location.search).get('room');const R='rooms/'+cod
 async function denied(name,fn){try{await fn();log(false,name+' — كان يجب رفضه لكنه نجح!')}catch(e){log(/permission/i.test(e.message),name+' — رُفض')}}
 async function allowed(name,fn){try{await fn();log(true,name+' — نجح')}catch(e){log(false,name+' — رُفض: '+e.message)}}
 const meta=(await D.get(r(R+'meta'))).val();const me=(await D.get(r(R+'players/'+u.uid))).val();const st=(await D.get(r(R+'stats/'+u.uid))).val()||{};
-log(true,`الحالة: ${meta.status} · ${meta.qKey} · النمط: ${meta.settings.mode} · only: ${JSON.stringify(meta.only||null)} · خارج: ${!!st.out}`);
+log(true,`هوية: ${u.uid.slice(0,6)} · جديدة: ${new URLSearchParams(location.search).has('fresh')} · الحالة: ${meta.status} · ${meta.qKey} · النمط: ${meta.settings.mode} · only: ${JSON.stringify(meta.only||null)} · خارج: ${!!st.out}`);
 if(!me) await allowed('الانضمام كلاعب مختبِر',()=>D.set(r(R+'players/'+u.uid),{name:'مختبِر',avatar:'🧪',online:true}));
 await denied('منح نفسي بطاقات (stats)',()=>D.set(r(R+'stats/'+u.uid+'/cards/fifty'),99));
 await denied('إلغاء خروجي من المنافسة',()=>D.set(r(R+'stats/'+u.uid+'/out'),false));

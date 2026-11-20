@@ -366,8 +366,8 @@
       const used = reset ? [q.id] : (m.used || []).concat(q.id);
       const pub = { qKey, q: q.q, o: opts, t: q.t || 'mcq', c: q.cat, d: q.diff, golden, legend, final, boost, endsAt, qtime, special: special || '' };
       if (q.p) pub.p = q.p;
-      await api.set(P('question'), pub);
       await api.set(P('reveal'), null);
+      await api.set(P('question'), pub);
       const mu = { status: 'question', qKey, qNum, round, roundQ, used, paused: false, pausedLeft: 0, event: null };
       if (!special) mu.urgent = false;
       await metaUp(mu);
@@ -708,7 +708,7 @@
         <p><b>أجاب ${nAns} من ${act.length}</b>${m.only ? ' (المشاركون في هذا السؤال)' : ' (المتصلون)'}</p>${chipsHtml(answered, true)}
         <p class="small"><button data-oa="peek">${H.peek ? '🙈 إخفاء الإجابة' : '👁️ إظهار الإجابة لي'}</button> ${H.peek ? `الإجابة الصحيحة: <b>${cur ? (cur.t === 'num' ? E(cur.n) + (cur.tol ? ' (±' + cur.tol + ')' : '') : LETTERS[cur.correct] + ' · ' + E(q.o[cur.correct])) : '—'}</b>` : '<span>(أخفِها إن كانت شاشتك معروضة للاعبين)</span>'}</p>`;
       ctrl = `<button class="primary" data-oa="next">✨ كشف الإجابة الآن</button><button data-oa="pause">${m.paused ? '▶️ استئناف' : '⏸️ إيقاف مؤقت'}</button>`;
-    } else if (m.status === 'reveal' && q && rv) {
+    } else if (m.status === 'reveal' && q && rv && rv.qKey === q.qKey) {
       const winners = Object.entries(rv.results || {}).filter(([, r]) => r.ok).map(([u, r]) => `<span class="oChip done">${E((R.players[u] || {}).avatar || '')} ${E((R.players[u] || {}).name || '؟')} +${r.reward}${r.fast ? ' ⚡' : ''}${r.dbl ? ' ✨×2' : ''}${r.half ? ' (½)' : ''}${r.region ? ' 🗝️' : ''}</span>`).join('');
       const losers = Object.entries(rv.results || {}).filter(([, r]) => r.lost || r.shield || r.penalty).map(([u, r]) => `<span class="oChip">${E((R.players[u] || {}).name || '؟')} ${r.shield ? '🛡️ حماه الدرع' : (r.lost ? '−❤️' : '') + (r.penalty ? ' −5🪙' : '')}${r.outNow ? ' 🚫' : ''}</span>`).join('');
       const pend = Object.entries(H.pendingCh).map(([key, r]) => { const ch = CHS.find(x => x.id === r.id); return `<div class="row"><span>🎭 ${E((R.players[r.uid] || {}).name || '؟')} يقول إنه نفّذ «${E(ch ? ch.title : 'الحكم')}»</span><button class="good" data-oa="chYes" data-k="${key}">✅ +${ch ? ch.reward : 5} ذهب</button><button data-oa="chNo" data-k="${key}">✖</button></div>`; }).join('');
@@ -881,7 +881,7 @@
       if (!can) html = `${qHeader()}${duelHtml()}${myBadge()}${picHtml(q)}<div class="oQ">${E(q.q)}</div>${timerHtml()}${optionsHtml(q)}<p class="oStatus">👀 ${m.only ? 'هذا السؤال للمتنافسين فقط — شجّعهم!' : 'أنت تشاهد الآن.'}</p>`;
       else html = `${qHeader()}${duelHtml()}${myBadge()}${picHtml(q)}<div class="oQ">${E(q.q)}</div>${timerHtml()}${optionsHtml(q, { clickable: true, mine: mine ? (mine.n !== undefined ? mine.n : mine.c) : undefined, mine2: mine && mine.c2, sel: R.sel, hidden: R.myHint || [], disabled: mine !== undefined || left <= 0 || m.paused })}${cardsBar(q, mine)}
         <p class="oStatus">${mine !== undefined ? '✅ أُرسلت إجابتك. بانتظار الباقين…' : m.paused ? '⏸️ أوقف المضيف اللعبة مؤقتًا' : q.t === 'num' ? 'اكتب الرقم ثم اضغط «إرسال» 👆' : 'اختر إجابتك 👆'}</p>`;
-    } else if (m.status === 'reveal' && q && rv) {
+    } else if (m.status === 'reveal' && q && rv && rv.qKey === q.qKey) {
       const r = (rv.results || {})[api.uid], mine = R.myAnswer[q.qKey];
       if (r && R.chMap[q.qKey] === undefined && !r.ok && S().ch !== false && !q.special) R.chMap[q.qKey] = nextCh();
       const ch = R.chMap[q.qKey];
@@ -926,7 +926,7 @@
     let html = '';
     if (m.status === 'lobby') html = `<div class="oBig">🌙 رحلة إلى مملكة الأحلام</div><p><span class="badge">${MODES[mode()].icon} ${MODES[mode()].name}</span></p><div class="oBig">ادخلوا بالكود<div class="oCode">${E(R.code)}</div></div><p class="oLink">${E(linkFor('room'))}</p>${chipsHtml()}`;
     else if (m.status === 'question' && q) { const ans = (R.allAnswers || {})[q.qKey] || {}; html = `${qHeader()}${duelHtml()}${picHtml(q)}<div class="oQ">${E(q.q)}</div>${optionsHtml(q)}${timerHtml()}<p>أجاب ${Object.keys(ans).length} من ${Object.keys(R.players).filter(u => canAnswer(u)).length}</p>${chipsHtml(ans, true)}`; }
-    else if (m.status === 'reveal' && q && rv) html = `${qHeader()}${duelHtml()}${picHtml(q)}<div class="oQ">${E(q.q)}</div>${optionsHtml(q, { correct: rv.correct, dist: rv.dist, num: rv.num })}${rv.exp ? `<div class="notice">💡 ${E(rv.exp)}</div>` : ''}${rv.msg ? `<div class="oEvent">${E(rv.msg)}</div>` : ''}${eventHtml()}${boardHtml(8)}`;
+    else if (m.status === 'reveal' && q && rv && rv.qKey === q.qKey) html = `${qHeader()}${duelHtml()}${picHtml(q)}<div class="oQ">${E(q.q)}</div>${optionsHtml(q, { correct: rv.correct, dist: rv.dist, num: rv.num })}${rv.exp ? `<div class="notice">💡 ${E(rv.exp)}</div>` : ''}${rv.msg ? `<div class="oEvent">${E(rv.msg)}</div>` : ''}${eventHtml()}${boardHtml(8)}`;
     else if (m.status === 'build') html = `<div class="oBig">🏗️ مرحلة البناء</div>${eventHtml()}<p>يبني اللاعبون ممالكهم الآن…</p>${boardHtml()}`;
     else if (m.status === 'end') html = `<div class="oBig">🎉 انتهت الرحلة!</div>${eventHtml()}${winnerHtml()}${boardHtml()}`;
     box().innerHTML = `<div class="oStage oDisplay">${html}<div class="oCtrl"><button data-oa="fs">⛶ ملء الشاشة</button></div></div>`;
