@@ -496,7 +496,7 @@
 .z0{--a:z0;background:radial-gradient(circle,#fff6cf,#f6df97)}.z1{--a:z1;background:radial-gradient(circle,#e3f6c2,#a8db7c)}.z2{--a:z2;background:radial-gradient(circle,#b9e3b0,#5fa968)}
 .z3{--a:z3;background:radial-gradient(circle,#e7e4ff,#b7b1f0)}.z4{--a:z4;background:radial-gradient(circle,#fff1c9 0 35%,#7fd0e8 70%)}.z5{--a:z5;background:radial-gradient(circle,#f1f1f1,#b8b2a6)}
 .z6{--a:z6;background:radial-gradient(circle,#ffe7f3,#f2b6d3)}.z7{--a:z7;background:linear-gradient(135deg,#ffd6e8,#fff3b0,#c8f7dc,#c9d8ff)}
-.kZone.fog{filter:grayscale(.85) brightness(.92)}.kZone.fog::after{content:'☁️';position:absolute;top:4px;left:8px;font-size:22px;opacity:.8}
+.kZone.fog{filter:grayscale(.85) brightness(.92)}.kZone.fog::after{content:'☁️' / '';position:absolute;top:4px;left:8px;font-size:22px;opacity:.8}
 .kZone.rare.open{box-shadow:0 0 18px #ffe066}
 .kZoneHead{background:#ffffffd9;border:0;border-radius:12px;padding:4px 10px;font-weight:bold;font-size:14px;cursor:pointer;color:#24304a}
 .kPlots{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
@@ -509,7 +509,7 @@
 .kPlot.lv4{background:linear-gradient(#fff,#b8f0d2);border-color:#3fbf7f}.kPlot.lv5{background:linear-gradient(135deg,#ffe0f0,#fff3b0,#c8f7dc,#c9d8ff);border-color:#b48cff;box-shadow:0 0 14px #b48cffaa}
 .kPlot.ready{animation:kGlow 1.4s ease-in-out infinite}
 @keyframes kGlow{0%,100%{box-shadow:0 0 0 0 #ffd54f00}50%{box-shadow:0 0 0 6px #ffd54fcc}}
-.kMap .kPop{animation:kPop .9s ease-out both;animation-delay:var(--pd,0ms)}.kPop::after{content:'✨🎉✨';position:absolute;top:-14px;left:0;right:0;font-size:18px;animation:kRise 1.2s ease-out forwards;animation-delay:var(--pd,0ms)}
+.kMap .kPop{animation:kPop .9s ease-out both;animation-delay:var(--pd,0ms)}.kPop::after{content:'✨🎉✨' / '';position:absolute;top:-14px;left:0;right:0;font-size:18px;animation:kRise 1.2s ease-out forwards;animation-delay:var(--pd,0ms)}
 @keyframes kPop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
 @keyframes kRise{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-26px)}}
 .kMap .kChest,.kMap .kFlag{position:absolute;top:2px;right:6px;border:0;background:none;box-shadow:none;padding:0;min-height:0;font-size:24px;cursor:pointer;animation:kBob 1.6s ease-in-out infinite}.kMap .kFlag{right:auto;left:6px}
