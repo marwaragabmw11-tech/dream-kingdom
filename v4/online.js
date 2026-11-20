@@ -23,10 +23,7 @@
   const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   const LETTERS = ['أ', 'ب', 'ج', 'د'];
   const AV = ['🦊', '🐼', '🐯', '🐸', '🦉', '🐨', '🦁', '🐰', '🐻', '🐱', '🐵', '🦄', '🐧', '🐢', '🐬', '🦋'];
-  const DECOS = [
-    { id: 'tree', name: 'شجرة', emoji: '🌳', cost: 15 }, { id: 'flower', name: 'زهور', emoji: '🌸', cost: 15 },
-    { id: 'rabbit', name: 'أرنب', emoji: '🐇', cost: 20 }, { id: 'fountain', name: 'نافورة', emoji: '⛲', cost: 35 },
-    { id: 'horse', name: 'حصان', emoji: '🐴', cost: 60 }, { id: 'statue', name: 'تمثال', emoji: '🗿', cost: 80 }];
+  const DECOS = DKK.DECOS;
   const MODES = {
     solo: { icon: '🧑', name: 'كل لاعب ضد الجميع', desc: 'لكل لاعب مملكته ونقاطه.' },
     speed: { icon: '⚡', name: 'تحدي السرعة', desc: 'أول إجابة صحيحة تأخذ 15 ذهبًا إضافيًا.' },
@@ -110,16 +107,10 @@
   const P = x => `rooms/${R.code}/${x}`;
   let chDeck = [];
 
-  function blankK() { return { gold: 100, gems: 2, stars: 0, score: 0, crops: 10, knowledge: {}, buildings: {}, regions: [0], decos: [], steps: 0 }; }
-  function normK(k) {
-    const o = Object.assign(blankK(), k || {});
-    o.knowledge = o.knowledge || {}; o.buildings = o.buildings || {};
-    o.regions = Array.isArray(o.regions) ? o.regions.filter(x => x !== null && x !== undefined) : Object.values(o.regions || { 0: 0 });
-    o.decos = Array.isArray(o.decos) ? o.decos.filter(Boolean) : Object.values(o.decos || {});
-    return o;
-  }
-  function blankS(lives) { return { score: 0, correct: 0, wrong: 0, streak: 0, fastest: 0, lives: lives || 0, out: false, ch: 0, cards: { fifty: 0, double: 0, second: 0, shield: 0, steal: 0 } }; }
-  function normS(s) { const o = Object.assign(blankS(0), s || {}); o.cards = Object.assign({ fifty: 0, double: 0, second: 0, shield: 0, steal: 0 }, o.cards || {}); return o; }
+  function blankK() { return DKK.norm({}); }
+  function normK(k) { return DKK.norm(JSON.parse(JSON.stringify(k || {}))); }
+  function blankS(lives) { return { score: 0, correct: 0, wrong: 0, streak: 0, fastest: 0, lives: lives || 0, out: false, ch: 0, hard: 0, builds: 0, cardsUsed: 0, rw: 0, rs: 0, tre: 0, boxes: 0, regs: 0, mis: 0, mstreak: 0, avs: [], cards: { fifty: 0, double: 0, second: 0, shield: 0, steal: 0 } }; }
+  function normS(s) { const o = Object.assign(blankS(0), JSON.parse(JSON.stringify(s || {}))); o.cards = Object.assign({ fifty: 0, double: 0, second: 0, shield: 0, steal: 0 }, o.cards || {}); o.avs = Array.isArray(o.avs) ? o.avs.filter(Boolean) : Object.values(o.avs || {}); return o; }
   const S = () => (R.meta && R.meta.settings) || {};
   const mode = () => S().mode || 'solo';
   function ownerOf(uid) {
@@ -167,7 +158,7 @@
   function playersTable(limit) {
     const rows = ranking().slice(0, limit || 100), surv = mode() === 'survival';
     if (!rows.length) return '<p class="small">لا يوجد لاعبون بعد.</p>';
-    return `<table class="oBoard"><thead><tr><th>#</th><th>اللاعب</th><th>النقاط</th>${surv ? '<th>❤️</th>' : ''}<th>✔️</th>${mode() === 'coop' || mode() === 'teams' ? '' : '<th>🪙</th>'}</tr></thead><tbody>${rows.map((x, i) => `<tr class="${x.uid === (api && api.uid) ? 'me' : ''} ${x.s.out ? 'out' : ''}"><td>${x.s.out ? '🚫' : ['🥇', '🥈', '🥉'][i] || i + 1}</td><td>${E(x.avatar || '🙂')} ${E(x.name)}${x.online === false ? ' <small>(غير متصل)</small>' : ''}${x.s.out ? ' <small>(خرج)</small>' : ''}</td><td>${x.s.score}</td>${surv ? `<td>${'❤️'.repeat(Math.max(0, x.s.lives)) || '—'}</td>` : ''}<td>${x.s.correct}</td>${mode() === 'coop' || mode() === 'teams' ? '' : `<td>${x.k.gold}</td>`}</tr>`).join('')}</tbody></table>`;
+    return `<table class="oBoard"><thead><tr><th>#</th><th>اللاعب</th><th>النقاط</th>${surv ? '<th>❤️</th>' : ''}<th>✔️</th>${mode() === 'coop' || mode() === 'teams' ? '' : '<th>🪙</th>'}</tr></thead><tbody>${rows.map((x, i) => `<tr class="${x.uid === (api && api.uid) ? 'me' : ''} ${x.s.out ? 'out' : ''}"><td>${x.s.out ? '🚫' : ['🥇', '🥈', '🥉'][i] || i + 1}</td><td>${E(x.avatar || '🙂')} ${E(x.name)} <small title="${E(DKK.levelOf(+x.xp || 0).title)}">${DKK.levelOf(+x.xp || 0).emoji}</small>${x.online === false ? ' <small>(غير متصل)</small>' : ''}${x.s.out ? ' <small>(خرج)</small>' : ''}</td><td>${x.s.score}</td>${surv ? `<td>${'❤️'.repeat(Math.max(0, x.s.lives)) || '—'}</td>` : ''}<td>${x.s.correct}</td>${mode() === 'coop' || mode() === 'teams' ? '' : `<td>${x.k.gold}</td>`}</tr>`).join('')}</tbody></table>`;
   }
   function chipsHtml(highlight, onlyActive) {
     const ps = playerList().filter(p => !onlyActive || canAnswer(p.uid));
@@ -394,8 +385,6 @@
     H.current = { id: bq.id, qKey: q.qKey, t: q.t, correct: q.t === 'num' ? -1 : q.o.indexOf(bq.opts[bq.correct]), n: bq.n, tol: bq.tol || 0, exp: bq.exp || '', cat: q.c, diff: q.d, golden: !!q.golden, legend: !!q.legend, final: !!q.final, boost: !!q.boost, endsAt: q.endsAt, qtime: q.qtime || m.qtime, special: q.special || '' };
     LS.set('hostCur', JSON.stringify(H.current)); return H.current;
   }
-  function openRegions(k) { REGIONS.forEach((r, i) => { if (!k.regions.includes(i) && k.steps >= r[2] && (i < 6 || (k.buildings.palace || 0) > 0)) k.regions.push(i); }); }
-  function openNextRegionFree(k) { const i = REGIONS.findIndex((r, j) => !k.regions.includes(j) && (j < 6 || (k.buildings.palace || 0) > 0)); if (i >= 0) { k.regions.push(i); return REGIONS[i][0]; } return null; }
   async function finishQuestion() {
     const c = recoverCurrent(), m = R.meta;
     if (!c || !m || m.status !== 'question' || m.qKey !== c.qKey || H.finishedKey === c.qKey) return;
@@ -442,13 +431,13 @@
         if (isHalf[uid]) reward = Math.round(reward / 2);
         if (use.double) reward *= 2;
         if (uid === fastest && fastBonus && !c.special) { reward += fastBonus; st.fastest++; r.fast = true; }
-        st.score += reward; st.correct++; st.streak++;
+        st.score += reward; st.correct++; st.streak++; st.mstreak = Math.max(st.mstreak || 0, st.streak); if (c.diff === 'صعب') { st.hard++; k.magic++; }
         if (st.streak > 0 && st.streak % 5 === 0) k.gems++;
         k.stars += c.diff === 'صعب' ? 2 : 1; k.steps += kn; k.knowledge[c.cat] = (k.knowledge[c.cat] || 0) + kn;
         if (c.legend) k.gems++;
         if (md === 'teams') teamGain[o] = (teamGain[o] || 0) + reward; else { k.gold += reward; k.score += reward; }
-        if (c.special === 'secret') { const reg = openNextRegionFree(k); k.gold += 10; r.region = reg || ''; }
-        openRegions(k);
+        if (c.special === 'secret') { const reg = DKK.openNextFree(k); k.gold += 10; r.region = reg || ''; if (reg) st.regs++; }
+        st.regs += DKK.autoRegions(k).length;
         Object.assign(r, { ok: true, reward, half: !!isHalf[uid], dbl: !!use.double });
       } else {
         st.wrong++; st.streak = 0;
@@ -508,7 +497,7 @@
       else if (st.cards[req.id] <= 0) msg = 'لا تملك هذه البطاقة.';
       else if ((req.id === 'fifty' || req.id === 'second') && (q.t === 'num' || q.o.length < 3)) msg = 'هذه البطاقة لا تعمل مع هذا النوع من الأسئلة.';
       else {
-        st.cards[req.id]--; saveS = true; ok = true;
+        st.cards[req.id]--; st.cardsUsed++; saveS = true; ok = true;
         H.uses[uid] = Object.assign({}, H.uses[uid], { [req.id]: true });
         extra['uses/' + q.qKey + '/' + uid + '/' + req.id] = true;
         if (req.id === 'fifty' && cur) {
@@ -521,8 +510,8 @@
     else if (req.t === 'buy') {
       const card = CARDS[req.id];
       if (!card || !s.shop || (req.id === 'steal' && !s.steal)) msg = 'هذه البطاقة غير متاحة في هذه اللعبة.';
-      else if (k.gold < card.cost) msg = `تحتاج ${card.cost} ذهب، ومعك ${k.gold}.`;
-      else { k.gold -= card.cost; st.cards[req.id]++; saveK = saveS = ok = true; msg = `${card.emoji} اشتريت «${card.name}».`; }
+      else if (k.gold < DKK.price(k, card.cost)) msg = `تحتاج ${DKK.price(k, card.cost)} ذهب، ومعك ${k.gold}.`;
+      else { k.gold -= DKK.price(k, card.cost); st.cards[req.id]++; saveK = saveS = ok = true; msg = `${card.emoji} اشتريت «${card.name}».`; }
     } else if (req.t === 'steal') {
       const tgt = req.target, to = tgt && ownerOf(tgt);
       if (!s.steal) msg = 'السرقة غير مسموحة في هذه اللعبة.';
@@ -533,30 +522,31 @@
         const ts = normS(R.stats[tgt]), tk = normK(R.kingdoms[to]);
         if (ts.cards.shield > 0) { ts.cards.shield--; ts.msg = { text: `🛡️ صدّ درعك محاولة سرقة من ${R.players[uid].name}!`, ok: true, at: api.TS }; R.stats[tgt] = ts; extra['stats/' + tgt] = ts; msg = `🛡️ ${R.players[tgt].name} يملك درعًا وصدّ السرقة.`; }
         else {
-          const amt = Math.min(20, Math.floor(tk.gold * 0.1));
+          const full = Math.min(20, Math.floor(tk.gold * 0.1)), amt = Math.floor(full * DKK.stealFactor(tk)), guard = full - amt;
           tk.gold -= amt; k.gold += amt; saveK = ok = true; R.kingdoms[to] = tk; extra['kingdoms/' + to] = tk;
-          ts.msg = { text: `🦹 أخذ ${R.players[uid].name} منك ${amt} ذهبًا. اشترِ درعًا لتحمي نفسك!`, ok: false, at: api.TS }; R.stats[tgt] = ts; extra['stats/' + tgt] = ts;
-          msg = `🦹 أخذت ${amt} ذهبًا من ${R.players[tgt].name}.`;
+          ts.msg = { text: amt ? `🦹 أخذ ${R.players[uid].name} منك ${amt} ذهبًا${guard ? ` (وحمى برج الحراسة ${guard})` : ''}. اشترِ درعًا لتحمي نفسك!` : `🗼 صدّ برج الحراسة محاولة سرقة من ${R.players[uid].name}!`, ok: !amt, at: api.TS }; R.stats[tgt] = ts; extra['stats/' + tgt] = ts;
+          msg = amt ? `🦹 أخذت ${amt} ذهبًا من ${R.players[tgt].name}${guard ? ` (حمى برج الحراسة ${guard})` : ''}.` : `🗼 برج الحراسة في مملكة ${R.players[tgt].name} صدّ السرقة.`;
         }
       }
     } else if (req.t === 'b') {
-      const b = BUILDINGS.find(x => x.id === req.id);
-      if (b) {
-        const lv = k.buildings[b.id] || 0, cost = b.cost * (lv + 1), need = b.know * (lv + 1), have = k.knowledge[b.cat] || 0;
-        if (lv >= 5) msg = 'وصل المبنى إلى المستوى الأقصى.';
-        else if (k.gold < cost) msg = `تحتاج ${cost} ذهب، ومعك ${k.gold}.`;
-        else if (have < need) msg = `تحتاج ${need} معرفة في «${b.cat}»، ومعك ${have}.`;
-        else {
-          k.gold -= cost; k.buildings[b.id] = lv + 1;
-          if (b.id === 'farm') k.crops += 5 * (lv + 1);
-          if (b.id === 'treasury') k.gems += 1;
-          openRegions(k); ok = saveK = true; msg = `🎉 تم ${lv ? 'تطوير' : 'بناء'} ${b.name} إلى المستوى ${lv + 1}!`;
-          if (m.urgent) { k.gold += 25; msg += ' 🏗️ ربحت مكافأة المهمة العاجلة: 25 ذهبًا!'; extra['meta/urgent'] = false; m.urgent = false; extra['meta/event'] = { id: 'urgentDone', text: `🏗️ ${R.players[uid].name} أنجز مهمة البناء العاجلة!`, at: api.TS }; }
-        }
+      const r = DKK.build(k, req.id); msg = r.msg;
+      if (r.ok) {
+        ok = saveK = true; st.builds++; st.regs += r.opened.length;
+        if (m.urgent) { k.gold += 25; msg += ' 🏗️ ربحت مكافأة المهمة العاجلة: 25 ذهبًا!'; extra['meta/urgent'] = false; m.urgent = false; extra['meta/event'] = { id: 'urgentDone', text: `🏗️ ${R.players[uid].name} أنجز مهمة البناء العاجلة!`, at: api.TS }; }
       }
-    } else if (req.t === 'd') {
-      const d = DECOS.find(x => x.id === req.id);
-      if (d) { if (k.gold < d.cost) msg = 'ذهب غير كافٍ.'; else { k.gold -= d.cost; k.decos.push(d.emoji); ok = saveK = true; msg = `تمت إضافة ${d.name} إلى المملكة.`; } }
+    } else if (req.t === 'tre' || req.t === 'mis' || req.t === 'rare' || req.t === 'ob') {
+      const r = req.t === 'tre' ? DKK.collectTreasure(k, +req.id) : req.t === 'mis' ? DKK.claimMission(k, +req.id) : req.t === 'rare' ? DKK.openRare(k) : DKK.openBox(k);
+      msg = r.msg; ok = saveK = r.ok;
+      if (r.ok) {
+        if (req.t === 'tre') st.tre++; if (req.t === 'mis') st.mis++; if (req.t === 'rare') st.regs++;
+        if (req.t === 'ob') { st.boxes++; if (r.card) { const ids = ['fifty', 'double', 'second', 'shield'].concat(s.steal ? ['steal'] : []), cid = ids[Math.floor(Math.random() * ids.length)]; st.cards[cid]++; msg += ` ${CARDS[cid].emoji} ${CARDS[cid].name}`; } }
+      }
+    } else if (req.t === 'd' || req.t === 'skin' || req.t === 'box' || req.t === 'av') {
+      if (!s.shop) msg = 'المتجر معطّل في هذه اللعبة.';
+      else {
+        const r = DKK.buy(k, req.t === 'd' ? 'deco' : req.t, req.id, st.avs); msg = r.msg; ok = saveK = r.ok;
+        if (r.ok && req.t === 'av') { if (!st.avs.includes(r.avId)) st.avs.push(r.avId); extra['players/' + uid + '/avatar'] = r.avatar; R.players[uid].avatar = r.avatar; }
+      }
     }
     if (saveK) { R.kingdoms[o] = k; extra['kingdoms/' + o] = k; }
     if (msg) st.msg = { text: msg, ok, at: api.TS };
@@ -567,9 +557,9 @@
   async function decideChallenge(key, give) {
     const req = H.pendingCh[key]; delete H.pendingCh[key];
     if (req && give && R.players[req.uid]) {
-      const ch = CHS.find(x => x.id === req.id), rew = ch ? ch.reward : 5;
-      const o = ownerOf(req.uid), k = normK(R.kingdoms[o]), st = normS(R.stats[req.uid]);
-      k.gold += rew; k.stars += 1; st.ch++; st.msg = { text: `🎭 أحسنت! منحك المضيف ${rew} ذهبًا ونجمة لتنفيذ «${ch ? ch.title : 'الحكم'}».`, ok: true, at: api.TS };
+      const ch = CHS.find(x => x.id === req.id);
+      const o = ownerOf(req.uid), k = normK(R.kingdoms[o]), st = normS(R.stats[req.uid]), rew = (ch ? ch.reward : 5) + DKK.chBonus(k);
+      k.gold += rew; k.stars += 1; k.magic += 1; st.ch++; st.msg = { text: `🎭 أحسنت! منحك المضيف ${rew} ذهبًا ونجمة و✨ طاقة سحرية لتنفيذ «${ch ? ch.title : 'الحكم'}».`, ok: true, at: api.TS };
       R.kingdoms[o] = k; R.stats[req.uid] = st;
       await api.update('rooms/' + R.code, { ['kingdoms/' + o]: k, ['stats/' + req.uid]: st }).catch(() => { });
     }
@@ -597,6 +587,14 @@
     const ch = CHS.find(c => c.id === R.meta.groupCh), rew = ch ? ch.reward : 10, up = {};
     [...new Set(Object.keys(R.players).map(ownerOf))].forEach(o => { const k = normK(R.kingdoms[o]); k.gold += rew; k.stars += 1; R.kingdoms[o] = k; up['kingdoms/' + o] = k; });
     up['meta/groupCh'] = null; up['meta/event'] = { id: 'groupDone', text: `🎉 نجح التحدي الجماعي! كل مملكة تحصل على ${rew} ذهبًا ونجمة.`, at: api.TS };
+    await api.update('rooms/' + R.code, up);
+  }
+  // حصاد المباني وتحديد الفائز بالجولة عند الانتقال إلى البناء
+  async function harvestAll() {
+    const up = {}, uids = Object.keys(R.players || {}), opened = {};
+    [...new Set(uids.map(ownerOf))].forEach(o => { const k = normK(R.kingdoms[o]), h = DKK.harvest(k); k.hv = { r: R.meta.round || 1, text: h.text || '' }; opened[o] = h.opened.length; R.kingdoms[o] = k; up['kingdoms/' + o] = k; });
+    let mx = 0; uids.forEach(u => { const s = normS(R.stats[u]); mx = Math.max(mx, s.score - (s.rs || 0)); });
+    uids.forEach(u => { const s = normS(R.stats[u]); if (mx > 0 && s.score - (s.rs || 0) === mx) s.rw++; s.rs = s.score; s.regs += opened[ownerOf(u)] || 0; R.stats[u] = s; up['stats/' + u] = s; });
     await api.update('rooms/' + R.code, up);
   }
   async function randomEventAtBuild() {
@@ -661,7 +659,7 @@
       if (sp === 'tiebreak') return metaUp({ status: 'end', only: null, tiebreak: false });
       if (m.duel) { if ((m.duel.n || 0) < m.duel.total) return startQuestion(m.round, m.roundQ, 'duel'); await finishDuel(); if (R.meta.status === 'build') return; return; }
       if (mode() === 'survival' && aliveCount() <= 1 && Object.keys(R.players).length > 1) return metaUp({ status: 'end', allowJoin: false, event: { id: 'survEnd', text: '❤️ انتهى وضع البقاء!', at: api.TS } });
-      if ((m.roundQ || 0) >= m.qPer) { await metaUp({ status: 'build', urgent: false, event: null }); if (!sp) return randomEventAtBuild(); return; }
+      if ((m.roundQ || 0) >= m.qPer) { if (m.hvRound !== m.round) await harvestAll(); await metaUp({ status: 'build', urgent: false, event: null, hvRound: m.round }); if (!sp) return randomEventAtBuild(); return; }
       return startQuestion(m.round, (m.roundQ || 0) + 1);
     }
     if (m.status === 'build') {
@@ -722,7 +720,7 @@
       ctrl = `<button class="primary" data-oa="next">${label}</button>`;
     } else if (m.status === 'build') {
       main = `<div class="oBig">🏗️ مرحلة البناء — الجولة ${m.round} من ${m.roundLimit}</div>${eventHtml()}${groupCtrl()}<p>يبني اللاعبون ممالكهم ويشترون البطاقات من هواتفهم الآن. اضغط زر المتابعة عندما ينتهون.</p>
-        <table class="oBoard"><thead><tr><th>المملكة</th><th>🪙</th><th>المباني</th><th>المناطق</th></tr></thead><tbody>${[...new Set(ps.map(p => ownerOf(p.uid)))].map(o => { const k = normK(R.kingdoms[o]); return `<tr><td>${E(ownerName(o))}</td><td>${k.gold}</td><td>${BUILDINGS.filter(b => k.buildings[b.id]).map(b => b.emoji + (k.buildings[b.id] > 1 ? '×' + k.buildings[b.id] : '')).join(' ') || '—'}</td><td>${k.regions.length}/7</td></tr>`; }).join('')}</tbody></table>`;
+        ${kingdomsShowcase()}`;
       ctrl = `<button class="primary" data-oa="next">${(m.round || 1) >= m.roundLimit ? '🏆 إنهاء اللعبة وإعلان النتائج' : mode() === 'tournament' && m.elimRound !== m.round ? '🏆 إعلان المتأهلين' : '🚀 بدء الجولة التالية'}</button>`;
     } else if (m.status === 'end') {
       const tied = tiedTop();
@@ -732,10 +730,14 @@
     box().innerHTML = `<div class="panel oStage">${main}<div class="oCtrl">${ctrl}</div></div>${manageHtml()}`;
     renderBar();
   }
+  function kingdomsShowcase() {
+    const ps = playerList(), owners = [...new Set(ps.map(p => ownerOf(p.uid)))];
+    return `<div class="kKingdoms">${owners.map(o => { const k = normK(R.kingdoms[o]); return `<div class="kKCard"><b>${E(ownerName(o))}</b>${DKK.miniHtml(k)}<div class="small">${ps.filter(p => ownerOf(p.uid) === o).map(p => `${E(p.avatar)} ${E(p.name)} ${DKK.levelBadge(p.xp || 0)} 🏅 ${+p.ach || 0}`).join('<br>')}</div></div>`; }).join('')}</div>`;
+  }
   function groupCtrl() { return R.meta.groupCh ? '<div class="row"><button class="good" data-oa="groupYes">✅ نجح التحدي الجماعي</button><button data-oa="groupNo">✖ لم ينجح</button></div>' : ''; }
   function winnerHtml() {
     if (mode() === 'teams') { const t = teamRanking()[0]; return t ? `<div class="oWinner">🏆 الفريق الفائز: ${E(t.t.emoji)} ${E(t.t.name)} — ${t.k.score} نقطة</div>` : ''; }
-    if (mode() === 'coop') { const k = normK(R.kingdoms.all), pal = (k.buildings.palace || 0) > 0; const mvp = ranking()[0]; return `<div class="oWinner">${pal ? '🏰 أحسنتم! بنيتم القصر العظيم معًا!' : '🤝 بنيتم مملكة رائعة معًا!'} — ${Object.values(k.buildings).reduce((a, b) => a + b, 0)} مستوى بناء</div>${mvp ? `<p>⭐ صاحب أكبر مساهمة: ${E(mvp.avatar)} ${E(mvp.name)} (${mvp.s.score} نقطة)</p>` : ''}`; }
+    if (mode() === 'coop') { const k = normK(R.kingdoms.all), pal = (k.buildings.portal || 0) > 0; const mvp = ranking()[0]; return `<div class="oWinner">${pal ? '🌀 أحسنتم! بنيتم بوابة العوالم معًا!' : '🤝 بنيتم مملكة رائعة معًا!'} — ${Object.values(k.buildings).reduce((a, b) => a + b, 0)} مستوى بناء</div>${mvp ? `<p>⭐ صاحب أكبر مساهمة: ${E(mvp.avatar)} ${E(mvp.name)} (${mvp.s.score} نقطة)</p>` : ''}`; }
     const w = ranking()[0]; return w ? `<div class="oWinner">🏆 الفائز: ${E(w.avatar)} ${E(w.name)} — ${w.s.score} نقطة${mode() === 'survival' ? ' · ' + '❤️'.repeat(w.s.lives) : ''}</div>` : '';
   }
   function teamsEditor() {
@@ -783,7 +785,7 @@
       const prev = R.meta; R.meta = m;
       if (prev && prev.status !== m.status && m.status === 'build') { snd(523, 150); vib(80); }
       if (m.event && m.event.at && (!prev || !prev.event || prev.event.at !== m.event.at)) { toast2(m.event.text); vib([40, 30, 40]); }
-      renderPlayer();
+      renderPlayer(); if (m.status === 'end') syncProfile();
     }));
     R.unsubs.push(api.on(P('question'), v => {
       const nk = v && v.qKey; const ok = R.question && R.question.qKey; R.question = v;
@@ -806,12 +808,12 @@
       else if (joined) { stopListeners(); LS.del('player'); document.body.classList.remove('onlineMode'); return renderHome('أخرجك المضيف من الغرفة.'); }
       renderPlayer();
     }));
-    R.unsubs.push(api.on(P('kingdoms'), v => { R.kingdoms = v || {}; renderPlayer(); }));
+    R.unsubs.push(api.on(P('kingdoms'), v => { R.kingdoms = v || {}; renderPlayer(); syncProfile(); }));
     R.unsubs.push(api.on(P('teams'), v => { R.teams = v || {}; renderPlayer(); }));
     R.unsubs.push(api.on(P('stats'), v => {
       R.stats = v || {}; const st = R.stats[api.uid];
       if (st && st.msg && st.msg.at) { if (first) R.lastMsgAt = st.msg.at; else if (st.msg.at > R.lastMsgAt) { R.lastMsgAt = st.msg.at; toast2(st.msg.text); vib(st.msg.ok ? 50 : [30, 30, 30]); if (st.msg.ok) snd(700, 160); } }
-      first = false; renderPlayer();
+      first = false; renderPlayer(); syncProfile();
     }));
     R.unsubs.push(api.onConn(c => { R.connected = c; renderBar(); }));
   }
@@ -843,24 +845,40 @@
     return `<div class="oPws">${btn('fifty')}${btn('double')}${btn('second')}${st.cards.shield ? `<span class="oPw on">🛡️ درع ×${st.cards.shield}</span>` : ''}</div>${used.second && mine === undefined ? `<p class="oStatus">🔄 اختر إجابتين بالترتيب: الأولى ثم الثانية (${R.sel.length}/2)</p>` : ''}`;
   }
   function kingdomHtml(k, canBuild) {
-    const st = normS(R.stats[api.uid]), s = S();
-    const wallet = [['🪙', 'الذهب', k.gold], ['💎', 'الجواهر', k.gems], ['⭐', 'النجوم', k.stars], ['🌾', 'المحاصيل', k.crops], ['📚', 'المعرفة', Object.values(k.knowledge).reduce((a, b) => a + b, 0)]];
-    const scene = BUILDINGS.filter(b => k.buildings[b.id]).map(b => `<div class="sceneItem"><span class="emoji">${b.emoji}${'✨'.repeat(k.buildings[b.id] - 1)}</span>${b.name}<small>المستوى ${k.buildings[b.id]}</small></div>`).join('') + k.decos.map(d => `<div class="sceneItem"><span class="emoji">${d}</span></div>`).join('');
-    const regions = REGIONS.map((r, i) => `<span class="oRegion ${k.regions.includes(i) ? 'open' : ''}" title="${r[0]}">${r[1]} ${r[0]}${k.regions.includes(i) ? '' : ` <small>🔒 ${r[2]}${i === 6 ? ' + القصر' : ''}</small>`}</span>`).join('');
-    const blds = BUILDINGS.map(b => {
-      const lv = k.buildings[b.id] || 0, cost = b.cost * (lv + 1), need = b.know * (lv + 1), have = k.knowledge[b.cat] || 0;
-      const can = canBuild && lv < 5 && k.gold >= cost && have >= need;
-      return `<div class="building ${lv ? 'owned' : ''}"><div class="emoji">${b.emoji}</div><h4>${b.name}</h4><span class="badge">${lv}/5</span><p class="small">🪙 ${cost}${need ? ` · 📚 ${need} ${E(b.cat)} (معك ${have})` : ''}</p>${lv < 5 ? `<button data-oa="build" data-id="${b.id}" ${can ? '' : 'disabled'}>${lv ? 'تطوير' : 'بناء'}</button>` : '<span class="badge">مكتمل</span>'}</div>`;
-    }).join('');
-    const decos = DECOS.map(d => `<button data-oa="deco" data-id="${d.id}" ${canBuild && k.gold >= d.cost ? '' : 'disabled'}>${d.emoji} ${d.name} (${d.cost})</button>`).join('');
-    const shop = s.shop ? `<h4>🛒 متجر البطاقات</h4><div class="buildings">${Object.entries(CARDS).filter(([id]) => id !== 'steal' || s.steal).map(([id, c]) => `<div class="building"><div class="emoji">${c.emoji}</div><h4>${c.name}</h4><p class="small">${E(c.desc)}</p><span class="badge">معك ${st.cards[id] || 0}</span><button data-oa="buy" data-id="${id}" ${canBuild && k.gold >= c.cost ? '' : 'disabled'}>شراء (${c.cost} 🪙)</button></div>`).join('')}</div>` : '';
+    const st = normS(R.stats[api.uid]), s = S(), me = R.players[api.uid] || {};
+    const hv = canBuild && k.hv && k.hv.r === (R.meta.round || 1) ? `<div class="kHarvest">${E(k.hv.text || 'لا إنتاج بعد — ابنِ المزرعة أو المنجم لتحصد في الجولة القادمة.')}</div>` : '';
+    const cards = s.shop ? `<h4>🃏 بطاقات المساعدة</h4><div class="buildings">${Object.entries(CARDS).filter(([id]) => id !== 'steal' || s.steal).map(([id, c]) => { const pr = DKK.price(k, c.cost); return `<div class="building"><div class="emoji">${c.emoji}</div><h4>${c.name}</h4><p class="small">${E(c.desc)}</p><span class="badge">معك ${st.cards[id] || 0}</span><button data-oa="buy" data-id="${id}" ${canBuild && k.gold >= pr ? '' : 'disabled'}>شراء (${pr < c.cost ? `<s>${c.cost}</s> ` : ''}${pr} 🪙)</button></div>`; }).join('')}</div>` : '';
+    const shop = s.shop ? `<details class="kMore" ${R.shopOpen ? 'open' : ''} id="oShopBox"><summary>🛒 متجر المملكة: زخارف ومظاهر وشخصيات وصناديق</summary>${DKK.shopHtml(k, { canBuy: canBuild, avs: st.avs, curAv: me.avatar })}</details>` : (k.boxes ? `<div class="row"><button class="primary" data-kbuy="open" ${canBuild ? '' : 'disabled'}>📦 افتح صندوق مفاجآت (${k.boxes})</button></div>` : '');
     const rivals = playerList().filter(p => ownerOf(p.uid) !== ownerOf(api.uid));
     const steal = s.steal && canBuild && st.cards.steal > 0 && rivals.length ? `<div class="row"><select id="oStealT">${rivals.map(p => `<option value="${E(p.uid)}" ${R.stealT === p.uid ? 'selected' : ''}>${E(p.avatar)} ${E(p.name)}</option>`).join('')}</select><button data-oa="steal">🦹 استخدم بطاقة السرقة</button></div>` : '';
-    const coopGoal = mode() === 'coop' ? `<div class="notice">🤝 الهدف المشترك: بناء 🏰 القصر العظيم (${(k.buildings.palace || 0) ? '✅ تم!' : `يحتاج 300 ذهب — معكم ${k.gold}`})</div>` : '';
-    return `${coopGoal}<div class="grid oWallet">${wallet.map(x => `<div class="stat">${x[0]} ${x[1]}<strong>${x[2]}</strong></div>`).join('')}</div>
-      <div class="kingdomScene">${scene || '<p>ابنِ أول مبنى في مملكتك!</p>'}</div>
-      <h4>🗺️ مناطق المملكة (${k.regions.length}/7) — خطوات المعرفة: ${k.steps}</h4><div class="oRegions">${regions}</div>
-      <h4>🏗️ المباني</h4><div class="buildings">${blds}</div><h4>🌸 الزينة</h4><div class="row">${decos}</div>${shop}${steal}`;
+    const coopGoal = mode() === 'coop' ? `<div class="notice">🤝 الهدف المشترك: بناء 🌀 بوابة العوالم وفتح 🌈 عالم الأحلام (${(k.buildings.portal || 0) ? '✅ بُنيت البوابة!' : 'تحتاج القصر العظيم والقلعة بالمستوى 4'})</div>` : '';
+    return `${coopGoal}${hv}${DKK.walletHtml(k)}${DKK.mapHtml(k, { canBuild, key: 'O' + ownerOf(api.uid) })}
+      <details class="kMore"><summary>🗺️ المناطق والكنوز ومهام الاستكشاف (${k.regions.length}/8)</summary>${DKK.regionsHtml(k)}</details>${cards}${steal}${shop}`;
+  }
+  const PMAP = { correct: 'correct', hard: 'hard', ch: 'ch', builds: 'builds', rw: 'roundWins', tre: 'tre', boxes: 'boxes', regs: 'regions', mis: 'mis' };
+  function isWinner(uid) {
+    if (mode() === 'coop') return false;
+    if (mode() === 'teams') { const t = teamRanking()[0]; return !!t && t.k.score > 0 && ownerOf(uid) === t.tid; }
+    const w = ranking()[0]; return !!w && w.uid === uid && w.s.score > 0;
+  }
+  // ملف اللاعب الدائم على جهازه: نضيف إليه ما تغيّر في عدّادات هذه الغرفة فقط
+  function syncProfile() {
+    if (R.role !== 'player' || !R.meta) return;
+    const me = R.players[api.uid], raw = (R.stats || {})[api.uid]; if (!me || !raw) return;
+    const s = normS(raw), k = normK(R.kingdoms[ownerOf(api.uid)]), bk = 'pfBase:' + R.code, base = parseJ(LS.get(bk)) || {}, d = {};
+    Object.entries(PMAP).forEach(([a, b]) => { const v = +s[a] || 0, dv = v - (+base[a] || 0); if (dv > 0) { d[b] = dv; base[a] = v; } });
+    d.streak = s.mstreak || 0; d.maxLv = DKK.maxLv(k); if (k.regions.includes(7)) d.rare = 1;
+    if (R.meta.status === 'end' && !base.end) { base.end = 1; d.games = 1; if (isWinner(api.uid)) { d.wins = 1; if (!s.cardsUsed) d.clean = 1; } }
+    LS.set(bk, JSON.stringify(base));
+    const fresh = DKK.prof.add(me.name, d, me.avatar);
+    fresh.forEach(a => DKK.achToast(`🏅 إنجاز جديد: ${a.emoji} ${a.name}`));
+    const sm = DKK.prof.summary(me.name);
+    if (me.xp !== sm.xp || me.ach !== sm.ach) api.update(P('players/' + api.uid), { xp: sm.xp, ach: sm.ach }).catch(() => { });
+  }
+  function playerAct(t, id) {
+    const map = { b: { t: 'b', id }, tre: { t: 'tre', id }, mis: { t: 'mis', id }, rare: { t: 'rare' }, open: { t: 'ob' }, deco: { t: 'd', id }, skin: { t: 'skin', id }, box: { t: 'box' }, av: { t: 'av', id } };
+    if (!map[t]) return;
+    api.push(P('requests'), Object.assign({ uid: api.uid, at: api.TS }, map[t])).catch(e => toast2('حدث خطأ في الاتصال: ' + (e && e.message || e)));
   }
   function myBadge() {
     const md = mode(), st = normS(R.stats[api.uid]);
@@ -897,8 +915,10 @@
       html = `<div class="oBig">🎉 انتهت الرحلة!</div>${eventHtml()}${winnerHtml()}${mode() === 'teams' || mode() === 'coop' ? '' : `<div class="oWinner">ترتيبك: ${pos || '—'} من ${rk.length}</div>`}${boardHtml()}<h3>${mode() === 'teams' ? 'مملكة فريقك' : mode() === 'coop' ? 'المملكة المشتركة' : 'مملكتك'}</h3>${kingdomHtml(k, false)}<button data-oa="leave">🚪 خروج</button>`;
     } else html = '<div class="panel">⏳ بانتظار المضيف…</div>';
     const st = normS(R.stats[api.uid]);
+    DKK.setCtx({ getK: () => normK(R.kingdoms[ownerOf(api.uid)]), canBuild: m.status === 'build', act: playerAct });
     box().innerHTML = `<div class="panel oStage">${html}</div>
       <details class="panel" id="oMine" ${R.mineOpen ? 'open' : ''}><summary>🏰 المملكة والترتيب والبطاقات</summary>${m.status !== 'build' ? kingdomHtml(k, false) : ''}${boardHtml()}<p>بطاقاتك: ${Object.entries(CARDS).map(([id, c]) => `${c.emoji} ${st.cards[id] || 0}`).join(' · ')}</p></details>
+      <details class="panel" id="oProf" ${R.profOpen ? 'open' : ''}><summary>🏅 ملفي: ${DKK.levelBadge(DKK.prof.summary(me.name).xp)} والإنجازات</summary>${DKK.profileHtml(me.name || '؟', '<p class="small">ملفك محفوظ على هذا الجهاز ويجمع إنجازاتك في كل الألعاب.</p>')}</details>
       <div class="row"><button data-oa="toggleSnd">${LS.get('snd') === '0' ? '🔇 الصوت' : '🔊 الصوت'}</button><button data-oa="toggleVib">${LS.get('vib') === '0' ? '📴 الاهتزاز' : '📳 الاهتزاز'}</button><button class="danger" data-oa="leave">🚪 مغادرة الغرفة</button></div>`;
     const ni = document.getElementById('oNumIn'); if (ni && numVal && !ni.disabled) { ni.value = numVal; if (numFocus) ni.focus(); }
     renderBar();
@@ -927,8 +947,8 @@
     if (m.status === 'lobby') html = `<div class="oBig">🌙 رحلة إلى مملكة الأحلام</div><p><span class="badge">${MODES[mode()].icon} ${MODES[mode()].name}</span></p><div class="oBig">ادخلوا بالكود<div class="oCode">${E(R.code)}</div></div><p class="oLink">${E(linkFor('room'))}</p>${chipsHtml()}`;
     else if (m.status === 'question' && q) { const ans = (R.allAnswers || {})[q.qKey] || {}; html = `${qHeader()}${duelHtml()}${picHtml(q)}<div class="oQ">${E(q.q)}</div>${optionsHtml(q)}${timerHtml()}<p>أجاب ${Object.keys(ans).length} من ${Object.keys(R.players).filter(u => canAnswer(u)).length}</p>${chipsHtml(ans, true)}`; }
     else if (m.status === 'reveal' && q && rv && rv.qKey === q.qKey) html = `${qHeader()}${duelHtml()}${picHtml(q)}<div class="oQ">${E(q.q)}</div>${optionsHtml(q, { correct: rv.correct, dist: rv.dist, num: rv.num })}${rv.exp ? `<div class="notice">💡 ${E(rv.exp)}</div>` : ''}${rv.msg ? `<div class="oEvent">${E(rv.msg)}</div>` : ''}${eventHtml()}${boardHtml(8)}`;
-    else if (m.status === 'build') html = `<div class="oBig">🏗️ مرحلة البناء</div>${eventHtml()}<p>يبني اللاعبون ممالكهم الآن…</p>${boardHtml()}`;
-    else if (m.status === 'end') html = `<div class="oBig">🎉 انتهت الرحلة!</div>${eventHtml()}${winnerHtml()}${boardHtml()}`;
+    else if (m.status === 'build') html = `<div class="oBig">🏗️ مرحلة البناء</div>${eventHtml()}<p>يبني اللاعبون ممالكهم الآن…</p><h3>🏰 الممالك والألقاب</h3>${kingdomsShowcase()}${boardHtml()}`;
+    else if (m.status === 'end') html = `<div class="oBig">🎉 انتهت الرحلة!</div>${eventHtml()}${winnerHtml()}${boardHtml()}<h3>🏰 الممالك والألقاب</h3>${kingdomsShowcase()}`;
     box().innerHTML = `<div class="oStage oDisplay">${html}<div class="oCtrl"><button data-oa="fs">⛶ ملء الشاشة</button></div></div>`;
   }
 
@@ -952,7 +972,7 @@
   }, 250);
 
   /* ============================ الأحداث ============================ */
-  document.addEventListener('toggle', e => { const t = e.target; if (!t || !t.id) return; if (t.id === 'oManage') H.manageOpen = t.open; if (t.id === 'oMine') R.mineOpen = t.open; }, true);
+  document.addEventListener('toggle', e => { const t = e.target; if (!t || !t.id) return; if (t.id === 'oManage') H.manageOpen = t.open; if (t.id === 'oMine') R.mineOpen = t.open; if (t.id === 'oProf') R.profOpen = t.open; if (t.id === 'oShopBox') R.shopOpen = t.open; }, true);
   document.addEventListener('change', e => {
     const id = e.target && e.target.id; if (id === 'oDuelA') H.duelA = e.target.value; if (id === 'oDuelB') H.duelB = e.target.value; if (id === 'oStealT') R.stealT = e.target.value;
     const s = e.target.closest('[data-oa-change]'); if (!s) return;
