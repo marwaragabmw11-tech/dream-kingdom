@@ -32,6 +32,7 @@ button.oAns{cursor:pointer;box-shadow:0 4px 0 #b8d2df}button.oAns:disabled{opaci
 .oDisplay{background:linear-gradient(135deg,#17234a,#463b79,#237c77);color:#fff;border-radius:24px;padding:clamp(14px,3vw,36px);min-height:90vh}.oDisplay .oAns{background:#ffffff1c;color:#fff;border-color:#ffffff55}.oDisplay .oAns.correct{background:#76c58a;color:#102d24}.oDisplay .oAns b{background:#ffffff33}.oDisplay table{color:#fff}.oDisplay th{background:#ffffff22}.oDisplay .oChip{background:#ffffff22;color:#fff;border-color:#ffffff44}.oDisplay .oChip.done{background:#76c58a55}.oDisplay .notice{color:var(--ink)}.oDisplay .oCode{color:#ffe69a}.oLink{direction:ltr;font-size:20px}
 .qImg{max-width:100%;max-height:260px;border-radius:14px;display:block;margin:8px auto}.answer.gone{opacity:.3;text-decoration:line-through}
 .oPic{font-size:clamp(70px,16vw,140px);line-height:1.1;margin:6px auto}.oNum{display:flex;gap:8px;max-width:420px;margin:14px auto}.oNum input{font-size:26px;text-align:center}.oNumAns{font-size:22px;margin:12px;padding:12px;background:#e8f0fa;border-radius:14px}.oDisplay .oNumAns{background:#ffffff22}
+.oDisplay .badge,.oDisplay .oWinner,.oDisplay .oEvent,.oDisplay .kTitle{color:#24304a}.oDisplay .oTimer{color:#ffd66e}.oDisplay .oTimer.low{color:#ff8a80}
 .oAnswers.ord .oAns{font-size:clamp(15px,2vw,22px)}.oAns.gone{opacity:.25;text-decoration:line-through}
 .oPws{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:8px 0}.oPw{font-size:14px;padding:8px 10px;background:#f3eefe;border:2px solid #d9cdfb}.oPw.on{background:#dff5e3;border-color:#8bcba1}.oPw b{background:#fff;border-radius:8px;padding:0 6px;margin-right:4px}
 .oCh{background:#fff8e6;border:2px dashed #f4b942;border-radius:16px;padding:12px;margin:10px 0;text-align:right}.oChHead{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
@@ -56,9 +57,9 @@ button.oAns{cursor:pointer;box-shadow:0 4px 0 #b8d2df}button.oAns:disabled{opaci
 <section id="host" class="screen"><div id="hostScreen"><div class="hostMeta"><span id="hostRound">🌙 رحلة إلى مملكة الأحلام</span><span id="hostPlayer"></span></div><div class="hostQ" id="hostQuestion">ابدأ اللعبة لعرض السؤال</div><div id="hostOptions" class="hostAnswers"></div><div class="hostControls"><button onclick="hostReveal()">كشف الإجابة ✨</button><button onclick="hostFullscreen()">ملء الشاشة ⛶</button><button onclick="toggleSound()" id="soundToggle">🔊 الصوت</button><button onclick="renderBoard();showScreen('board')">لوحة الترتيب</button></div><div id="hostProgress"></div></div></section>
 <section id="online" class="screen"><div id="oBar" class="oBar"></div><div id="onl"><div class="panel">⏳ جارٍ التحميل…</div></div></section>
 </main><div class="footer">اللعب المحلي يعمل دون إنترنت ويُحفظ على هذا الجهاز · اللعب الجماعي عبر الإنترنت من زر 🌐</div><div id="toast" class="toast hidden"></div><div id="modal" class="modal hidden" onclick="if(event.target===this)closeModal()"><div id="modalContent"></div></div>
-<script src="questions.js?v=3.1"></script>
-<script src="challenges.js?v=3.1"></script>
-<script src="kingdom.js?v=3.1"></script>
+<script src="questions.js?v=3.2"></script>
+<script src="challenges.js?v=3.2"></script>
+<script src="kingdom.js?v=3.2"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);const CATS=['العلوم','اللغة العربية','التاريخ','الجغرافيا','الطبيعة والحيوانات','الرياضيات والمنطق','الفنون','المعارف الإسلامية'];
@@ -166,5 +167,5 @@ document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()
 // استعادة آمنة عند فتح الصفحة: لا يبدأ اللعب تلقائيًا ولا تُنشأ أسماء افتراضية.
 (function init(){let raw=localStorage.getItem('dreamKingdomSaveV4');if(raw){try{let s=JSON.parse(raw);if(s&&Array.isArray(s.players)){state=Object.assign(blankState(),s);state.questions=mergeQuestionBank(s.questions);state.owners=state.owners||{};state.players.forEach(p=>ensureOwner(ownerIdForPlayer(p)));$('mode').value=state.mode;}}catch(e){localStorage.removeItem('dreamKingdomSaveV4');}}$('difficulty').value='مختلط';renderAll();})();
 </script>
-<script src="online.js?v=3.1"></script>
+<script src="online.js?v=3.2"></script>
 </body></html>
