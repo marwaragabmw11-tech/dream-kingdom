@@ -56,8 +56,8 @@ button.oAns{cursor:pointer;box-shadow:0 4px 0 #b8d2df}button.oAns:disabled{opaci
 <section id="host" class="screen"><div id="hostScreen"><div class="hostMeta"><span id="hostRound">🌙 رحلة إلى مملكة الأحلام</span><span id="hostPlayer"></span></div><div class="hostQ" id="hostQuestion">ابدأ اللعبة لعرض السؤال</div><div id="hostOptions" class="hostAnswers"></div><div class="hostControls"><button onclick="hostReveal()">كشف الإجابة ✨</button><button onclick="hostFullscreen()">ملء الشاشة ⛶</button><button onclick="toggleSound()" id="soundToggle">🔊 الصوت</button><button onclick="renderBoard();showScreen('board')">لوحة الترتيب</button></div><div id="hostProgress"></div></div></section>
 <section id="online" class="screen"><div id="oBar" class="oBar"></div><div id="onl"><div class="panel">⏳ جارٍ التحميل…</div></div></section>
 </main><div class="footer">اللعب المحلي يعمل دون إنترنت ويُحفظ على هذا الجهاز · اللعب الجماعي عبر الإنترنت من زر 🌐</div><div id="toast" class="toast hidden"></div><div id="modal" class="modal hidden" onclick="if(event.target===this)closeModal()"><div id="modalContent"></div></div>
-<script src="questions.js"></script>
-<script src="challenges.js"></script>
+<script src="questions.js?v=2.0"></script>
+<script src="challenges.js?v=2.0"></script>
 <script>
 'use strict';
 const $=id=>document.getElementById(id);const CATS=['العلوم','اللغة العربية','التاريخ','الجغرافيا','الطبيعة والحيوانات','الرياضيات والمنطق','الفنون','المعارف الإسلامية'];
@@ -148,5 +148,5 @@ document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()
 // استعادة آمنة عند فتح الصفحة: لا يبدأ اللعب تلقائيًا ولا تُنشأ أسماء افتراضية.
 (function init(){let raw=localStorage.getItem('dreamKingdomSaveV4');if(raw){try{let s=JSON.parse(raw);if(s&&Array.isArray(s.players)){state=Object.assign(blankState(),s);state.questions=mergeQuestionBank(s.questions);state.owners=state.owners||{};state.players.forEach(p=>ensureOwner(ownerIdForPlayer(p)));$('mode').value=state.mode;}}catch(e){localStorage.removeItem('dreamKingdomSaveV4');}}$('difficulty').value='مختلط';renderAll();})();
 </script>
-<script src="online.js"></script>
+<script src="online.js?v=2.0"></script>
 </body></html>
