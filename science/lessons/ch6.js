@@ -1,0 +1,61 @@
+/* Chapter 6: The Force of Wind (book pages 78–83) */
+(function(){
+const {U,tag,sun,cloud,tufts}=ART;
+const {dewy,title,chalk,notebook,ending,sum,arrow,panel,txt,room}=H;
+const L=[];
+const carG=(sail='large')=>`${U('car',0,40,170,80)}${sail!=='none'?`<path d="M84 72V${sail==='large'?-20:20}" stroke="#7a4a22" stroke-width="4"/><path d="M86 ${sail==='large'?-18:22}Q${sail==='large'?150:120} ${sail==='large'?20:40} 86 70Z" fill="${sail==='large'?'#4fb3ea':'#a8d8f5'}" stroke="#1d6fa5" stroke-width="2"/>`:''}`;
+const track=()=>`<rect x="0" y="330" width="800" height="120" fill="#3b3f46"/><path d="M0 390H800" stroke="#fff" stroke-width="3" stroke-dasharray="20 16" opacity=".6"/><rect x="0" y="420" width="800" height="22" fill="#ffd166"/>${[...Array(17)].map((_,i)=>`<path d="M${i*50} 420v${i%2?8:14}" stroke="#7a5a10" stroke-width="2"/>${i%2?'':`<text x="${i*50+3}" y="440" font-size="11" fill="#7a5a10">${i*25}</text>`}`).join('')}<path d="M190 330V420" stroke="#fff" stroke-width="4"/>`;
+const lab=(sail,id='carRun')=>`${room('#f1e9f6')}${track()}${U('fan',20,190,120,148)}<g class="windlines" id="wl" style="opacity:0">${[0,1,2].map(i=>`<path class="blow" style="animation-delay:${i*.3}s" d="M140 ${250+i*24}h60" stroke="#7fb6d6" stroke-width="4" stroke-linecap="round"/>`).join('')}</g><g id="${id}" class="carmove" style="transform:translateX(0)"><g transform="translate(150 270)">${carG(sail)}</g></g><g id="mark"></g>`;
+
+/* ---------- 6-1 ---------- */
+L.push({id:'6-1',title:'Wind-Powered Cars',ar:'سيارات تعمل بالرياح',pages:'78–79, 82–83',scenes:[
+{t:'Start',svg:()=>`${lab('large')}${title('Wind-Powered Cars','',470,440,40)}`,
+L:[["How does the distance a car travels change when you change the strength of the wind?","المسافة اللي العربية بتمشيها بتتغير إزاي لما نغير قوة الريح؟"],["When the wind is strong, the car shoots out fast!","لما الريح تبقى قوية، العربية بتنطلق بسرعة!"]]},
+{t:'Force',svg:()=>`<rect width="800" height="450" fill="#fbf7ee"/>${[0,1,2].map(i=>panel(16+i*262,40,250,330,'#fff')).join('')}
+<g data-r="2"><rect x="60" y="230" width="80" height="70" rx="8" fill="url(#gWood)"/>${arrow(40,265,58,265,'#e63973',6)}${arrow(150,265,230,265,'#3f9a3a',4)}${txt(141,350,'start moving',19)}</g>
+<g data-r="2"><circle cx="400" cy="270" r="30" fill="#ef6f51"/>${U('glove',430,220,60,72)}${arrow(330,270,366,270,'#3f9a3a',4)}${txt(403,350,'stop moving',19)}</g>
+<g data-r="2"><circle cx="640" cy="270" r="30" fill="#4fb3ea"/>${arrow(560,300,610,280,'#3f9a3a',4)}${arrow(660,250,720,170,'#3f9a3a',4)}${txt(665,350,'change direction',19)}</g>
+<g data-r="1">${tag(400,30,'A force is a push or a pull',340,'#1d3557','#fff')}</g><g data-r="3">${tag(400,410,'Greater force → greater effect',360,'#e63973','#fff',19)}</g>`,
+L:[["A force is a push or a pull.","القوة هي زقة أو شدة."],["It can make a still object move, stop a moving object, or change the direction of its motion.","ممكن تخلي حاجة واقفة تتحرك، أو توقف حاجة بتتحرك، أو تغير اتجاه حركتها."],["The greater the force, the greater its effect on the object.","وكل ما القوة تكبر، تأثيرها على الحاجة يكبر."]]},
+{t:'Wind lab',stars:2,svg:()=>lab('large'),
+L:[["Wind has the power to move things. How things move depends on how strong the wind is.","الريح ليها قوة تحرّك الأشياء، والحركة بتختلف حسب قوة الريح."],["Weak wind: the power to move is small, so the car travels a short distance.","ريح ضعيفة: القوة صغيرة، فالعربية بتمشي مسافة قصيرة."],["Strong wind: the power is big, the push on the car is stronger, and it travels a longer distance!","ريح قوية: القوة كبيرة، الزقة أقوى، والعربية بتمشي مسافة أطول!"]],
+act:(el,K)=>{const res={weak:[],strong:[]};el.innerHTML=`<h2>Wind car lab <span class="tag">Warm Up</span></h2><div class="lab"><button class="btn blue" type="button" data-w="weak">Weak wind</button><button class="btn" type="button" data-w="strong">Strong wind</button></div><table class="tbl"><tr><th>Wind</th><th>Trial 1</th><th>Trial 2</th><th>Trial 3</th></tr><tr><td>Weak</td><td></td><td></td><td></td></tr><tr><td>Strong</td><td></td><td></td><td></td></tr></table>`;
+el.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{const w=b.dataset.w,c=K.$('#carRun'),wl=K.$('#wl');if(!c)return;const base=w==='weak'?140:430,dist=base+Math.round(Math.random()*40-20);c.style.transition='none';c.style.transform='translateX(0)';void c.getBoundingClientRect();wl.style.opacity=1;wl.style.animationDuration=w==='weak'?'1.4s':'.5s';
+setTimeout(()=>{c.style.transition=`transform ${w==='weak'?2.2:1.6}s cubic-bezier(.2,.7,.3,1)`;c.style.transform=`translateX(${dist}px)`},50);setTimeout(()=>{wl.style.opacity=0;K.$('#mark').innerHTML=`<path d="M${190+dist} 330V420" stroke="#e63973" stroke-width="4"/>`+ART.tag(190+dist,316,`${Math.round(dist/2)} cm`,110,'#e63973','#fff',16)},1900);
+const r=res[w];if(r.length<3){r.push(Math.round(dist/2));const row=el.querySelectorAll('.tbl tr')[w==='weak'?1:2];row.cells[r.length].textContent=r[r.length-1]+' cm'}K.star(w)})}},
+{t:'Make the car',svg:()=>`<rect width="800" height="450" fill="#cf9f6c"/>${panel(20,30,240,380,'#fff')}${panel(280,30,240,380,'#fff')}${panel(540,30,240,380,'#fff')}
+<g data-r="1"><path d="M50 230H230L222 260H58Z" fill="url(#gWood)" stroke="#7a4a22" stroke-width="2"/>${txt(140,350,'1 body: cardboard',18)}${txt(140,376,'or a food tray',18)}</g>
+<g data-r="2"><g transform="translate(320 170)">${U('car',0,40,170,80)}</g><circle cx="460" cy="150" r="20" fill="#2b6fd6" stroke="#1d3a7a" stroke-width="2"/>${txt(400,350,'2 wheels: axle +',18)}${txt(400,376,'bottle caps',18)}</g>
+<g data-r="3"><g transform="translate(575 190)">${carG('large')}</g>${txt(660,350,'3 sail: thick paper',18)}${txt(660,376,'+ tape',18)}</g>`,
+L:[["How to make a wind-powered car. First, use cardboard or a food tray to make the body.","إزاي نعمل عربية بالريح. الأول نعمل الجسم من كرتون أو صينية أكل."],["Put an axle through the body and attach tires. You can make tires from plastic bottle caps.","دخلي محور في الجسم وركبي العجل. ممكن تعملي العجل من غطيان الزجاجات."],["Make a sail out of thick paper, and attach it to the body with tape.","اعملي شراع من ورق تقيل، ولزقيه في الجسم بالشريط اللاصق."]]},
+{t:'Quiz',stars:7,svg:()=>chalk('Try 1 and Exercise 1 — pages 82–83'),L:[["Quiz time!","وقت الأسئلة!"]],
+act:(el,K)=>K.quiz(el,'q',[
+{type:'blanks',src:'Try 1 (1)',q:'Fill in the blank about the experiment with wind-powered cars.',ar:'كمّلي الفراغ.',bank:['shorter','longer'],items:[['The distance the car travels is','longer','when it is hit by a strong wind than when it is hit by a weak wind.']]},
+{type:'tf',src:'Try 1 (2)',q:'Mark ✓ for correct and ✗ for incorrect about wind-powered cars.',ar:'علّمي ✓ أو ✗.',items:[['Wind has the power to move things.',1],['For a wind-powered car, the distance it travels does not change even if you change the strength of the wind.',0],['When a weak wind hits a wind-powered car, the distance it travels is shorter than when a strong wind hits it.',1]]},
+{type:'mcq',src:'Exercise 1 (1)',q:'Choose all correct answers about the power of wind.',ar:'اختاري كل الإجابات الصح.',o:['A: When the wind becomes stronger, its power to move things also becomes bigger.','B: We cannot see the wind, but it can make power when it hits things.','C: No matter how strong the wind is, the distance the car travels is always the same.'],a:[0,1],multi:1,why:'A and B.'},
+{type:'blanks',src:'Exercise 1 (2)',q:'Fill in the blanks about the experiment.',ar:'كمّلي الفراغات.',bank:['small','big','longer','shorter'],items:[['Since a strong wind has a','big','power to move things, the force to push the car becomes stronger,'],['and the distance it travels becomes','longer','.']]}])},
+{t:'The end',svg:()=>ending(lab('large'),'strong wind = farther'),L:[["Great job! Stronger wind, bigger power, longer distance!","برافو! ريح أقوى، قوة أكبر، ومسافة أطول!"]],
+act:el=>sum(el,['A <b>force</b> is a push or a pull.','<b>Weak</b> wind: small power, <b>short</b> distance.','<b>Strong</b> wind: big power, <b>long</b> distance.'])}
+]});
+
+/* ---------- 6-2 ---------- */
+L.push({id:'6-2',title:'Sail Size',ar:'حجم الشراع',pages:'80–83',scenes:[
+{t:'Start',svg:()=>`<rect width="800" height="300" fill="url(#gSkyDay)"/>${cloud(200,60,.8)}${sun(700,70,.6)}<rect y="290" width="800" height="160" fill="url(#gRiver)"/>${ART.waves(0,330,'#bfe9ff',24)}<g class="sway">${U('felucca',300,110,240,240)}</g>${title('Sail Size','',400,280,30)}`,
+L:[["How does the distance a sailboat travels change when you change the size of the sail?","المسافة اللي المركب بيمشيها بتتغير إزاي لما نغير حجم الشراع؟"],["If the wind is the same, will a bigger sail catch more wind?","لو الريح نفس القوة، الشراع الأكبر هيمسك ريح أكتر؟"]]},
+{t:'Sail lab',stars:2,svg:()=>lab('small','carS'),
+L:[["When the wind strength is the same, the larger the area that catches the wind, the bigger the power it gets.","لما قوة الريح تكون نفسها، كل ما مساحة الشراع تكبر، القوة اللي بياخدها من الريح تكبر."],["Small sail: the area is small, the power is small, and the distance is short.","شراع صغير: المساحة صغيرة، القوة صغيرة، والمسافة قصيرة."],["Large sail: the area is big, the power is big, and the distance is long.","شراع كبير: المساحة كبيرة، القوة كبيرة، والمسافة طويلة."],["Fair test: change only the sail, and keep the wind strength the same!","تجربة عادلة: غيري الشراع بس، وخلي قوة الريح زي ما هي!"]],
+act:(el,K)=>{el.innerHTML=`<h2>Sail lab <span class="tag">Warm Up</span></h2><p>Same fan, same wind strength. Only the sail changes!</p><div class="lab"><button class="btn blue" type="button" data-s="small">Small sail</button><button class="btn" type="button" data-s="large">Large sail</button></div><div class="fbx" id="sfb"></div>`;
+el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{const s=b.dataset.s,c=K.$('#carS'),wl=K.$('#wl');if(!c)return;c.innerHTML=`<g transform="translate(150 270)">${carG(s)}</g>`;const dist=s==='small'?170:420;c.style.transition='none';c.style.transform='translateX(0)';void c.getBoundingClientRect();wl.style.opacity=1;
+setTimeout(()=>{c.style.transition='transform 2s cubic-bezier(.2,.7,.3,1)';c.style.transform=`translateX(${dist}px)`},50);setTimeout(()=>{wl.style.opacity=0;K.$('#mark').innerHTML=`<path d="M${190+dist} 330V420" stroke="#e63973" stroke-width="4"/>`+ART.tag(190+dist,316,s==='small'?'short':'long!',100,'#e63973','#fff',16)},1900);K.$('#sfb').innerHTML=`<div class="fb good">${s==='small'?'Small sail → small power → short distance.':'Large sail → big power → long distance!'}</div>`;K.star(s)})}},
+{t:'Quiz',stars:6,svg:()=>chalk('Try 2 and Exercise 2 — pages 82–83'),L:[["Quiz time!","وقت الأسئلة!"]],
+act:(el,K)=>K.quiz(el,'q',[
+{type:'blanks',src:'Try 2 (1)',q:'Fill in the blanks about the experiment.',ar:'كمّلي الفراغات.',bank:['smaller','bigger','shorter','longer'],items:[['If you make the sail bigger, the power to catch the wind becomes','bigger',','],['and the distance the car travels becomes','longer','.']]},
+{type:'mcq',src:'Try 2 (2)',q:'Choose the correct idea to catch more wind power.',ar:'إزاي نمسك ريح أكتر؟',o:['A: Make the sail that catches the wind smaller.','B: Make the sail that catches the wind bigger.','C: Take the sail off the car.'],a:[1],why:'A bigger sail catches more wind.'},
+{type:'mcq',src:'Exercise 2 (1)',q:'When the wind strength is the same, which car can travel the farthest?',ar:'أنهي عربية هتمشي أبعد؟',o:['A: A car with no sail','B: A car with a small sail','C: A car with a large sail'],a:[2],why:'The large sail.'},
+{type:'blanks',src:'Exercise 2 (2)',q:'Small sail: fill in the blanks.',ar:'الشراع الصغير: كمّلي.',bank:['big','small','long','short'],items:[['Since the area catching the wind is small, the power it gets from the wind becomes','small',','],['and the distance the car travels becomes','short','.']]}])},
+{t:'The end',svg:()=>ending(lab('large'),'bigger sail = bigger power'),L:[["Great job! A bigger sail catches more wind power.","برافو! الشراع الأكبر بيمسك قوة ريح أكتر."]],
+act:el=>sum(el,['Same wind: a <b>larger sail</b> catches more wind and gets <b>bigger power</b>.','Small sail → short distance. Large sail → long distance.','<b>Fair test</b>: change only one thing (the sail); keep the wind the same.'])}
+]});
+
+(window.CHAPTERS=window.CHAPTERS||[]).push({n:6,title:'The Force of Wind',ar:'قوة الرياح',color:'#e0533d',lessons:L});
+})();

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Science Term 1 Lessons</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Baloo+Bhaijaan+2:wght@500;700&display=swap">
+<style>
+/* VOICE: a warm, playful picture-book trip for a 9-year-old, narrated by Dewy the water drop
+   IDEA: an animated storybook player — one stage per scene, lessons as chapters of the book
+   PICTURE: shaded SVG stage; animals hop, fly and sniff while the narrator talks
+   COLOUR and TYPE: Nile blue #1d6fa5 + desert sand, coral accent #ef6f51; Baloo 2 / Baloo Bhaijaan 2
+   LAYOUT: lesson tabs, stage, captions, controls, scene chips, then the activity card */
+:root{color-scheme:light dark;--bg:light-dark(#fbf1df,#17140f);--ink:light-dark(#1d2a3a,#f3ead9);--card:light-dark(#fff,#262019);--muted:light-dark(#5b6676,#b9ad98);--nile:#1d6fa5;--coral:#ef6f51;--ok:#2e9d55;--bad:#d64545;--line:light-dark(#ecdcc0,#3a3127);--f:"Baloo 2",system-ui,sans-serif}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 var(--f);overflow-x:clip}
+.ar,[dir=rtl]{font-family:"Baloo Bhaijaan 2","Baloo 2",system-ui,sans-serif}
+header{background:var(--nile);color:#fff;padding:12px max(4vw,14px);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:clamp(19px,3vw,26px);line-height:1.1;margin:0;font-weight:800;flex:1 1 260px}
+header small{display:block;font-weight:500;font-size:14px;opacity:.85}
+.starbox{background:#fff;color:var(--nile);border-radius:99px;padding:4px 14px;font-weight:800;white-space:nowrap}
+.starbox b{color:#f2a900}
+main{max-width:1000px;margin:0 auto;padding:12px max(3vw,10px) 40px}
+.lessons{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;scrollbar-width:thin}
+.chaps{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:thin}
+.chap{flex:none;border:0;border-radius:99px;padding:6px 14px;font:800 15px var(--f);cursor:pointer;color:#fff;min-height:40px;opacity:.55}
+.chap.cur{opacity:1;box-shadow:0 0 0 3px var(--bg),0 0 0 5px currentColor}
+.chap small{font-weight:600;opacity:.9}
+.les{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:0;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:16px;padding:6px 14px;font:700 15px/1.25 var(--f);cursor:pointer;text-align:start;max-width:230px;min-height:48px}
+.les b{font-size:13px;color:var(--coral)}
+.les span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
+.les i{font-style:normal;font-size:13px;color:var(--muted)}
+.les.cur{background:var(--nile);border-color:var(--nile);color:#fff}.les.cur b,.les.cur i{color:#ffd166}
+.stage{position:relative;aspect-ratio:16/9;border-radius:22px;overflow:hidden;background:#cfe9f5;box-shadow:0 10px 30px -12px rgba(0,0,0,.35)}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage text{font-family:var(--f)}
+#startBtn{position:absolute;inset:0;margin:auto;width:max-content;height:max-content;z-index:5;font:800 clamp(18px,3vw,28px) var(--f);background:var(--coral);color:#fff;border:0;border-radius:99px;padding:14px 30px;cursor:pointer;box-shadow:0 8px 0 #c4513a}
+#startBtn:active{transform:translateY(4px);box-shadow:0 4px 0 #c4513a}
+.cap{background:var(--card);border-radius:18px;margin-top:12px;padding:12px 18px;min-height:76px;border:2px solid var(--line)}
+.cap .en{font-weight:700;font-size:clamp(17px,2.4vw,21px);line-height:1.35;margin:0}
+.cap .ar{margin:4px 0 0;color:var(--muted);font-size:18px}
+.ar{display:none}body.showar .ar{display:block}
+body.nocap .cap{display:none}
+.controls{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:12px}
+.cb{min-width:48px;height:48px;border-radius:99px;border:0;background:var(--nile);color:#fff;font:700 17px var(--f);cursor:pointer;padding:0 14px}
+.cb.play{background:var(--coral);min-width:64px;font-size:20px}
+.cb.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.cb.on{background:#f2a900;color:#1d2a3a;border-color:#f2a900}
+.cb:disabled{opacity:.4}
+.cb:focus-visible,.btn:focus-visible,.opt:focus-visible,.les:focus-visible,.dot:focus-visible{outline:3px solid #f2a900;outline-offset:2px}
+.spacer{flex:1}
+select.cb{appearance:none;text-align:center}
+.nudge{animation:nudge 1s ease-in-out infinite}
+@keyframes nudge{50%{transform:scale(1.12);background:var(--coral)}}
+.dots{display:flex;gap:6px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:thin}
+.dot{flex:none;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:4px 12px;font:600 14px var(--f);cursor:pointer;min-height:36px}
+.dot.cur{background:var(--nile);border-color:var(--nile);color:#fff}
+#act{background:var(--card);border-radius:20px;padding:16px clamp(14px,3vw,24px);margin-top:12px;border:2px solid var(--line)}
+#act:empty{display:none}
+#act h2{margin:0 0 6px;font-size:22px;line-height:1.2}
+.q{font-weight:700;font-size:19px;margin:6px 0 4px}
+.tag{display:inline-block;font-size:13px;background:var(--line);border-radius:99px;padding:0 10px;color:var(--muted);font-weight:600;vertical-align:middle}
+.opts{display:grid;gap:8px;margin:10px 0}
+.opt{text-align:start;border:2px solid var(--line);background:transparent;color:var(--ink);border-radius:14px;padding:10px 14px;font:600 17px var(--f);cursor:pointer;min-height:48px}
+.opt.sel{border-color:var(--nile);background:color-mix(in srgb,var(--nile) 12%,transparent)}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.btn{border:0;border-radius:99px;background:var(--coral);color:#fff;font:800 17px var(--f);padding:10px 22px;min-height:48px;cursor:pointer}
+.btn.blue{background:var(--nile)}.btn.ghostb{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.btn:disabled{opacity:.45}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.fb{border-radius:14px;padding:10px 14px;margin-top:8px;font-weight:600}
+.fb.good{background:color-mix(in srgb,var(--ok) 15%,transparent)}
+.fb.oops{background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.sort{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px;margin-top:10px}
+.item{display:flex;align-items:center;gap:8px;border:2px solid var(--line);border-radius:16px;padding:8px 10px;flex-wrap:wrap}
+.item svg{width:58px;height:46px;flex:none}
+.item span{flex:1 1 90px;font-weight:700}
+.ab{min-width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:transparent;color:var(--ink);font:800 16px var(--f);cursor:pointer;padding:0 10px}
+.ab.ok{background:var(--ok);border-color:var(--ok);color:#fff}.ab.no{background:var(--bad);border-color:var(--bad);color:#fff}
+.item.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.gcard{border:2px solid var(--line);border-radius:16px;padding:10px 12px;margin-top:10px}
+.gcard header{all:unset;display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px}
+.gcard svg{width:64px;height:52px}
+.gopts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.tfrow,.blrow{border:2px solid var(--line);border-radius:14px;padding:10px 12px;margin:8px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tfrow p,.blrow p{flex:1 1 260px;margin:0;font-weight:600}
+.tfrow.done,.blrow.done{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,transparent)}
+.blank{display:inline-block;min-width:90px;border-bottom:3px solid var(--coral);text-align:center;font-weight:800;color:var(--coral);padding:0 6px}
+.blrow.done .blank{color:var(--ok);border-color:var(--ok)}
+.model{border-left:5px solid var(--ok);padding:8px 14px;margin:10px 0;background:color-mix(in srgb,var(--ok) 8%,transparent);border-radius:0 14px 14px 0}
+.chk{display:flex;gap:10px;align-items:center;margin:6px 0;font-weight:600;cursor:pointer}
+.chk input{width:24px;height:24px;accent-color:var(--ok);flex:none}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:10px;margin:10px 0}
+.sum div{border:2px solid var(--line);border-radius:16px;padding:10px 14px}
+.sum b{color:#e63973}
+.ocard{display:inline-flex;flex-direction:column;align-items:center;gap:2px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:6px 10px;font:700 15px var(--f);cursor:pointer;min-height:48px;min-width:72px}
+.ocard svg{width:64px;height:50px}.ocard.used{opacity:.3}
+.oslots{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:10px 0}.oslot{min-width:80px;min-height:70px;border:2px dashed var(--line);border-radius:14px;display:grid;place-items:center;color:var(--muted)}.oslot .ocard{border-color:var(--ok);cursor:default}.oarr{font-weight:800;color:var(--muted)}
+.opool{display:flex;flex-wrap:wrap;gap:8px}
+.lab{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
+.lab input[type=range]{flex:1 1 220px;accent-color:var(--coral);height:32px}
+.tbl{border-collapse:collapse;margin-top:8px;font-weight:600}.tbl td,.tbl th{border:2px solid var(--line);padding:6px 12px;text-align:center}
+footer{max-width:1000px;margin:0 auto;padding:0 max(3vw,10px) 30px;color:var(--muted);font-size:14px}
+/* stage motion */
+[data-r]{opacity:0;transition:opacity .8s}
+[data-r].shown{opacity:1}
+.grow{transform:scaleX(0);transform-box:fill-box;transform-origin:left center;transition:transform 1.4s ease-out .3s}
+.shown .grow{transform:scaleX(1)}
+.draw{stroke-dasharray:420;stroke-dashoffset:420;transition:stroke-dashoffset 2.6s ease-out .2s}
+.shown .draw,.shown.draw{stroke-dashoffset:0}
+.lift{transition:transform 1.6s cubic-bezier(.3,1.4,.5,1);transform-box:fill-box;transform-origin:20% 100%}
+.lift.act{transform:translate(-20px,-120px) rotate(-14deg)}
+.sprout{transform:scale(0);transform-box:fill-box;transform-origin:50% 100%;transition:transform 1.8s cubic-bezier(.3,1.4,.5,1) .3s}
+.shown .sprout{transform:scale(1)}
+.wave{animation:wave 3s linear infinite}
+@keyframes wave{to{transform:translateX(40px)}}
+.drift{animation:drift 14s ease-in-out infinite alternate}
+@keyframes drift{to{translate:40px 0}}
+.spin{animation:spin 26s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tw{animation:tw 2.4s ease-in-out infinite}
+@keyframes tw{50%{opacity:.2}}
+.hop{animation:hop 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes hop{0%,55%,100%{transform:translateY(0)}28%{transform:translateY(-20px)}}
+.fly{animation:fly 7s ease-in-out infinite}
+@keyframes fly{0%,100%{transform:translate(0,0)}25%{transform:translate(70px,-24px)}50%{transform:translate(120px,14px)}75%{transform:translate(40px,30px)}}
+.flap{animation:flap .18s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes flap{to{transform:scaleY(.55)}}
+.flap2{animation:flap2 .5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 50%}
+@keyframes flap2{to{transform:scaleX(.7)}}
+.bob{animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-9px)}}
+.sniff{animation:sniff 3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes sniff{50%{transform:rotate(-2.5deg)}}
+.breathe{animation:breathe 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes breathe{50%{transform:scale(1.07,1.04)}}
+.growup{animation:growup 4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes growup{0%{transform:scale(.6)}60%,100%{transform:scale(1)}}
+.peck{animation:peck 1.4s ease-in-out infinite;transform-box:fill-box;transform-origin:30% 100%}
+@keyframes peck{40%,60%{transform:rotate(14deg)}}
+.rise{animation:rise 2.4s ease-in infinite}
+@keyframes rise{0%{transform:translateY(0);opacity:0}20%{opacity:1}100%{transform:translateY(-55px);opacity:0}}
+.sip{animation:sip 2s ease-in infinite;opacity:0}
+@keyframes sip{0%{transform:translate(0,0);opacity:0}20%{opacity:1}100%{transform:translate(-30px,-150px);opacity:0}}
+.ring{animation:dash 6s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-240}}
+.mover{transition:transform 2.6s ease-in-out}
+.mover.go{transform:translate(330px,-48px)}
+.write{animation:write 3.5s ease-in-out infinite}
+@keyframes write{0%{transform:translate(0,0)}90%{transform:translate(420px,0)}100%{transform:translate(0,0)}}
+.backforth{animation:bf 3.2s ease-in-out infinite}
+@keyframes bf{50%{transform:translateX(110px)}}
+.backforth2{animation:bf2 3.2s ease-in-out infinite}
+@keyframes bf2{50%{transform:translateX(70px)}}
+.walk{animation:walk 16s linear infinite}
+@keyframes walk{from{transform:translateX(-160px)}to{transform:translateX(560px)}}
+.hopacross{animation:hopx 5s linear infinite}
+@keyframes hopx{0%{transform:translate(0,0)}12.5%{transform:translate(65px,-80px)}25%{transform:translate(130px,0)}37.5%{transform:translate(195px,-80px)}50%{transform:translate(260px,0)}62.5%{transform:translate(325px,-80px)}75%{transform:translate(390px,0)}87.5%{transform:translate(455px,-80px)}100%{transform:translate(520px,0)}}
+.flash{animation:flash 5s linear infinite;opacity:0}
+@keyframes flash{0%,6%{opacity:.85}14%,100%{opacity:0}}
+.rollacross{animation:roll 9s linear infinite}
+.rollacross.slow{animation-duration:14s}
+@keyframes roll{from{transform:translateX(-40px)}to{transform:translateX(640px)}}
+.spinball{animation:spin 3s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.crawl{animation:crawl 6s ease-in-out infinite alternate}.crawl.slow{animation-duration:10s}
+@keyframes crawl{to{transform:translateX(40px)}}
+.pulse{animation:pulse 2s ease-in-out infinite}@keyframes pulse{50%{opacity:.15}}
+.unfold{transform-box:fill-box;transform-origin:50% 50%}.shown .unfold{animation:unfold 2.4s ease-out both}@keyframes unfold{0%{transform:scale(.25,.5)}100%{transform:scale(1)}}
+.flyaway{animation:flyaway 5s ease-in-out infinite}@keyframes flyaway{0%{transform:translate(0,0)}50%{transform:translate(120px,-30px)}100%{transform:translate(260px,-10px);opacity:.3}}
+.rain{animation:rain 1.2s linear infinite}@keyframes rain{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(-30px,70px);opacity:0}}
+.dig{transform:translateY(-70px);transition:transform 1.2s ease}.dig.act{transform:translateY(0)}
+.orbit{animation:spin 8s linear infinite}
+.climb{animation:climb 2.4s linear infinite}@keyframes climb{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(-300px);opacity:0}}
+.growv{transform:scaleY(.25);transform-box:fill-box;transform-origin:50% 100%;transition:transform 2s ease}.growv.act{transform:scaleY(1)}
+.sunarc{animation:sunarc 9s ease-in-out infinite alternate}@keyframes sunarc{to{transform:rotate(180deg)}}
+.shsweep{animation:shsweep 9s ease-in-out infinite alternate}@keyframes shsweep{to{transform:scaleX(-1)}}
+.smoke circle{animation:smoke 2s ease-out infinite}@keyframes smoke{0%{transform:translateY(0);opacity:.6}100%{transform:translateY(-70px);opacity:0}}
+.sweep{animation:sweep 4s ease-in-out infinite alternate}@keyframes sweep{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}
+.wavego{animation:wavego 1.4s ease-out infinite;opacity:0}@keyframes wavego{0%{transform:translateX(0);opacity:.95}100%{transform:translateX(40px);opacity:0}}
+.beads.jumping circle{animation:bj .28s ease-in-out infinite alternate}.beads.jumping.big circle{animation-name:bjb}
+@keyframes bj{to{transform:translateY(-14px)}}@keyframes bjb{to{transform:translateY(-44px)}}
+.airdot{animation:airdot .5s ease-in-out infinite alternate}@keyframes airdot{to{transform:translateX(8px)}}
+.wiggle{animation:wig .12s linear infinite alternate;transform-box:fill-box;transform-origin:50% 0}@keyframes wig{to{transform:rotate(2deg)}}
+.flick{animation:flk .16s linear infinite alternate}@keyframes flk{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+.vib{animation:vib .07s linear infinite alternate}@keyframes vib{to{transform:scaleY(-1)}}
+.snap{animation:snap 2.6s ease-in-out infinite}@keyframes snap{0%,35%{transform:scaleY(1)}48%{transform:scaleY(-.4)}60%{transform:scaleY(.2)}72%,100%{transform:scaleY(0)}}
+.blow{animation:blow .9s linear infinite}@keyframes blow{0%{transform:translateX(0);opacity:0}30%{opacity:1}100%{transform:translateX(90px);opacity:0}}
+.sway{animation:sway 4s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}@keyframes sway{from{transform:rotate(-2deg) translateX(-10px)}to{transform:rotate(2deg) translateX(10px)}}
+.arrowfly{animation:afly 2s ease-in infinite}@keyframes afly{0%{transform:translateX(0);opacity:1}80%{opacity:1}100%{transform:translateX(260px);opacity:0}}
+.spinfast{animation:spin .4s linear infinite;transform-box:fill-box;transform-origin:50% 50%}
+.pullman{animation:pullm 1.2s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}@keyframes pullm{to{transform:rotate(-6deg) translateX(4px)}}
+.dripdown{animation:dripd 1.2s ease-in infinite}@keyframes dripd{0%{transform:translateY(0);opacity:1}100%{transform:translateY(100px);opacity:0}}
+.fastdrop{animation:fastd 1.4s linear infinite}@keyframes fastd{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(260px);opacity:0}}
+.slowdrop{animation:slowd 6s linear infinite}@keyframes slowd{0%{transform:translateY(0);opacity:0}10%{opacity:1}60%{transform:translateY(70px);opacity:.8}100%{transform:translateY(90px);opacity:0}}
+.lid{transform-box:fill-box;transform-origin:0 100%}
+#liz{cursor:pointer}
+@media (prefers-reduced-motion:reduce){.wave,.drift,.spin,.tw,.hop,.fly,.flap,.flap2,.bob,.sniff,.breathe,.growup,.peck,.rise,.sip,.ring,.write,.backforth,.backforth2,.walk,.hopacross,.flash,.rollacross,.spinball,.nudge,.crawl,.pulse,.flyaway,.rain,.orbit,.climb,.sunarc,.shsweep,.smoke circle,.sweep,.wavego,.beads.jumping circle,.airdot,.wiggle,.flick,.vib,.snap,.blow,.sway,.arrowfly,.spinfast,.pullman,.dripdown,.fastdrop,.slowdrop{animation:none}.wavego{opacity:1}.mover,.grow,.draw,.lift,.sprout,[data-r]{transition:none}.sip,.flash{opacity:1}}
+@media(max-width:600px){.cb{min-width:44px;height:44px;padding:0 10px;font-size:15px}.cap{padding:10px 12px}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="artdefs"></defs></svg>
+<header>
+  <h1 id="htitle">Science · Primary 4 · Term 1<small id="hsub">Animated lessons</small></h1>
+  <div class="starbox" aria-live="polite"><b>★</b> <span id="stars">0</span></div>
+</header>
+<main>
+  <nav class="chaps" id="chaps" aria-label="Chapters"></nav>
+  <nav class="lessons" id="lessons" aria-label="Lessons"></nav>
+  <div class="stage" id="stage"><div id="scene"></div><button id="startBtn" type="button">Start the lesson ▶</button></div>
+  <div class="cap" aria-live="polite"><p class="en" id="capEn">Press start, turn the sound on, and watch!</p><p class="ar" dir="rtl" id="capAr">اضغطي ابدئي، شغّلي الصوت، واتفرجي!</p></div>
+  <div class="controls">
+    <button class="cb" id="prev" type="button" aria-label="Previous scene">◀</button>
+    <button class="cb play" id="play" type="button" aria-label="Play or pause">▶</button>
+    <button class="cb" id="next" type="button" aria-label="Next scene">▶▶</button>
+    <span class="spacer"></span>
+    <select class="cb ghost" id="speed" aria-label="Narration speed"><option value="0.75">0.75×</option><option value="0.9" selected>1×</option><option value="1.1">1.25×</option></select>
+    <button class="cb ghost" id="voice" type="button" aria-label="Narration language">Voice: EN</button>
+    <button class="cb ghost on" id="cc" type="button" aria-label="Captions">CC</button>
+    <button class="cb ghost" id="arb" type="button" aria-label="Arabic help">عربي</button>
+  </div>
+  <nav class="dots" id="dots" aria-label="Scenes"></nav>
+  <section id="act" aria-live="polite"></section>
+</main>
+<footer>Keys: ← → change scene · Space play/pause · C captions · A Arabic. Built from the Science Primary 4 book (Term 1), pages 6–103. All drawings are original.</footer>
+<script src="art.js"></script>
+<script src="art2.js"></script>
+<script src="kit.js"></script>
+<script src="ch1.js"></script>
+<script src="ch2.js"></script>
+<script src="ch3.js"></script>
+<script src="ch4.js"></script>
+<script src="ch5.js"></script>
+<script src="ch6.js"></script>
+<script src="ch7.js"></script>
+<script src="ch8.js"></script>
+<script src="tools.js"></script>
+<script>
+{
+const $=s=>document.querySelector(s);
+document.getElementById('artdefs').innerHTML=ART.defs;
+const CH=(window.CHAPTERS||[]).sort((a,b)=>a.n-b.n);CH.forEach(c=>c.lessons.forEach(l=>l.ch=c));const LS=CH.flatMap(c=>c.lessons);
+const KEY='science-term1-lessons';
+let S={lesson:LS[0].id,pos:{},stars:{},ar:false,voice:'en',cc:true};
+try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&typeof v==='object')S=Object.assign(S,v)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const total=l=>l.scenes.reduce((a,s)=>a+(s.stars||0),0);
+const got=l=>Object.keys(S.stars[l.id]||{}).length;
+let les=LS.find(l=>l.id===S.lesson)||LS[0],cur=0;
+
+/* ---------- activity kit ---------- */
+const K={$,star(k){const b=S.stars[les.id]||(S.stars[les.id]={});if(!b[k]){b[k]=1;save();updStars()}},next:()=>go(cur+1)};
+const shake=e=>{e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake')};
+const ico=(id,c,vb='0 0 140 110')=>`<svg viewBox="${vb}" aria-hidden="true">${ART.U(id,5,5,130,100,c)}</svg>`;
+K.mcq=(el,q,done)=>{let tries=0,sel=new Set(),solved=false;
+el.innerHTML=`<p class="q">${q.q}</p><p class="ar" dir="rtl">${q.ar||''}</p><div class="opts">${q.o.map((o,i)=>`<button class="opt" type="button" data-i="${i}">${o}</button>`).join('')}</div>${q.multi?'<button class="btn blue" type="button" data-chk>Check</button>':''}<div class="fbx"></div>`;
+const opts=[...el.querySelectorAll('.opt')],fb=el.querySelector('.fbx'),chk=el.querySelector('[data-chk]');
+const check=()=>{tries++;const ok=q.a.length===sel.size&&q.a.every(a=>sel.has(a));opts.forEach((b,i)=>{b.classList.remove('right','wrong');if(sel.has(i))b.classList.add(q.a.includes(i)?'right':'wrong')});
+if(ok){solved=true;opts.forEach((b,i)=>{if(q.a.includes(i))b.classList.add('right')});fb.innerHTML=`<div class="fb good">Correct! ${q.why||''}</div>`;if(chk)chk.remove();done(tries===1)}
+else fb.innerHTML=`<div class="fb oops">Not yet. Read the question again and try once more.</div>`};
+opts.forEach((b,i)=>b.onclick=()=>{if(solved)return;if(q.multi){sel.has(i)?sel.delete(i):sel.add(i);b.classList.toggle('sel',sel.has(i));b.classList.remove('right','wrong')}else{sel=new Set([i]);check()}});
+if(chk)chk.onclick=()=>{if(sel.size)check()}};
+K.tf=(el,q,onStar,done)=>{el.innerHTML=`<p class="q">${q.q}</p><p class="ar" dir="rtl">${q.ar||''}</p>${q.items.map((it,i)=>`<div class="tfrow" data-i="${i}"><p>${it[0]}</p><button class="ab" type="button" data-v="1" aria-label="correct">✓</button><button class="ab" type="button" data-v="0" aria-label="incorrect">✗</button></div>`).join('')}<div class="fbx"></div>`;
+const miss={};let left=q.items.length;el.querySelectorAll('.tfrow').forEach(r=>r.querySelectorAll('.ab').forEach(b=>b.onclick=()=>{const i=+r.dataset.i;if(r.classList.contains('done'))return;
+if(+b.dataset.v===q.items[i][1]){r.classList.add('done');b.classList.add('ok');if(!miss[i])onStar(i);if(--left===0){el.querySelector('.fbx').innerHTML='<div class="fb good">All marked correctly!</div>';done()}}else{miss[i]=1;b.classList.add('no');setTimeout(()=>b.classList.remove('no'),700);shake(r)}}))};
+K.blanks=(el,q,onStar,done)=>{el.innerHTML=`<p class="q">${q.q}</p><p class="ar" dir="rtl">${q.ar||''}</p>${q.items.map((it,i)=>`<div class="blrow" data-i="${i}"><p>${it[0]} <span class="blank">&nbsp;</span> ${it[2]}</p><div class="gopts">${q.bank.map(w=>`<button class="ab" type="button" data-w="${w}">${w}</button>`).join('')}</div></div>`).join('')}<div class="fbx"></div>`;
+const miss={};let left=q.items.length;el.querySelectorAll('.blrow').forEach(r=>r.querySelectorAll('.ab').forEach(b=>b.onclick=()=>{const i=+r.dataset.i;if(r.classList.contains('done'))return;
+if(b.dataset.w===q.items[i][1]){r.classList.add('done');r.querySelector('.blank').textContent=b.dataset.w;r.querySelector('.gopts').remove();if(!miss[i])onStar(i);if(--left===0){el.querySelector('.fbx').innerHTML='<div class="fb good">All filled in correctly!</div>';done()}}else{miss[i]=1;b.classList.add('no');setTimeout(()=>b.classList.remove('no'),700);shake(r)}}))};
+K.order=(el,q,onStar,done)=>{const given=q.given||0,ans=q.answer;let pos=given;const miss={};
+const card=(i)=>{const it=q.items[i];return `<button class="ocard" type="button" data-i="${i}">${it.id?ico(it.id,it.c):''}<span>${it.label}</span></button>`};
+el.innerHTML=`<p class="q">${q.q}</p><p class="ar" dir="rtl">${q.ar||''}</p><div class="oslots">${ans.map((a,k)=>`<div class="oslot" data-k="${k}">${k<given?card(a):`<b>${k+1}</b>`}</div>`).join('<span class="oarr">→</span>')}</div><div class="opool">${q.items.map((_,i)=>ans.indexOf(i)<given?'':card(i)).join('')}</div><div class="fbx"></div>`;
+el.querySelectorAll('.opool .ocard').forEach(b=>b.onclick=()=>{if(pos>=ans.length||b.disabled)return;const i=+b.dataset.i;
+if(i===ans[pos]){b.disabled=true;b.classList.add('used');el.querySelector(`.oslot[data-k="${pos}"]`).innerHTML=card(i);if(!miss[pos])onStar(pos);q.onStep&&q.onStep(pos);pos++;if(pos>=ans.length){el.querySelector('.fbx').innerHTML=`<div class="fb good">Correct order! ${q.why||''}</div>`;done()}}
+else{miss[pos]=1;shake(b);el.querySelector('.fbx').innerHTML='<div class="fb oops">Not that one yet. What comes next?</div>'}})};
+let actx=null;const AC=()=>{try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();if(actx.state==='suspended')actx.resume()}catch(e){actx=null}return actx};
+K.tone=(f=440,d=.4,g=.2,type='sine')=>{const a=AC();if(!a)return;try{const o=a.createOscillator(),v=a.createGain();o.type=type;o.frequency.value=f;v.gain.setValueAtTime(g,a.currentTime);v.gain.exponentialRampToValueAtTime(.0001,a.currentTime+d);o.connect(v).connect(a.destination);o.start();o.stop(a.currentTime+d)}catch(e){}};
+K.drum=(g=.5)=>{K.tone(110,.35,g,'sine');K.tone(70,.5,g*.8,'triangle')};
+K.quiz=(el,prefix,list)=>{let qi=0;const nx=()=>{if(qi>=list.length){el.innerHTML='<h2>Quiz done!</h2><p>Great work. Go to the next scene.</p><button class="btn blue" type="button" id="toNext">Next scene ▶▶</button>';$('#toNext').onclick=K.next;return}
+const q=list[qi],n=qi;el.innerHTML=`<h2>Question ${qi+1} of ${list.length} <span class="tag">${q.src||''}</span></h2><div id="qq"></div>`;const box=$('#qq');
+const fin=()=>{qi++;const b=document.createElement('button');b.className='btn blue';b.type='button';b.textContent=qi<list.length?'Next question':'Finish quiz';b.onclick=nx;box.appendChild(b);b.focus({preventScroll:true})};
+if(q.type==='tf')K.tf(box,q,i=>K.star(`${prefix}${n}_${i}`),fin);else if(q.type==='order')K.order(box,q,i=>K.star(`${prefix}${n}_${i}`),fin);else if(q.type==='blanks')K.blanks(box,q,i=>K.star(`${prefix}${n}_${i}`),fin);else K.mcq(box,q,first=>{if(first)K.star(`${prefix}${n}_0`);fin()})};nx()};
+K.bins=(el,c)=>{el.innerHTML=`<h2>${c.title} ${c.src?`<span class="tag">${c.src}</span>`:''}</h2><p class="ar" dir="rtl">${c.ar||''}</p><div class="sort">${c.items.map((it,i)=>`<div class="item" data-i="${i}">${ico(it.id,it.c)}<span>${it.n}</span>${c.bins.map(b=>`<button class="ab" type="button" data-k="${b.k}">${b.label}</button>`).join('')}</div>`).join('')}</div><div class="fbx"></div>`;
+const placed={},miss={};let left=c.items.length;const fb=el.querySelector('.fbx');
+el.querySelectorAll('.item').forEach(card=>card.querySelectorAll('.ab').forEach(b=>b.onclick=()=>{const i=+card.dataset.i,it=c.items[i];if(card.classList.contains('done'))return;
+if(b.dataset.k===it.k){card.classList.add('done');b.classList.add('ok');if(!miss[i])K.star(`${c.key}${i}`);const bin=c.bins.find(x=>x.k===it.k),g=$('#bin-'+it.k);
+if(g&&bin){const n=placed[it.k]=(placed[it.k]||0),cols=bin.cols||2,cw=bin.cw||170,ch=bin.ch||110;placed[it.k]++;g.insertAdjacentHTML('beforeend',`<g class="bob" style="animation-delay:${n*.3}s">${ART.U(it.id,bin.x+(n%cols)*cw+6,bin.y+Math.floor(n/cols)*ch,cw-12,ch-14,it.c)}</g>`)}
+fb.innerHTML='';if(--left===0){fb.innerHTML='<div class="fb good">All sorted. Well done!</div>';c.done&&c.done()}}
+else{miss[i]=1;b.classList.add('no');setTimeout(()=>b.classList.remove('no'),700);shake(card);fb.innerHTML=`<div class="fb oops">Not this one. ${c.hint?c.hint(it):''}</div>`}}))};
+K.guess=(el,c)=>{el.innerHTML=`<h2>Guess where they live <span class="tag">Warm Up</span></h2><p class="ar" dir="rtl">خمّني كل كائن ممكن نلاقيه فين.</p>${c.items.map((it,i)=>`<div class="gcard" data-i="${i}"><header>${ico(it.id,it.c)}${it.n}</header><div class="gopts">${it.opts.map((o,j)=>`<button class="ab" type="button" data-j="${j}">${o[0]}</button>`).join('')}</div><div class="fbx"></div></div>`).join('')}`;
+const miss={};el.querySelectorAll('.gcard').forEach(card=>card.querySelectorAll('.ab').forEach(b=>b.onclick=()=>{const i=+card.dataset.i,it=c.items[i],o=it.opts[+b.dataset.j];if(card.classList.contains('done'))return;
+if(o[1]){card.classList.add('done');b.classList.add('ok');if(!miss[i])K.star(`${c.key}${i}`);card.querySelector('.fbx').innerHTML=`<div class="fb good">Good guess! ${it.fact}</div>`}
+else{miss[i]=1;b.classList.add('no');shake(card);card.querySelector('.fbx').innerHTML=`<div class="fb oops">Hmm, could a ${it.n.toLowerCase()} really live there? Try another place.</div>`}}))};
+K.paper=(el,c)=>{el.innerHTML=`<h2>Writing challenge <span class="tag">${c.src||''}</span></h2><p class="q">${c.q}</p><p class="ar" dir="rtl">${c.ar||''}</p><button class="btn" type="button" data-w>I wrote my answer on paper</button><div class="pm"></div>`;
+const w=el.querySelector('[data-w]');w.onclick=()=>{w.disabled=true;el.querySelector('.pm').innerHTML=`<div class="model"><b>Check with this:</b> ${c.model}<p class="ar" dir="rtl">${c.modelAr||''}</p></div><p class="q">Did you write...</p>${c.checks.map((t,i)=>`<label class="chk"><input type="checkbox" data-c="${i}">${t}</label>`).join('')}<p class="tag">Each tick gives you a star. Be honest!</p>`;
+el.querySelectorAll('[data-c]').forEach(x=>x.onchange=()=>{if(x.checked)K.star(`${c.key}${x.dataset.c}`)})}};
+
+/* ---------- narration ---------- */
+const synth=window.speechSynthesis;let voices=[];
+const loadV=()=>{try{voices=synth?synth.getVoices():[]}catch(e){voices=[]}};loadV();if(synth)try{synth.onvoiceschanged=loadV}catch(e){}
+const voiceFor=l=>voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(l)&&/female|samantha|google|natural|siri/i.test(v.name))||voices.find(v=>v.lang&&v.lang.toLowerCase().startsWith(l));
+let run=0,playing=false,started=false,step=0,wd=0,utt=null;
+function say(text,lang,done){let fin=false;const f=()=>{if(!fin){fin=true;clearTimeout(wd);done()}};const sp=+$('#speed').value;
+if(!synth){wd=setTimeout(f,900+text.length*70/sp);return}
+try{synth.cancel();utt=new SpeechSynthesisUtterance(text);const v=voiceFor(lang);if(v)utt.voice=v;utt.lang=lang==='ar'?'ar-EG':'en-US';utt.rate=sp;utt.onend=f;utt.onerror=f;synth.speak(utt);wd=setTimeout(f,2500+text.length*120/sp)}catch(e){wd=setTimeout(f,900+text.length*70/sp)}}
+function setStep(n){step=n;const sc=$('#scene');sc.querySelectorAll('[data-r]').forEach(e=>e.classList.toggle('shown',+e.dataset.r<=n));sc.querySelectorAll('[data-a]').forEach(e=>e.classList.toggle('act',+e.dataset.a<=n))}
+function cap(l){$('#capEn').textContent=l[0];$('#capAr').textContent=l[1]}
+function updPlay(){$('#play').textContent=playing?'❚❚':'▶'}
+function stop(){run++;playing=false;clearTimeout(wd);try{synth&&synth.cancel()}catch(e){}updPlay()}
+function play(){const L=les.scenes[cur].L,my=++run;playing=true;updPlay();$('#next').classList.remove('nudge');let k=0;
+const nx=()=>{if(my!==run)return;if(k>=L.length){playing=false;updPlay();if(cur<les.scenes.length-1&&!les.scenes[cur].act)$('#next').classList.add('nudge');return}
+setStep(k+1);cap(L[k]);const ar=S.voice==='ar';say(ar?L[k][1]:L[k][0],ar?'ar':'en',()=>{k++;setTimeout(nx,450)})};nx()}
+
+/* ---------- views ---------- */
+function updStars(){const all=LS.reduce((a,l)=>a+got(l),0),tot=LS.reduce((a,l)=>a+total(l),0);$('#stars').textContent=`${all} / ${tot}`;
+document.querySelectorAll('.lstars').forEach(e=>e.textContent=`★ ${got(les)} / ${total(les)} stars`);
+document.querySelectorAll('.les').forEach(b=>{const l=LS.find(x=>x.id===b.dataset.id);if(l)b.querySelector('i').textContent=`★ ${got(l)} / ${total(l)}`});document.querySelectorAll('.chap').forEach(b=>{const x=CH.find(y=>y.n===+b.dataset.n);if(!x)return;const gg=x.lessons.reduce((a,l)=>a+got(l),0),tt=x.lessons.reduce((a,l)=>a+total(l),0);b.title=`${gg} / ${tt} stars`})}
+function renderLessons(){const C=les.ch;$('#htitle').firstChild.textContent=C.n===9?'Science Toolbox':`Chapter ${C.n} · ${C.title}`;$('#hsub').textContent='Science · Primary 4 · Term 1 · animated lessons';
+$('#chaps').innerHTML=CH.map(x=>`<button class="chap${x===C?' cur':''}" type="button" data-n="${x.n}" style="background:${x.color};color:${x.color}"><span style="color:#fff">${x.n===9?'Toolbox':'Ch '+x.n}</span></button>`).join('');
+$('#chaps').querySelectorAll('.chap').forEach(b=>b.onclick=()=>{const x=CH.find(y=>y.n===+b.dataset.n);if(x)openLesson(x.lessons[0].id,true)});const cc=$('#chaps .cur');if(cc)cc.scrollIntoView({block:'nearest',inline:'center'});
+$('#lessons').innerHTML=C.lessons.map(l=>`<button class="les${l.id===les.id?' cur':''}" type="button" data-id="${l.id}"><b>${/E$/.test(l.id)?'Enrichment':/^T/.test(l.id)?'Toolbox':'Lesson '+l.id}</b><span>${l.title.replace('Enrichment: ','')}</span><i></i></button>`).join('');
+$('#lessons').querySelectorAll('.les').forEach(b=>b.onclick=()=>openLesson(b.dataset.id,true));updStars();const c=$('#lessons .cur');if(c)c.scrollIntoView({block:'nearest',inline:'center'});updStars()}
+function render(){const sc=les.scenes[cur];$('#scene').innerHTML=`<svg viewBox="0 0 800 450" role="img" aria-label="${sc.t}">${sc.svg()}</svg>`;setStep(0);cap(sc.L[0]);
+const a=$('#act');a.innerHTML='';if(sc.act)sc.act(a,K);if(sc.enter)sc.enter(K);
+$('#dots').innerHTML=les.scenes.map((s,i)=>`<button class="dot${i===cur?' cur':''}" type="button" data-i="${i}">${i+1}. ${s.t}</button>`).join('');
+$('#dots').querySelectorAll('.dot').forEach(d=>d.onclick=()=>go(+d.dataset.i));const c=$('#dots .cur');if(c)c.scrollIntoView({block:'nearest',inline:'center'});
+$('#prev').disabled=cur===0;$('#next').disabled=cur===les.scenes.length-1;$('#next').classList.remove('nudge');updStars()}
+function go(i){if(i<0||i>=les.scenes.length)return;stop();cur=i;S.pos[les.id]=i;save();render();if(started)play();else setStep(les.scenes[cur].L.length)}
+function openLesson(id,fromUser){const l=LS.find(x=>x.id===id);if(!l)return;stop();les=l;S.lesson=id;save();cur=Math.min(+S.pos[id]||0,l.scenes.length-1);
+if(fromUser){cur=0;S.pos[id]=0;try{history.replaceState(null,'','#lesson-'+id)}catch(e){}}renderLessons();render();if(started)play();else setStep(les.scenes[cur].L.length)}
+function begin(){started=true;const b=$('#startBtn');if(b)b.remove();render();play()}
+$('#act').addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(!g)return;if(g.dataset.go==='restart'){S.stars[les.id]={};save();go(0)}else{const i=LS.indexOf(les);if(i<LS.length-1)openLesson(LS[i+1].id,true)}});
+$('#startBtn').onclick=begin;
+$('#play').onclick=()=>{if(!started)return begin();if(playing){stop();setStep(les.scenes[cur].L.length)}else play()};
+$('#prev').onclick=()=>go(cur-1);$('#next').onclick=()=>go(cur+1);
+$('#speed').onchange=()=>{if(playing){stop();play()}};
+const applyUI=()=>{document.body.classList.toggle('showar',!!S.ar);document.body.classList.toggle('nocap',!S.cc);$('#arb').classList.toggle('on',!!S.ar);$('#cc').classList.toggle('on',!!S.cc);$('#voice').textContent=S.voice==='ar'?'الصوت: عربي':'Voice: EN'};
+$('#arb').onclick=()=>{S.ar=!S.ar;save();applyUI()};$('#cc').onclick=()=>{S.cc=!S.cc;save();applyUI()};
+$('#voice').onclick=()=>{S.voice=S.voice==='ar'?'en':'ar';if(S.voice==='ar'){S.ar=true;if(voices.length&&!voiceFor('ar'))$('#capAr').textContent='لا يوجد صوت عربي على هذا الجهاز، النص العربي ظاهر تحت.'}save();applyUI();if(playing){stop();play()}};
+document.addEventListener('keydown',e=>{if(/input|select|textarea/i.test(e.target.tagName))return;
+if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);else if(e.key===' '&&e.target.tagName!=='BUTTON'){e.preventDefault();$('#play').click()}else if(e.key==='c'||e.key==='C')$('#cc').click();else if(e.key==='a'||e.key==='A')$('#arb').click()});
+window.addEventListener('hashchange',()=>{const m=location.hash.match(/^#lesson-(.+)$/);if(m&&m[1]!==les.id)openLesson(m[1],true)});
+applyUI();
+const hm=location.hash.match(/^#lesson-(.+)$/);if(hm&&LS.find(x=>x.id===hm[1])){les=LS.find(x=>x.id===hm[1]);S.lesson=les.id}
+cur=Math.min(+S.pos[les.id]||0,les.scenes.length-1);renderLessons();render();setStep(les.scenes[cur].L.length);
+if(cur>0)$('#startBtn').textContent=`Continue: scene ${cur+1} ▶`;
+}
+</script>
+</body>
+</html>
