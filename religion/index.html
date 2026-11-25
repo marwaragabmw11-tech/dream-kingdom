@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>روضة أمينة للتربية الإسلامية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f9f6;--card:#fff;--ink:#22303c;--soft:#6b7a86;--line:#dbe7e1;--brand:#2a9d8f;--brand2:#e07a5f;--sun:#f4c95d;--ok:#2bb673;--bad:#e5484d;--sh:0 6px 0 rgba(0,0,0,.05),0 10px 24px rgba(30,70,60,.10);--r:22px}
+.dark{--bg:#17201f;--card:#22302e;--ink:#eef6f3;--soft:#a9bcb6;--line:#34463f;--sh:0 6px 0 rgba(0,0,0,.25),0 10px 24px rgba(0,0,0,.3)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:500 18px/1.8 'Baloo Bhaijaan 2',system-ui,sans-serif}
+body{background-image:radial-gradient(circle at 0 0,#d8f3ec 0,transparent 40%),radial-gradient(circle at 100% 40%,#fde8df 0,transparent 35%);background-attachment:fixed;min-height:100vh}
+body.dark{background-image:none}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.hide{display:none!important}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 14px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:2px dashed var(--line)}
+header h1{font-size:20px;margin:0;flex:1;display:flex;align-items:center;gap:8px;cursor:pointer}
+header h1 img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:var(--sh)}
+.pill{background:var(--card);border-radius:99px;padding:4px 12px;box-shadow:var(--sh);font-weight:800;white-space:nowrap}
+.icon{background:var(--card);border:0;border-radius:14px;width:40px;height:40px;box-shadow:var(--sh);font-size:18px;flex:none}
+main{max-width:860px;margin:0 auto;padding:16px 14px 110px}
+nav.tabs{position:fixed;bottom:0;inset-inline:0;z-index:30;display:flex;justify-content:space-around;background:var(--card);box-shadow:0 -6px 20px rgba(0,0,0,.08);padding:6px 4px calc(6px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0}
+nav.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;font-size:12.5px;font-weight:700;color:var(--soft);padding:4px 6px;border-radius:14px;min-width:60px}
+nav.tabs button b{font-size:22px;line-height:1.2}
+nav.tabs button.on{color:var(--brand);background:color-mix(in srgb,var(--brand) 12%,transparent)}
+h2{font-size:24px;margin:6px 0 12px}
+h3{font-size:19px;margin:4px 0 8px}
+.say{background:var(--card);border-radius:18px;padding:10px 14px;margin:8px 0;box-shadow:var(--sh)}
+.mini{color:var(--soft);font-size:15px;margin:6px 0}
+.hero{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#3fb8a9,#2a9d8f);color:#fff;border-radius:28px;padding:16px;box-shadow:var(--sh);margin-bottom:16px}
+.hero img{width:110px;height:110px;border-radius:24px;object-fit:cover;flex:none;border:4px solid rgba(255,255,255,.7)}
+.hero p{margin:4px 0}.hero b.big{font-size:22px;display:block}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tile{border:0;border-radius:var(--r);padding:16px 12px;background:var(--card);box-shadow:var(--sh);text-align:center}
+.tile:active{transform:scale(.97)}
+.tile b{display:block;font-size:40px;line-height:1.2}.tile span{font-weight:800;font-size:17px;display:block}.tile small{color:var(--soft);font-size:13px}
+.units{display:grid;gap:12px}
+.unit{border:0;border-radius:var(--r);padding:0;color:#fff;text-align:start;box-shadow:var(--sh);overflow:hidden;display:block;width:100%}
+.ucover{width:100%;height:190px;object-fit:cover;object-position:center 30%;display:block}
+.uinfo{display:flex;align-items:center;gap:14px;padding:12px 16px}
+.ubanner{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);margin:6px 0 10px}.ubanner img{width:100%;height:240px;object-fit:cover;object-position:center 30%;display:block}
+@media(min-width:700px){.units{grid-template-columns:repeat(3,1fr)}}
+.unit b{font-size:42px}.unit span{font-weight:800;font-size:19px;display:block}.unit small{opacity:.9}
+.unit em{margin-inline-start:auto;font-style:normal;background:rgba(0,0,0,.25);border-radius:99px;padding:0 10px;font-weight:800;white-space:nowrap}
+.lesson{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);margin:14px 0;overflow:hidden}
+.lhead{padding:12px 16px;color:#fff;display:flex;align-items:center;gap:8px}
+.lhead h3{margin:0;flex:1}
+.ways{display:flex;gap:6px;padding:10px 10px 0;overflow-x:auto;scrollbar-width:none}
+.ways button{border:0;border-radius:99px;padding:6px 12px;background:var(--bg);font-weight:700;white-space:nowrap;font-size:15px}
+.ways button.on{background:var(--ink);color:var(--card)}
+.wbody{padding:12px 16px 16px;min-height:120px}
+.wbody ul{padding-inline-start:20px;margin:4px 0}.wbody li{margin:6px 0}
+.trick{background:#fff3c4;color:#5b4500;border-radius:16px;padding:12px;border:2px dashed #f6c343}
+.dark .trick{background:#40361a;color:#ffe9a8}
+/* pictures */
+.pcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin:8px 0}
+.pcards.three{grid-template-columns:repeat(3,1fr)}
+.pc{background:var(--bg);border-radius:16px;padding:10px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.pc b{font-size:30px;line-height:1.2}.pc span{font-weight:800}.pc small{color:var(--soft);font-size:13px;line-height:1.5}
+.vs{display:flex;align-items:stretch;gap:8px;margin:8px 0}
+.vcol{flex:1;background:var(--bg);border-radius:16px;padding:10px;text-align:center;display:flex;flex-direction:column}
+.vcol b{font-size:34px}.vcol span{font-weight:800;font-size:18px}.vcol small{color:var(--soft);font-size:14px}
+.vsx{align-self:center;font-weight:800;color:var(--brand2)}
+.timeline{display:flex;flex-wrap:wrap;align-items:center;gap:6px;justify-content:center;margin:10px 0}
+.timeline span{background:var(--bg);border-radius:12px;padding:4px 10px;font-size:14px;font-weight:700}
+.timeline span.now{background:var(--brand);color:#fff}.timeline i{font-style:normal;color:var(--soft)}
+.ptable{width:100%;border-collapse:separate;border-spacing:4px}
+.ptable th{background:var(--brand);color:#fff;border-radius:10px;padding:6px}.ptable td{background:var(--bg);border-radius:10px;padding:6px 8px;font-size:15px}
+.compassw{text-align:center}.compass{width:100%;max-width:300px}
+.crim{fill:color-mix(in srgb,var(--brand) 10%,var(--card));stroke:var(--brand);stroke-width:4}.cdot{fill:var(--ink)}
+.cdir line{stroke:var(--ink);stroke-width:3}.cdir circle{fill:var(--card);stroke:var(--brand);stroke-width:3;cursor:pointer}
+.cdir.sub circle{stroke:var(--brand2)}.cdir text{font:800 13px 'Baloo Bhaijaan 2',sans-serif;fill:var(--ink);pointer-events:none}
+.cdir.sub text{font-size:11px}.cdir.on circle{fill:var(--sun)}.cdir{cursor:pointer}
+.flagsvg{width:100%;max-width:260px;display:block;margin:auto;border-radius:6px}
+.flagsvg.big{max-width:320px}.fp{cursor:pointer}
+.mapdemo svg{width:100%;max-width:360px;display:block;margin:auto}
+.mbg{fill:color-mix(in srgb,#4aa3df 18%,var(--card));stroke:var(--line)}.mtitle{fill:var(--card);stroke:var(--brand)}
+.mland{fill:#e9d8a6;stroke:#b08d57}.mriver{fill:none;stroke:#4aa3df;stroke-width:4}.mrose{fill:var(--card);stroke:var(--brand2);stroke-width:2}.mkey{fill:var(--card);stroke:var(--line)}
+.mapdemo text,.bmap text{font-family:'Baloo Bhaijaan 2',sans-serif;fill:var(--ink);font-weight:700}
+.bmap svg{width:100%;max-width:340px;display:block;margin:auto}
+.bmap .sea{fill:#9fd3f0}.bmap .nb{fill:color-mix(in srgb,var(--soft) 25%,var(--card))}.bmap .eg{fill:#f4d58d;stroke:#c99a3b;stroke-width:3}
+.sfig{width:130px;display:block;margin:auto;color:var(--ink)}
+.flagsvg.sfig{width:160px}
+.qimg{display:block;max-width:100%;max-height:220px;margin:8px auto;border-radius:14px;box-shadow:var(--sh)}
+/* quiz */
+.qcard{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:12px 14px;margin:12px 0;border:3px solid transparent}
+.qcard.done{border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+.qcard.pulse{animation:pulse .6s}@keyframes pulse{50%{transform:scale(1.02)}}
+.qsec{background:color-mix(in srgb,var(--brand2) 14%,var(--card));color:var(--brand2);font-weight:800;border-radius:12px;padding:4px 10px;margin:-2px 0 8px;font-size:15px}
+.qhead{display:flex;align-items:center;gap:8px}
+.qn{background:var(--brand);color:#fff;border-radius:99px;min-width:30px;text-align:center;font-weight:800;padding:0 8px}
+.qstar{flex:1;font-size:20px}.qhead .icon{width:36px;height:36px}
+.qtext{font-size:19px;font-weight:700;margin:8px 0;line-height:1.7}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}
+.plab{font-weight:800;min-width:80px}
+.inp{font-size:19px;font-weight:700;border:3px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:6px 12px;width:100%;max-width:420px;outline:none}
+.inp.num{width:130px;text-align:center}.inp.sel{width:auto;min-width:180px}
+.inp:focus{border-color:var(--brand)}
+.uni{font-weight:800;color:var(--soft)}
+.ok{border-color:var(--ok)!important;background:color-mix(in srgb,var(--ok) 14%,var(--card))!important}
+.bad{border-color:var(--bad)!important;background:color-mix(in srgb,var(--bad) 12%,var(--card))!important;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.opt{border:3px solid var(--line);background:var(--bg);border-radius:16px;padding:8px 10px;font-weight:700;font-size:17px;text-align:start}
+.opt.sel{border-color:var(--brand)}.ol{color:var(--soft);margin-inline-end:4px}
+.tfb{text-align:center;font-size:19px}
+.qbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{border:0;border-radius:16px;padding:8px 16px;background:var(--brand);color:#fff;font-weight:800;box-shadow:0 4px 0 color-mix(in srgb,var(--brand) 60%,#000)}
+.btn:active{transform:translateY(3px);box-shadow:none}
+.btn.ghost{background:var(--bg);color:var(--ink);box-shadow:0 4px 0 var(--line)}
+.btn.ok{background:var(--ok);box-shadow:0 4px 0 #1b7a4c}
+.btn.sm{padding:4px 12px;font-size:15px}
+.btn.big{font-size:22px;padding:12px 28px;display:block;margin:12px auto}
+.fb{font-weight:800;margin-top:8px}.fb.good{color:var(--ok)}.fb.bad{color:var(--bad);border:0!important;background:none!important;animation:none}.fb.info{color:var(--soft)}
+.fix{color:var(--ink);font-weight:700;background:var(--bg);border-radius:12px;padding:6px 10px;margin-top:6px}
+.steps{background:color-mix(in srgb,var(--sun) 22%,var(--card));border-radius:16px;padding:8px 12px;margin-top:10px}
+.stitle{font-weight:800}.sline{margin:4px 0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{border:3px solid var(--line);background:var(--bg);border-radius:99px;padding:4px 14px;font-weight:700}
+.chip.sel{background:var(--brand);border-color:var(--brand);color:#fff}
+.note{width:100%;min-height:80px;border:3px dashed var(--line);border-radius:14px;background:var(--bg);color:var(--ink);padding:8px;font-size:17px}
+.model{background:var(--bg);border-radius:14px;padding:10px;margin-top:8px}
+.mtitle{font-weight:800;color:var(--brand)}.mans{margin:4px 0 6px;font-weight:700}
+.kw span{display:inline-block;background:var(--card);border:2px solid var(--line);border-radius:99px;padding:0 10px;margin:2px;font-size:14px}
+.kw span.hit{border-color:var(--ok);color:var(--ok)}
+.list .item{display:flex;align-items:center;gap:10px;background:var(--card);border:0;width:100%;text-align:start;border-radius:18px;box-shadow:var(--sh);padding:12px 14px;margin:10px 0}
+.item b{font-size:28px}.item div{flex:1}.item small{color:var(--soft);display:block;font-size:13px}
+.item .pill{box-shadow:none;background:var(--bg)}
+.prog{height:10px;background:var(--bg);border-radius:9px;overflow:hidden;margin:4px 0}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--sun),var(--brand));border-radius:9px}
+.models{display:flex;gap:8px;margin:8px 0}
+.models button{flex:1;border:3px solid var(--line);background:var(--card);border-radius:16px;padding:8px;font-weight:800}
+.models button.on{border-color:var(--brand);background:var(--brand);color:#fff}
+.back{border:0;background:none;color:var(--brand);font-weight:800;padding:0;margin-bottom:6px}
+.section{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px;margin:14px 0}
+.keycard{background:var(--card);border-radius:18px;box-shadow:var(--sh);padding:12px 14px;margin:10px 0;border-inline-start:6px solid var(--brand2)}
+.keycard h3{margin:0 0 4px;color:var(--brand2)}.keycard .ex{background:var(--bg);border-radius:12px;padding:6px 10px;margin-top:6px;font-size:16px}
+#welcome{position:fixed;inset:0;z-index:50;background:rgba(20,30,30,.55);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+#welcome .wbox{background:var(--card);border-radius:28px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:pop .45s}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+#welcome img{width:150px;height:150px;border-radius:50%;object-fit:cover;display:block;margin:auto;border:5px solid var(--sun)}
+#welcome h2{text-align:center}#welcome p{margin:8px 0}
+@media (max-width:420px){.opts{grid-template-columns:1fr}.opts.two{grid-template-columns:1fr 1fr}.hero img{width:90px;height:90px}.pcards.three{grid-template-columns:1fr}}
+.printb{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.wt{width:100%;border-collapse:collapse;margin:6px 0 12px;font-size:17px}.wt th,.wt td{border:1px solid var(--line,#ddd);padding:6px 8px;text-align:right}.wt th{background:color-mix(in srgb,var(--acc,#e9a23b) 20%,transparent)}
+.passage{margin:6px 0 8px;border:2px dashed #e9a23b;border-radius:14px;padding:6px 10px;background:color-mix(in srgb,#e9a23b 8%,transparent)}.passage summary{cursor:pointer;font-weight:700}.passage div{margin-top:6px;line-height:2}
+.hero{background:linear-gradient(135deg,#2a9d8f,#1f6f66)}
+.ayat{display:flex;flex-direction:column;gap:6px;margin-top:6px}.aya{font-family:'Amiri','Scheherazade New','Traditional Arabic',serif;font-size:24px;line-height:2;background:var(--card,#fff);border:2px solid var(--line,#eee);border-radius:14px;padding:4px 12px;cursor:pointer}.aya .an{color:#2a9d8f;font-size:18px}
+.ayat.hid .aya:not(.show){color:transparent;text-shadow:0 0 10px rgba(0,0,0,.35)}.ayat.hid .aya:not(.show) .an{color:#2a9d8f;text-shadow:none}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="home-t">🕌 روضة أمينة</h1>
+  <span class="pill" id="starpill">⭐ 0</span>
+  <button class="icon" id="openW" title="رسالة مشمش">💌</button>
+  <button class="icon" id="theme" title="الوضع الليلي">🌙</button>
+</header>
+<main id="app"></main>
+<nav class="tabs" id="tabs">
+  <button data-v="home"><b>🏠</b>البيت</button>
+  <button data-v="learn"><b>📚</b>الدروس</button>
+  <button data-v="keys"><b>✍️</b>إزاي أجاوب</button>
+  <button data-v="quiz"><b>📝</b>الأنشطة</button>
+  <button data-v="month"><b>🏆</b>المراجعات</button>
+</nav>
+<div id="welcome" class="hide"><div class="wbox">
+  <div style="font-size:64px">🐱🕌</div>
+  <h2>السلام عليكم يا أمينة! 🌙</h2>
+  <p>أنا <b>مشمش</b> 🐱، والمرة دي هنتعلم مع بعض <b>التربية الإسلامية</b> 🤲.</p>
+  <p>هنا كل دروس كتابك في الـ3 وحدات: <b>الدين والكرم</b> 🤲، <b>الأخوة في الدين</b> 🤝، <b>الدين وقبول الآخر</b> 🕊️.</p>
+  <p>كل درس فيه <b>حكاية</b> و<b>معاني الكلمات</b> و<b>أهم النقط</b> و<b>حيلة للحفظ</b> وسؤال صغير. ودروس السور فيها تبويب <b>📖 الحفظ</b> تسمّعي فيه لنفسك آية آية.</p>
+  <p>وفي <b>📝 الأنشطة</b> هتلاقي «الأنشطة والتدريبات» من كتابك، وفي <b>🏆 المراجعات</b> مراجعة كل وحدة والتقييمات العامة.</p>
+  <p>الغلط هنا عادي جدًا 🌸 محدش بيشوفه غيرك.</p>
+  <button class="btn big" id="wGo">بسم الله، يلا نبدأ! 🚀</button>
+</div></div>
+<script src="rengine.js"></script>
+<script src="rquran.js"></script>
+<script src="rlearn.js"></script>
+<script src="r1.js"></script>
+<script src="r2.js"></script>
+<script src="r3.js"></script>
+<script src="rshuf.js"></script>
+<script src="../shared/print.js"></script>
+<script src="rprint.js"></script>
+<script>window.SUNITS = RUNITS; window.SQ = RQ; window.SMONTH = RMONTH; window.SKEYS = RKEYS;</script>
+<script>
+(function(){
+const E = SE, H = E.H, S = E.S, app = document.getElementById('app');
+const WEEKS = []; SUNITS.forEach(u => (SQ[u.id] || []).forEach(w => WEEKS.push(Object.assign({ unit: u }, w))));
+const totalQ = w => Object.values(w.models).reduce((s, m) => s + m.length, 0);
+const pill = document.getElementById('starpill');
+const upd = () => pill.textContent = '⭐ ' + E.count();
+E.onStar = () => { upd(); pill.animate([{ transform: 'scale(1.4)' }, { transform: 'scale(1)' }], 400); };
+upd();
+const th = document.getElementById('theme');
+const setTheme = d => { document.documentElement.classList.toggle('dark', d); document.body.classList.toggle('dark', d); th.textContent = d ? '☀️' : '🌙'; S.dark = d; E.save(); };
+setTheme(S.dark != null ? S.dark : matchMedia('(prefers-color-scheme: dark)').matches);
+th.onclick = () => setTheme(!S.dark);
+const Wl = document.getElementById('welcome');
+document.getElementById('openW').onclick = () => Wl.classList.remove('hide');
+document.getElementById('wGo').onclick = () => { Wl.classList.add('hide'); S.welcomed = 1; E.save(); E.ding(); };
+if (!S.welcomed) Wl.classList.remove('hide');
+const tabs = document.getElementById('tabs');
+tabs.onclick = e => { const b = e.target.closest('button'); if (b) go(b.dataset.v); };
+document.getElementById('home-t').onclick = () => go('home');
+function go(v, a, b) {
+  try { speechSynthesis.cancel(); } catch(e) {}
+  [...tabs.children].forEach(t => t.classList.toggle('on', t.dataset.v === v || (v === 'unit' && t.dataset.v === 'learn') || (v === 'week' && t.dataset.v === 'quiz')));
+  app.innerHTML = ''; window.scrollTo(0, 0); (V[v] || V.home)(a, b);
+}
+const back = (label, fn) => { const b = H('button', 'back', '→ ' + label); b.onclick = fn; app.appendChild(b); };
+const V = {};
+const ML = k => k === 'الأنشطة' ? 'الأنشطة والتدريبات' : k;
+V.home = () => {
+  const n = E.count();
+  app.appendChild(H('div', 'hero', `<div style="font-size:64px;line-height:1">🕌🌙</div><div><b class="big">السلام عليكم يا أمينة! 🌙</b><p>معاكي <b>${n}</b> نجمة ⭐ ${n ? '— كمّلي، مشمش فخور بيكي!' : '— يلا نجمع أول نجمة!'}</p><p style="font-size:15px;opacity:.95">النهارده هنتعلم إيه في الدين؟ ✨</p></div>`));
+  const t = H('div', 'tiles');
+  [['learn', '📚', 'الدروس', '21 درس + حفظ 3 سور'], ['keys', '✍️', 'إزاي أجاوب', 'سر كل نوع سؤال'], ['quiz', '📝', 'الأنشطة', 'أنشطة وتدريبات كل درس'], ['month', '🏆', 'المراجعات', 'الوحدات + التقييمات العامة']].forEach(([v, e, a, s]) => { const b = H('button', 'tile', `<b>${e}</b><span>${a}</span><small>${s}</small>`); b.onclick = () => go(v); t.appendChild(b); });
+  app.appendChild(t);
+  app.appendChild(H('div', 'section', `<h3>🧭 خطة كل أسبوع</h3><ul><li>اقري <b>حكاية</b> الدرس و<b>معاني الكلمات</b> 📒.</li><li>في دروس السور افتحي <b>📖 الحفظ</b> وسمّعي لنفسك آية آية، وراجعي دايمًا من المصحف أو مع المعلمة 🤍.</li><li>بصّي على <b>أهم النقط</b> و<b>الحيلة</b>، وحلّي السؤال الصغير ✋.</li><li>روحي <b>📝 الأنشطة</b> وحلّي أنشطة الدرس.</li><li>في آخر كل وحدة حلّي <b>مراجعة الوحدة</b> 🏆.</li></ul>`));
+};
+V.learn = () => {
+  app.appendChild(H('h2', '', '📚 الدروس — اختاري وحدة'));
+  const g = H('div', 'units');
+  SUNITS.forEach((u, i) => {
+    const got = E.count('l:' + u.id + ':');
+    const b = H('button', 'unit', `<div class="ucover" style="display:grid;place-items:center;font-size:84px;height:150px">${u.emoji}</div><div class="uinfo"><b>${u.emoji}</b><div><span>الوحدة ${['الأولى', 'الثانية', 'الثالثة'][i]}</span><small>${u.t} · ${u.lessons.length} دروس</small></div><em>${got}/${u.lessons.length} ⭐</em></div>`);
+    b.style.background = `linear-gradient(135deg, ${u.color}, color-mix(in srgb, ${u.color} 70%, #000))`;
+    b.onclick = () => go('unit', u.id); g.appendChild(b);
+  });
+  app.appendChild(g);
+};
+const WAYS = [['story', '📖 حكاية'], ['hifz', '🕋 الحفظ'], ['words', '📒 معاني الكلمات'], ['points', '📌 أهم النقط'], ['trick', '⚡ حيلة للحفظ'], ['try', '✋ جربي']];
+V.unit = (id) => {
+  const u = SUNITS.find(x => x.id === id), ui = SUNITS.indexOf(u);
+  back('كل الوحدات', () => go('learn'));
+    app.appendChild(H('h2', '', `${u.emoji} الوحدة ${['الأولى', 'الثانية', 'الثالثة'][ui]}: ${u.t}`));
+  u.lessons.forEach((l, li) => {
+    const c = H('div', 'lesson'); const hd = H('div', 'lhead', `<h3>${l.icon} الدرس ${li + 1}: ${l.t}</h3>`); hd.style.background = u.color;
+    const ways = H('div', 'ways'), body = H('div', 'wbody');
+    const show = k => {
+      [...ways.children].forEach(b => b.classList.toggle('on', b.dataset.k === k)); body.innerHTML = '';
+      if (k === 'story') body.appendChild(H('div', '', l.story));
+      if (k === 'hifz') { const su = RSURA[l.sura]; let hide = false;
+        const top = H('div', 'mini', `<b>${su.name}</b> · ${su.info} — دوسي «🙈 خبّي الآيات» وسمّعي لنفسك، واضغطي على الآية علشان تظهر. وراجعي دايمًا من المصحف 🤍`);
+        const tg = H('button', 'btn ghost sm', '🙈 خبّي الآيات'); tg.style.margin = '6px 0';
+        const box = H('div', 'ayat'); su.ayat.forEach((a, i) => { const d = H('div', 'aya', `${a} <span class="an">﴿${(i + 1).toLocaleString('ar-EG')}﴾</span>`); d.onclick = () => d.classList.toggle('show'); box.appendChild(d); });
+        tg.onclick = () => { hide = !hide; box.classList.toggle('hid', hide); [...box.children].forEach(c => c.classList.remove('show')); tg.textContent = hide ? '👀 أظهري الآيات' : '🙈 خبّي الآيات'; };
+        body.append(top, tg, box); }
+      if (k === 'words') { const tb = (rows, a, b) => rows && rows.length ? `<table class="wt"><tr><th>${a}</th><th>${b}</th></tr>${rows.map(r => `<tr><td><b>${r[0]}</b></td><td>${r[1]}</td></tr>`).join('')}</table>` : '';
+        const x = tb(l.words, 'الكلمة', 'معناها') + tb(l.opp, 'الكلمة', 'مضادها ↔️') + tb(l.pl, 'المفرد', 'الجمع');
+        body.innerHTML = x || '<div class="mini">الدرس ده قواعد، مفيهوش كلمات جديدة — شوفي «أهم النقط» 📌</div>'; }
+      if (k === 'points') body.appendChild(H('ul', '', l.points.map(p => `<li>${p}</li>`).join('')));
+      if (k === 'trick') body.appendChild(H('div', 'trick', l.trick));
+      if (k === 'try') { body.appendChild(H('div', 'mini', 'سؤال صغير مني (مش من الكتاب) علشان تتأكدي إنك فهمتي:')); body.appendChild(E.card(l.try, 'l:' + u.id + ':' + li, '✋')); }
+      if (k !== 'try' && k !== 'hifz') { const sp = H('button', 'btn ghost sm', '🔊 اسمعي'); sp.style.marginTop = '8px'; sp.onclick = () => E.speak(body.textContent); body.appendChild(sp); }
+    };
+    WAYS.filter(([k]) => k !== 'hifz' || l.sura).forEach(([k, lab]) => { const b = H('button', '', lab); b.dataset.k = k; b.onclick = () => { show(k); E.pop(); }; ways.appendChild(b); });
+    c.append(hd, ways, body); app.appendChild(c); show('story');
+  });
+  const s = H('div', 'section', '<h3>📝 كويزات الوحدة دي</h3>');
+  WEEKS.filter(w => w.unit.id === id).forEach(w => { const b = H('button', 'btn ghost', `${w.title} <small>(ص ${w.page})</small>`); b.style.margin = '4px'; b.onclick = () => go('week', w.id); s.appendChild(b); });
+  app.appendChild(s);
+};
+V.keys = () => {
+  app.appendChild(H('h2', '', '✍️ إزاي أجاوب صح؟'));
+  app.appendChild(H('div', 'say', 'كل نوع سؤال له «مفتاح» 🔑 لو بدأتي بيه الإجابة بتبقى مظبوطة ومنظمة، والمدرّسة بتحب كده!'));
+  SKEYS.forEach(([t, how, ex]) => app.appendChild(H('div', 'keycard', `<h3>${t}</h3><div>${how}</div><div class="ex">مثال: ${ex}</div>`)));
+  app.appendChild(H('div', 'section', '<h3>🌟 نصايح مشمش</h3><ul><li>اقري الفقرة مرتين قبل الأسئلة.</li><li>في «هات من الفقرة» الإجابة لازم تكون <b>من الفقرة نفسها</b>.</li><li>اكتبي جملة كاملة بالفصحى مش كلمة واحدة.</li><li>«لا» و«غير» في الاختيار = دوّري على الحاجة الغلط! ⚠️</li></ul>'));
+};
+V.quiz = () => {
+  app.appendChild(H('h2', '', '📝 الأنشطة والتدريبات'));
+  app.appendChild(H('div', 'mini', 'أنشطة كل درس من كتابك بالترتيب 🌟'));
+  const L = H('div', 'list');
+  WEEKS.forEach((w, i) => { const tq = totalQ(w), got = E.count('w:' + w.id + ':');
+    const b = H('button', 'item', `<b>${w.unit.emoji}</b><div><span>الدرس ${i + 1}: ${w.title}</span><small>صفحة ${w.page} في الكتاب</small><div class="prog"><i style="width:${got / tq * 100}%"></i></div></div><span class="pill">${got}/${tq} ⭐</span>`);
+    b.onclick = () => go('week', w.id); L.appendChild(b); });
+  app.appendChild(L);
+};
+V.week = (id, model) => {
+  const w = WEEKS.find(x => x.id === id); const ks = Object.keys(w.models); model = model || ks[0];
+  back('كل الكويزات', () => go('quiz'));
+  app.appendChild(H('h2', '', `${w.unit.emoji} ${w.title}`));
+  app.appendChild(H('div', 'mini', `الأنشطة والتدريبات — صفحة ${w.page} في الكتاب`));
+  const m = H('div', 'models');
+  ks.forEach(k => { const got = E.count(`w:${w.id}:${k}:`); const b = H('button', k === model ? 'on' : '', `${ML(k)} <small>${got}/${w.models[k].length}⭐</small>`); b.onclick = () => go('week', id, k); m.appendChild(b); });
+  app.appendChild(m);
+  const wi = WEEKS.indexOf(w), pr = H('div', 'printb');
+  const p1 = H('button', 'btn ghost', '🖨️ اطبعي الورقة دي'); p1.onclick = () => SPRINT(w.models[model], `الدرس ${wi + 1}: ${w.title} — ${ML(model)}`, `روضة أمينة للتربية الإسلامية · الصف الرابع · الترم الأول · ص ${w.page}`);
+  const p2 = H('button', 'btn ghost', '🖨️ اطبعي الأسبوع كله'); p2.onclick = () => SPRINT(ks.flatMap(k => w.models[k].map((q, i) => i ? q : Object.assign({}, q, { sec: ML(k) }))), `الدرس ${wi + 1}: ${w.title} — كل الأوراق`, `روضة أمينة للتربية الإسلامية · ص ${w.page}`);
+  pr.append(p1); app.appendChild(pr);
+  w.models[model].forEach((q, i) => app.appendChild(E.card(q, `w:${w.id}:${model}:${i}`, i + 1)));
+  const nx = ks[ks.indexOf(model) + 1], end = H('div', 'section', `<h3>🎉 خلصتي ${ML(model)}؟</h3>`);
+  if (nx) { const b = H('button', 'btn', `${ML(nx)} ←`); b.onclick = () => go('week', id, nx); end.appendChild(b); }
+  else { const i = WEEKS.indexOf(w); if (WEEKS[i + 1]) { const b = H('button', 'btn', 'الدرس اللي بعده ←'); b.onclick = () => go('week', WEEKS[i + 1].id); end.appendChild(b); } }
+  app.appendChild(end);
+};
+V.month = (id) => {
+  if (id) {
+    const mo = SMONTH.find(x => x.id === id);
+    back('المراجعات', () => go('month'));
+    app.appendChild(H('h2', '', '🏆 ' + mo.title));
+    app.appendChild(H('div', 'mini', `${mo.sub} — صفحة ${mo.page} في الكتاب. خدي وقتك، مش لازم تخلّصيه مرة واحدة 🌸`));
+    const pr = H('div', 'printb'), p1 = H('button', 'btn ghost', '🖨️ اطبعي التدريب ده'); p1.onclick = () => SPRINT(mo.qs, mo.title, `${mo.sub} · ص ${mo.page}`); pr.appendChild(p1); app.appendChild(pr);
+    mo.qs.forEach((q, i) => app.appendChild(E.card(q, `m:${mo.id}:${i}`, i + 1)));
+    return;
+  }
+  app.appendChild(H('h2', '', '🏆 المراجعات'));
+  const L = H('div', 'list');
+  SMONTH.forEach(mo => { const got = E.count('m:' + mo.id + ':');
+    const b = H('button', 'item', `<b>🏆</b><div><span>${mo.title}</span><small>${mo.sub} — ص ${mo.page} — ${mo.qs.length} سؤال</small><div class="prog"><i style="width:${got / mo.qs.length * 100}%"></i></div></div><span class="pill">${got}/${mo.qs.length} ⭐</span>`);
+    b.onclick = () => go('month', mo.id); L.appendChild(b); });
+  app.appendChild(L);
+  app.appendChild(H('div', 'say', '💡 حلّي مراجعة الوحدة بعد ما تخلّصي كويزاتها، والمراجعة العامة قبل الامتحان.'));
+};
+go('home');
+})();
+</script>
+</body>
+</html>
