@@ -51,6 +51,12 @@
       { id: 'museum', name: 'متحف الأجداد', looks: ['🏺', '🏺📜', '🏛️', '🏛️🏺', '🏛️👑'], d: 'حكايات المصريين القدماء: أخيتاتون والنجم القطبي.' },
       { id: 'maps', name: 'بيت الخرائط', looks: ['📜', '🗺️', '🗺️📍', '🗺️🧭📍', '🌍🗺️'], d: 'عنوان الخريطة ومفتاحها ومقياس الرسم ووردة الاتجاهات.' },
       { id: 'port', name: 'ميناء النيل', looks: ['🛶', '⛵', '⛵⛵', '🚢', '🚢⚓🌊'], d: 'النيل والسواحل: طرق مصر للتجارة والسياحة.' }
+    ],
+    ict: [
+      { id: 'satstation', name: 'محطة الأقمار الصناعية', looks: ['📡', '🛰️', '🛰️📡', '🛰️🌍', '🛰️🌍🚀'], d: 'GPS والأقمار الصناعية بيلاقوا أي مكان، والـGPR والماجنتوميتر بيدوّروا تحت الأرض.' },
+      { id: 'complab', name: 'معمل الكمبيوتر', looks: ['⌨️', '🖱️⌨️', '💻', '💻🖨️', '🖥️💻🖨️'], d: 'إدخال ← معالجة ← إخراج. والمعالج CPU هو مخ الكمبيوتر.' },
+      { id: 'robots', name: 'مصنع الروبوتات', looks: ['🔩', '🤖', '🤖🦾', '🤖🦾🦿', '🤖🤖🚀'], d: 'التكنولوجيا المساعدة بتساعد أصحاب الهمم يعملوا كل حاجة.' },
+      { id: 'pwcastle', name: 'قلعة كلمات السر', looks: ['🔑', '🔐', '🛡️🔐', '🏰🔐', '🏰🛡️✨'], d: 'كلمة السر القوية: 8 رموز على الأقل، حروف وأرقام ورموز، ومن غير اسمك.' }
     ]
   };
   const CASTLE = { looks: ['🛖', '🏠', '🏯', '🏰', '🏰👑'], gold: [40, 80, 140, 220, 320], stars: [0, 6, 15, 30, 50] };
@@ -88,7 +94,7 @@
     ['ok100', '🌟', '100 إجابة صح', () => nOk() >= 100],
     ['ok300', '💫', '300 إجابة صح', () => nOk() >= 300],
     ['build1', '🏗️', 'أول مبنى', () => Object.values(G.b).some(v => v > 0)],
-    ['all3', '🗺️', 'مبنى في كل أرض', () => ['math', 'sci', 'soc'].every(l => BLD[l].some(b => lvOf(b.id) > 0))],
+    ['all3', '🗺️', 'مبنى في كل أرض', () => SK.lands.every(l => BLD[l.id] && BLD[l.id].some(b => lvOf(b.id) > 0))],
     ['lv5', '🏆', 'مبنى في المستوى الخامس', () => Object.values(G.b).some(v => v >= 5)],
     ['castle3', '🏰', 'القلعة في المستوى 3', () => G.castle >= 3],
     ['star3', '🌠', '3 نجوم في مرحلة', () => Object.values(G.st).some(v => v >= 3)],
@@ -141,7 +147,7 @@
     <div class="tiles">
       <button class="tile" data-go="lands"><b>🎮</b><span>يلا نلعب</span><small>اختاري أرض ومرحلة</small></button>
       <button class="tile" data-go="kingdom"><b>${CASTLE.looks[Math.max(0, G.castle - 1)]}</b><span>مملكتي</span><small>ابني وطوّري</small></button>
-      <button class="tile" data-a="mix"><b>🎲</b><span>خلطة التلات مواد</span><small>8 أسئلة من كل حاجة</small></button>
+      <button class="tile" data-a="mix"><b>🎲</b><span>خلطة كل المواد</span><small>8 أسئلة من كل حاجة</small></button>
       <button class="tile" data-go="review"><b>🔁</b><span>صندوق الأخطاء</span><small>${due ? due + ' سؤال مستنيكي' : 'فاضي 🎉'}</small></button>
     </div>
     <div class="card"><h3>🗺️ أراضي المملكة</h3>${SK.lands.map(l => { const m = mastery(l); return `<button class="lrow" data-go="land" data-arg="${l.id}" style="--c:${l.col};--bg:${l.bg}"><span class="le">${l.emoji}</span><span class="lt"><b>${l.name}</b><small>${l.sub} · ${l.all.length} سؤال</small><span class="bar"><i style="width:${m}%"></i></span></span><span class="lp">${m}%</span></button>`; }).join('')}</div>
@@ -235,6 +241,14 @@
       else if (t === 'num') c.kind = 'input';
       else if (t === 'multi') c.kind = 'smulti';
       else if ((q.keys || []).length) { c.kind = 'keys'; keyChips(it, c); } else c.kind = 'self';
+    } else if (it.s === 'ict') {
+      const t = q.t;
+      if (t === 'mcq' || t === 'odd') { c.opts = q.o.slice(); c.ans = q.a; }
+      else if (t === 'tf') c.kind = 'tf';
+      else if (t === 'fill') { c.opts = q.o.slice(); c.ans = q.o.indexOf(q.a); }
+      else if (t === 'match') c.kind = 'imatch';
+      else if (t === 'sort') c.kind = 'isort';
+      else c.kind = 'self';
     } else {
       const r = it.row;
       if (r[4].length > 1) { c.opts = shuf(r[4].slice()); c.ans = c.opts.indexOf(r[4][0]); }
@@ -297,6 +311,14 @@
   function answerText(it) {
     const q = it.q;
     if (it.s === 'sci') return esc(it.row[4][0]);
+    if (it.s === 'ict') {
+      if (q.t === 'mcq' || q.t === 'odd') return esc(q.o[q.a]);
+      if (q.t === 'tf') return (q.a ? '✔ True' : '✘ False') + (q.fix ? ' — ' + esc(q.fix) : '');
+      if (q.t === 'fill') return esc(q.a);
+      if (q.t === 'match') return q.L.map((l, i) => `${esc(l)} → ${esc(q.R[q.a[i]])}`).join('<br>');
+      if (q.t === 'sort') return q.g.map((g, k) => `<b>${esc(g)}:</b> ` + q.items.filter((_, i) => q.a[i] === k || q.a[i] === 2).map(esc).join(', ')).join('<br>');
+      return esc(q.model);
+    }
     if (it.s === 'soc') {
       if (q.t === 'mcq') return q.o[q.a];
       if (q.t === 'tf') return (q.a ? 'صح ✔' : 'خطأ ✘') + (q.fix ? ` — التصويب: ${q.fix}` : '');
@@ -342,6 +364,7 @@
   const STOP = 'that this with from have they their them when what which will your into than then there these those very much more most also only does both each make makes made were been being about after before because over under such like just some many other another'.split(' ');
   function paperKeys(it) {
     if (it.s === 'soc') return (it.q.keys || []).length ? [...new Set(it.q.keys)] : ['الإجابة مكتوبة كاملة', 'فيها سبب أو تبرير', 'الكتابة واضحة'];
+    if (it.s === 'ict') { const src = it.q.t === 'self' ? (it.q.keys || []).join(' ') : (it.q.fix || ''); const ws = (src.match(/[A-Za-z+#@]+/g) || []).filter(w => w.length >= 4 && !STOP.includes(w.toLowerCase())); const k = [...new Set(ws.map(w => w.toLowerCase()))].slice(0, 4); if (it.q.t === 'self') return k.length ? k : ['the answer is complete']; return it.q.a ? ['✔ True — she marked it right'] : ['✘ False — she marked it wrong'].concat(k.length ? k : ['the correction is right']); }
     if (it.s === 'sci') { const ws = (String(it.row[4][0]).match(/[A-Za-z]+/g) || []).filter(w => w.length >= 4 && !STOP.includes(w.toLowerCase())); return [...new Set(ws.map(w => w.toLowerCase()))].slice(0, 5); }
     return ['الناتج صح', 'الخطوات مكتوبة بالترتيب', 'الكتابة واضحة والوحدة مكتوبة (لو فيه)'];
   }
@@ -350,7 +373,10 @@
   function qHead(it) {
     const l = SK.lands.find(x => x.id === it.s);
     let h = '';
-    if (it.s === 'sci') {
+    if (it.s === 'ict') {
+      const q = it.q; h += `<div class="qt" dir="ltr">${q.t === 'odd' ? 'Cross out the odd word:' : esc(q.q)}</div>`;
+      if (q.t === 'imatch' || q.t === 'match') h += `<div class="rlist" dir="ltr">${q.R.map((x, i) => `<div><b>${'abcde'[i]})</b> ${esc(x)}</div>`).join('')}</div>`;
+    } else if (it.s === 'sci') {
       const r = it.row; h += `<div class="qt" dir="ltr">${esc(r[3])}</div>`;
       if (r[8] && typeof SV !== 'undefined' && SV[r[8]]) h += `<div class="fig">${SV[r[8]]}</div>`;
     } else {
@@ -374,6 +400,8 @@
       case 'prop': return `<div class="ans" dir="ltr"><input id="in1" class="inp" inputmode="decimal" placeholder="?"></div><p class="note">والخاصية اسمها إيه؟</p><div class="opts" dir="ltr">${PROPS.map((p, i) => `<button class="opt ${c.prop === i ? 'sel' : ''}" data-a="prop" data-i="${i}">${p}</button>`).join('')}</div><button class="btn wide" data-a="submit">تمّ ✔</button>`;
       case 'ord': return `<div class="chips" dir="ltr">${q.items.map((t, i) => `<button class="chip" data-a="ord" data-i="${i}" ${c.seq.includes(i) ? 'disabled' : ''}>${t}</button>`).join('')}</div><div class="oline" dir="ltr">${c.seq.length ? c.seq.map(i => q.items[i]).join(' <i>›</i> ') : '<em>اضغطي على الأرقام بالترتيب…</em>'}</div><div class="row"><button class="btn ghost sm" data-a="ordreset">↺ من الأول</button><button class="btn" data-a="submit">تمّ ✔</button></div>`;
       case 'smulti': return `<div class="ans col">${q.parts.map((p, i) => `<div class="pl"><b>${p[0]}</b><div class="chips">${(p[2] || []).map((o, k) => `<button class="chip ${c.sm && c.sm[i] === k ? 'sel' : ''}" data-a="sm" data-p="${i}" data-i="${k}">${o}</button>`).join('')}</div></div>`).join('')}</div><button class="btn wide" data-a="submit">تمّ ✔</button>`;
+      case 'imatch': return `<div class="ans col" dir="ltr">${q.L.map((l, i) => `<div class="pl"><b>${i + 1}) ${esc(l)}</b><div class="chips">${q.R.map((_, k) => `<button class="chip ${c.sm && c.sm[i] === k ? 'sel' : ''}" data-a="sm" data-p="${i}" data-i="${k}">${'abcde'[k]}</button>`).join('')}</div></div>`).join('')}</div><button class="btn wide" data-a="submit">تمّ ✔</button>`;
+      case 'isort': { const gs = q.g.concat(q.a.includes(2) ? ['Both'] : []); return `<div class="ans col" dir="ltr">${q.items.map((t, i) => `<div class="pl"><b>${esc(t)}</b><div class="chips">${gs.map((g, k) => `<button class="chip ${c.sm && c.sm[i] === k ? 'sel' : ''}" data-a="sm" data-p="${i}" data-i="${k}">${esc(g)}</button>`).join('')}</div></div>`).join('')}</div><button class="btn wide" data-a="submit">تمّ ✔</button>`; }
       case 'keys': return `<p class="note">🔑 <b>صيد الكلمات:</b> اختاري الكلمات اللي <b>لازم</b> تبقى في الإجابة (فيه ${c.keys.length}). متختاريش كلمات غريبة!</p><div class="chips">${c.chips.map((w, i) => `<button class="chip ${c.pick.has(i) ? 'sel' : ''}" data-a="key" data-i="${i}">${w}</button>`).join('')}</div><button class="btn wide" data-a="submit">تمّ ✔ (${c.pick.size}/${c.keys.length})</button>`;
       case 'self': return `<p class="note">${it.s === 'soc' ? 'ده سؤال رأي/كتابة. قوليه بصوتك أو اكتبيه، وبعدين قارني بالإجابة النموذجية.' : 'ده سؤال رسم/كتابة. حلّيه في الكشكول، وبعدين قارني بالإجابة النموذجية.'}</p><button class="btn wide" data-a="showmodel">👀 وريني النموذج</button>${c.showModel ? `<div class="model" dir="${dir}">${q.model}</div><div class="row"><button class="btn ok" data-a="selfok">✔ إجابتي زيها</button><button class="btn ghost" data-a="selfno">↺ لسه</button></div>` : ''}`;
     }
@@ -383,7 +411,7 @@
     const it = c.it, q = it.q, r = c.res;
     let h = `<div class="fb ${r.ok ? 'ok' : r.half ? 'half' : 'no'}"><b>${r.msg}</b>`;
     if (r.gain) h += ` <span class="gain">+${r.gain} 🪙</span>`;
-    if ((!r.ok || (c.kind === 'keys' && c.hit) || CUR.paperDone) && !(CUR.paperDone && it.s === 'soc')) h += `<div class="ansl"><small>الإجابة:</small> <span dir="auto">${answerText(it)}</span></div>`;
+    if ((!r.ok || (c.kind === 'keys' && c.hit) || CUR.paperDone) && !(CUR.paperDone && it.s === 'soc')) h += `<div class="ansl"><small>الإجابة:</small><div dir="auto" style="text-align:start">${answerText(it)}</div></div>`;
     if (c.kind === 'keys' && c.hit) h += `<div class="kw">${c.keys.map(k => `<span class="${c.hit.includes(k) ? 'hit' : ''}">${c.hit.includes(k) ? '✔ ' : ''}${k}</span>`).join('')}</div>`;
     h += '</div>';
     /* الشرح */
@@ -393,6 +421,10 @@
         const useAr = (G.arHelp && ar.length) || !en.length;
         h += `<div class="steps"><div class="sh"><b>${useAr ? '👣 الخطوات (الوصفة)' : '👣 Steps (the recipe)'}</b>${en.length && ar.length ? `<button class="langb" data-a="arhelp">${useAr ? 'English' : 'ع  اشرحي بالعربي'}</button>` : ''}</div><ol dir="${useAr ? 'rtl' : 'ltr'}">${(useAr ? ar : en).map(s => `<li>${s}</li>`).join('')}</ol></div>`;
       }
+    } else if (it.s === 'ict') {
+      const les = it.set && it.set.lesson && window.ICTL ? window.ICTL[it.set.unit - 1].lessons[it.set.lesson - 1] : null;
+      const ex = q.t === 'tf' && !q.a && q.fix ? `✍️ <b>Correct it:</b> ${esc(q.fix)}` : (q.why ? '💡 ' + esc(q.why) : '');
+      if (ex || les) h += `<div class="steps" dir="ltr">${ex ? `<p>${ex}</p>` : ''}${les ? `<p>📚 Lesson ${les.n}: ${esc(les.en)} <span dir="rtl">(${les.ar})</span></p>` : ''}</div>`;
     } else if (it.s === 'sci') {
       const rr = it.row; if (rr[5]) h += `<div class="steps" dir="ltr"><p>💡 ${esc(rr[5])}</p>${rr[6] ? `<p>🌍 ${esc(rr[6])}</p>` : ''}</div>`;
     } else {
@@ -414,7 +446,7 @@
     }
     if (CUR.phase === 'write') {
       return top + `<div class="qcard golden"><div class="gtitle">✍️ اكتبي على الورقة</div>${qHead(it)}
-        <ol class="note"><li>اكتبي رقم السؤال والإجابة كاملة على ورقة أو في الكشكول.</li><li>${it.s === 'math' ? 'Write the steps (the recipe) and the final answer.' : it.s === 'sci' ? 'Write a full sentence: “Because …” / “It … because …”.' : 'في «بم تفسر» ابدئي بـ«لأن»، وفي «دلل» هاتي مثال.'}</li><li>لما تخلصي، نادي ماما واضغطي «خلّصت».</li></ol>
+        <ol class="note"><li>اكتبي رقم السؤال والإجابة كاملة على ورقة أو في الكشكول.</li><li>${it.s === 'ict' ? (it.q.t === 'tf' ? 'Write (✓) or (✗). If it is wrong, write the correct sentence.' : 'Write a full answer in English.') : it.s === 'math' ? 'Write the steps (the recipe) and the final answer.' : it.s === 'sci' ? 'Write a full sentence: “Because …” / “It … because …”.' : 'في «بم تفسر» ابدئي بـ«لأن»، وفي «دلل» هاتي مثال.'}</li><li>لما تخلصي، نادي ماما واضغطي «خلّصت».</li></ol>
         <button class="btn gold wide" data-a="wrote">✅ خلّصت — ماما تصحح</button><button class="btn ghost wide" data-a="nopaper">🎮 أرجع ألعبها عادي</button></div>`;
     }
     return top + `<div class="qcard">${qHead(it)}${CUR.phase === 'q' ? qBody(CUR) : feedback(CUR)}</div>`;
@@ -458,6 +490,7 @@
       case 'multi': { const vs = q.parts.map((_, i) => val('in' + (i + 1))); if (vs.some(v => !v)) return toast('كمّلي كل الخانات 🙂'); return finish(q.parts.every(([, a], i) => String(a).includes(',') ? setEq(ENG.list(vs[i]), ENG.list(a)) : eqN(vs[i], a) || ENG.digits(vs[i]).trim().toLowerCase() === String(a).toLowerCase())); }
       case 'prop': { const v = val('in1'); if (!v || c.prop == null) return toast('اكتبي الرقم واختاري الخاصية 🙂'); return finish(eqN(v, q.a) && c.prop === q.p); }
       case 'ord': if (c.seq.length < q.items.length) return toast('رتّبي كل الأرقام 🙂'); return finish(c.seq.join() === q.ans.join());
+      case 'imatch': case 'isort': { const n = (q.L || q.items).length; if (!c.sm || [...Array(n).keys()].some(i => c.sm[i] == null)) return toast('اختاري لكل سطر 🙂'); return finish(q.a.every((v, i) => c.sm[i] === v)); }
       case 'smulti': { if (!c.sm || q.parts.some((_, i) => c.sm[i] == null)) return toast('اختاري لكل رقم 🙂'); return finish(q.parts.every((p, i) => [].concat(p[1]).map(normAr).includes(normAr(p[2][c.sm[i]])))); }
       case 'keys': {
         if (!c.pick.size) return toast('اختاري الكلمات المهمة 🙂');
@@ -473,7 +506,7 @@
   function referee() {
     const it = CUR.it, keys = paperKeys(it);
     CUR.ticks = new Set();
-    const model = it.s === 'sci' ? esc(it.row[4][0]) : it.s === 'soc' ? it.q.model : (answerText(it) + ((it.q.e || genSteps(it.q)).length ? '<ol dir="ltr">' + (it.q.e || genSteps(it.q)).map(s => `<li>${s}</li>`).join('') + '</ol>' : ''));
+    const model = it.s === 'ict' ? (it.q.t === 'self' ? esc(it.q.model) : it.q.a ? '✔ True' : '✘ False — ' + esc(it.q.fix || '')) : it.s === 'sci' ? esc(it.row[4][0]) : it.s === 'soc' ? it.q.model : (answerText(it) + ((it.q.e || genSteps(it.q)).length ? '<ol dir="ltr">' + (it.q.e || genSteps(it.q)).map(s => `<li>${s}</li>`).join('') + '</ol>' : ''));
     sheet(`<h2>👩‍⚖️ تصحيح الورقة الذهبية</h2><p class="note">ماما: قارني ورقة أمينة بالنموذج، وعلّمي على كل حاجة موجودة في إجابتها.</p>
       <div class="model" dir="${it.lang === 'ar' ? 'rtl' : 'ltr'}"><b>📖 ${it.lang === 'ar' ? 'الإجابة النموذجية' : 'Model answer'}:</b><br>${model}</div>
       <p><b>✔ علّمي على اللي اتكتب صح:</b></p><div class="ticks" dir="auto">${keys.map((k, i) => `<button class="tick" data-a="tick" data-i="${i}">☐ ${esc(k)}</button>`).join('')}</div>
@@ -551,7 +584,7 @@
     if (a === 'stage') return stageRun(b.dataset.l, +i);
     if (a === 'boss') return bossRun(b.dataset.l, +i);
     if (a === 'quick') { const l = SK.lands.find(x => x.id === b.dataset.l); const ids = [].concat(...l.stages.map(s => s.ids)); return startRun({ mode: 'quick', landId: l.id, pool: ids, list: pickRound(shuf(ids), 8) }); }
-    if (a === 'mix') { const per = SK.lands.map(l => shuf([].concat(...l.stages.map(s => s.ids)))); const list = shuf([].concat(per[0].slice(0, 3), per[1].slice(0, 3), per[2].slice(0, 2))); return startRun({ mode: 'mix', pool: [].concat(...per), list }); }
+    if (a === 'mix') { const per = SK.lands.map(l => shuf([].concat(...l.stages.map(s => s.ids)))); const n = per.length, list = shuf([].concat(...per.map((p, k) => p.slice(0, Math.floor(8 / n) + (k < 8 % n ? 1 : 0))))); return startRun({ mode: 'mix', pool: [].concat(...per), list }); }
     if (a === 'review') { const ids = Object.keys(G.bad).filter(id => SK.items[id]).sort((x, y) => G.bad[x] - G.bad[y]); return startRun({ mode: 'review', list: ids.slice(0, 8) }); }
     if (a === 'again') { const R = RUN; if (R.mode === 'stage') { const l = SK.lands.find(x => x.id === R.landId); return stageRun(R.landId, l.stages.findIndex(s => s.id === R.stageId)); } if (R.mode === 'boss') { const l = SK.lands.find(x => x.id === R.landId); return bossRun(R.landId, l.boss.findIndex(x => x.id === R.bossId)); } if (R.mode === 'review') { const ids = Object.keys(G.bad).filter(id => SK.items[id]); if (!ids.length) return go('review'); return startRun({ mode: 'review', list: ids.slice(0, 8) }); } return startRun(Object.assign({}, R, { list: pickRound(shuf(R.pool || R.list), R.list.length), log: [], right: 0, gold: 0, k: 0, done: null })); }
     if (a === 'quit') { if (RUN && RUN.k > 0 && !confirm('تخرجي من الجولة؟ الذهب اللي كسبتيه محفوظ.')) return; RUN = null; CUR = null; return go('home'); }
@@ -567,7 +600,7 @@
     if (a === 'reset') { if (confirm('متأكدة؟ هيتمسح كل التقدم والمملكة.') && confirm('آخر تأكيد: نمسح كل حاجة؟')) { G = NEW(); save(); go('home'); } return; }
     /* داخل السؤال */
     if (!CUR) return;
-    if (a === 'say') { const it = CUR.it; return speak(it.s === 'sci' ? it.row[3] : it.q.q, it.lang); }
+    if (a === 'say') { const it = CUR.it; return speak(it.s === 'sci' ? it.row[3] : (it.q.q || '') + (it.q.o ? '. ' + it.q.o.join(', ') : ''), it.lang); }
     if (a === 'sayans') { const it = CUR.it; const t = (it.s === 'sci' ? it.row[4][0] + '. ' + (it.row[5] || '') : String(answerText(it))); return speak(t, it.s === 'soc' ? 'ar' : /[؀-ۿ]/.test(t) && it.s === 'math' ? 'ar' : it.lang); }
     if (a === 'pick' && CUR.phase === 'q') { const k = +i; b.classList.add(k === CUR.ans ? 'good' : 'bad'); return setTimeout(() => finish(k === CUR.ans), 250); }
     if (a === 'tf' && CUR.phase === 'q') return finish((b.dataset.v === '1') === !!CUR.it.q.a);

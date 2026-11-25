@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Amina’s ICT Lab · مختبر أمينة للـICT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f6ff;--card:#fff;--ink:#23263a;--soft:#6e7390;--line:#dfe5f5;--brand:#5b6cff;--brand2:#14b8a6;--sun:#ffd166;--ok:#22a861;--bad:#e5484d;--sh:0 5px 0 rgba(0,0,0,.05),0 10px 24px rgba(60,70,140,.10);--r:20px}
+.dark{--bg:#171a2b;--card:#23273d;--ink:#eef0ff;--soft:#a9aecb;--line:#343a58;--sh:0 5px 0 rgba(0,0,0,.25),0 10px 24px rgba(0,0,0,.3)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:500 17px/1.65 'Baloo 2','Baloo Bhaijaan 2',system-ui,sans-serif}
+body{background-image:radial-gradient(circle at 0 0,#dfe4ff 0,transparent 40%),radial-gradient(circle at 100% 30%,#d6f7f1 0,transparent 35%);background-attachment:fixed;min-height:100vh}
+.dark body,body.dark{background-image:none}
+[dir=rtl],[lang=ar]{font-family:'Baloo Bhaijaan 2','Baloo 2',system-ui,sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}.hide{display:none!important}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;padding:8px 12px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:2px dashed var(--line)}
+header h1{font-size:18px;margin:0;flex:1;display:flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap;min-width:0}
+header h1 img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:var(--sh)}
+.pill{background:var(--card);border-radius:99px;padding:3px 11px;box-shadow:var(--sh);font-weight:800;white-space:nowrap}
+.icon{background:var(--card);border:0;border-radius:14px;width:40px;height:40px;box-shadow:var(--sh);font-size:18px;flex:none}
+.icon.on{background:var(--brand2);color:#fff}
+main{max-width:820px;margin:0 auto;padding:14px 14px 110px}
+nav.tabs{position:fixed;bottom:0;inset-inline:0;z-index:30;display:flex;justify-content:space-around;background:var(--card);box-shadow:0 -6px 20px rgba(0,0,0,.08);padding:6px 4px calc(6px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0}
+nav.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;font-size:12.5px;font-weight:700;color:var(--soft);padding:4px 6px;border-radius:14px;min-width:60px}
+nav.tabs button b{font-size:22px;line-height:1.2}nav.tabs button.on{color:var(--brand);background:color-mix(in srgb,var(--brand) 12%,transparent)}
+h2{font-size:23px;margin:6px 0 10px}h3{font-size:18px;margin:6px 0}
+.mini{color:var(--soft);font-size:15px;margin:6px 0}
+.say{background:var(--card);border-radius:18px;padding:12px 14px;margin:8px 0;box-shadow:var(--sh)}
+.hero{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#7b8bff,#5b6cff);color:#fff;border-radius:26px;padding:14px;box-shadow:var(--sh);margin-bottom:14px}
+.hero img{width:104px;height:104px;border-radius:22px;object-fit:cover;flex:none;border:4px solid rgba(255,255,255,.7)}
+.hero b.big{font-size:22px;display:block}.hero p{margin:3px 0}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.tile{border:0;border-radius:var(--r);padding:14px 10px;background:var(--card);box-shadow:var(--sh);text-align:center}
+.tile b{display:block;font-size:36px;line-height:1.2}.tile span{font-weight:800;display:block}.tile small{color:var(--soft);font-size:13px}
+.section{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px;margin:12px 0}
+.list .item{display:flex;align-items:center;gap:10px;background:var(--card);border:0;width:100%;text-align:start;border-radius:18px;box-shadow:var(--sh);padding:11px 13px;margin:9px 0}
+.item b{font-size:26px}.item div{flex:1}.item small{color:var(--soft);display:block;font-size:13px}.item .pill{box-shadow:none;background:var(--bg)}
+.prog{height:10px;background:var(--bg);border-radius:9px;overflow:hidden;margin:4px 0}.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--brand2),var(--brand));border-radius:9px}
+.uhead{border-radius:var(--r);padding:12px 14px;color:#fff;margin:14px 0 6px;font-weight:800;font-size:18px}
+.uhead small{display:block;font-weight:600;opacity:.9}
+.lesson{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);margin:12px 0;overflow:hidden}
+.lhead{padding:10px 14px;color:#fff;display:flex;align-items:center;gap:8px}.lhead h3{margin:0;flex:1}.lhead small{opacity:.9}
+.ways{display:flex;gap:6px;padding:10px 10px 0;overflow-x:auto;scrollbar-width:none}
+.ways button{border:0;border-radius:99px;padding:5px 12px;background:var(--bg);font-weight:700;white-space:nowrap;font-size:15px}.ways button.on{background:var(--ink);color:var(--card)}
+.wbody{padding:10px 14px 14px}.wbody ul,.wbody ol{padding-inline-start:22px;margin:4px 0}.wbody li{margin:6px 0}
+.trick{background:#fff3c4;color:#5b4500;border-radius:16px;padding:12px;border:2px dashed #f6c343}.dark .trick{background:#40361a;color:#ffe9a8}
+.wlist{display:grid;grid-template-columns:1fr 1fr;gap:6px}.wlist div{background:var(--bg);border-radius:12px;padding:6px 10px;font-size:15px}.wlist b{display:block}
+.langb{border:2px solid var(--brand2);background:var(--card);color:#0f8f81;border-radius:99px;padding:2px 12px;font-weight:800;font-size:14px;font-family:'Baloo Bhaijaan 2','Baloo 2',sans-serif;margin-top:8px}
+.qcard{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:12px 14px;margin:12px 0;border:3px solid transparent}
+.qcard.done{border-color:color-mix(in srgb,var(--ok) 45%,transparent)}.qcard.pulse{animation:pulse .6s}@keyframes pulse{50%{transform:scale(1.02)}}
+.qsec{font-weight:800;color:var(--brand);font-size:14px;margin-bottom:4px}
+.qhead{display:flex;align-items:center;gap:8px}.qn{background:var(--brand);color:#fff;border-radius:99px;min-width:30px;text-align:center;font-weight:800;padding:0 8px}.qstar{flex:1;font-size:20px}.qhead .icon{width:36px;height:36px}
+.qtext{font-size:18px;font-weight:700;margin:8px 0;line-height:1.55}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.opts.two{grid-template-columns:1fr 1fr}
+.opt{border:3px solid var(--line);background:var(--bg);border-radius:16px;padding:8px 10px;font-weight:800;font-size:16.5px;text-align:start}.opt.sel{border-color:var(--brand2)}.ol{color:var(--soft)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0}.chip{border:3px solid var(--line);background:var(--bg);border-radius:99px;padding:4px 13px;font-weight:800;font-size:16px}.chip.sel{background:var(--brand2);border-color:var(--brand2);color:#fff}
+.chips.sm .chip{padding:2px 11px;font-size:15px}
+.opt.ok,.chip.ok,.mrow.ok{border-color:var(--ok)!important;background:color-mix(in srgb,var(--ok) 14%,var(--card))!important}
+.opt.bad,.chip.bad,.mrow.bad{border-color:var(--bad)!important;background:color-mix(in srgb,var(--bad) 12%,var(--card))!important;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.match .rcol{background:var(--bg);border-radius:14px;padding:8px 10px;font-size:15px;margin-bottom:6px}.match .rcol div{margin:3px 0}
+.mrow{border:3px solid var(--line);border-radius:14px;padding:6px 10px;margin:6px 0}.ml{font-weight:700}.ml b{color:var(--brand);margin-inline-end:6px}
+.note{width:100%;min-height:70px;border:3px dashed var(--line);border-radius:14px;background:var(--bg);color:var(--ink);font:inherit;padding:8px}
+.model{background:var(--bg);border-radius:14px;padding:10px;margin-top:8px}.kw{margin-top:6px;color:var(--brand);font-weight:700}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}
+.qbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{border:0;border-radius:16px;padding:7px 15px;background:var(--brand);color:#fff;font-weight:800;box-shadow:0 4px 0 color-mix(in srgb,var(--brand) 60%,#000)}
+.btn:active{transform:translateY(3px);box-shadow:none}.btn.ghost{background:var(--bg);color:var(--ink);box-shadow:0 4px 0 var(--line)}.btn.ok{background:var(--ok);box-shadow:0 4px 0 #17703f}.btn.big{font-size:20px;padding:11px 26px;display:block;margin:12px auto}
+.fb{font-weight:800;margin-top:8px}.fb.good{color:var(--ok)}.fb.bad{color:var(--bad)}.fb.info{color:var(--soft)}.fix{color:var(--ink);font-weight:600;margin-top:4px}
+.help{background:color-mix(in srgb,var(--brand2) 10%,var(--card));border-radius:16px;padding:8px 12px;margin-top:8px;font-size:15.5px}
+.help .hp{background:var(--card);border-radius:12px;padding:6px 10px;margin-top:6px}.help small{color:var(--soft)}
+.wl{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.wl span{background:var(--card);border-radius:99px;padding:2px 10px}
+.models{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.back{border:0;background:none;color:var(--brand);font-weight:800;padding:0;margin-bottom:6px;font-size:16px}
+.printb{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.srch{width:100%;font:inherit;border:3px solid var(--line);border-radius:14px;padding:8px 12px;background:var(--card);color:var(--ink)}
+#welcome{position:fixed;inset:0;z-index:50;background:rgba(20,20,40,.55);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+#welcome .wbox{background:var(--card);border-radius:26px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+#welcome img{width:100%;border-radius:18px}
+@media (max-width:420px){.opts{grid-template-columns:1fr}.wlist{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="home-t"><img src="../math/img/face.webp" alt="Mishmish">ICT Lab 💻</h1>
+  <span class="pill" id="starpill">⭐ 0</span>
+  <button class="icon" id="arT" title="Explain in Arabic · الشرح بالعربي" style="font-family:'Baloo Bhaijaan 2',sans-serif;font-weight:800">ع</button>
+  <button class="icon" id="openW" title="Mishmish’s message">💌</button>
+  <button class="icon" id="theme" title="Dark mode">🌙</button>
+</header>
+<main id="app"></main>
+<nav class="tabs" id="tabs">
+  <button data-v="home"><b>🏠</b>Home</button>
+  <button data-v="lessons"><b>📚</b>Lessons</button>
+  <button data-v="practice"><b>✏️</b>Practice</button>
+  <button data-v="exams"><b>🏆</b>Exams</button>
+  <button data-v="words"><b>🔤</b>Words</button>
+</nav>
+<div id="welcome" class="hide"><div class="wbox"><img src="../social/img/explorer.webp" alt=""><div id="wtext"></div><button class="langb" id="wLang"></button><button class="btn big" id="wGo">Let’s go! 🚀</button></div></div>
+<script src="lessons.js"></script>
+<script src="q1.js"></script>
+<script src="q2.js"></script>
+<script src="../shared/print.js"></script>
+<script src="iengine.js"></script>
+<script>
+(function(){
+const E = IE, H = E.H, S = E.S, L = E.L, esc = E.esc, app = document.getElementById('app');
+const UNITS = ICTL, SETS = ICTQ.sets;
+const KIND = { ex: 'Exercises', test: 'Test Yourself', month: 'Monthly exam', model: 'Model exam' };
+const setStars = s => E.count('set:' + s.id + ':');
+const pill = document.getElementById('starpill'), upd = () => pill.textContent = '⭐ ' + E.count();
+E.onStar = () => { upd(); pill.animate([{ transform: 'scale(1.4)' }, { transform: 'scale(1)' }], 400); }; upd();
+const th = document.getElementById('theme');
+const setTheme = d => { document.documentElement.classList.toggle('dark', d); document.body.classList.toggle('dark', d); th.textContent = d ? '☀️' : '🌙'; S.dark = d; E.save(); };
+setTheme(S.dark != null ? S.dark : matchMedia('(prefers-color-scheme: dark)').matches); th.onclick = () => setTheme(!S.dark);
+const arT = document.getElementById('arT');
+const paintAr = () => arT.classList.toggle('on', E.isAr());
+arT.onclick = () => { S.ar = !S.ar; E.save(); paintAr(); go(cur.v, cur.a, cur.b, true); toast(S.ar ? 'الشرح بقى بالعربي 🇪🇬 (الأسئلة زي ما هي بالإنجليزي زي الكتاب)' : 'Explanations are in English now 🇬🇧'); };
+paintAr();
+function toast(t) { const d = H('div', 'say', t); d.dir = 'auto'; Object.assign(d.style, { position: 'fixed', insetInline: '12px', bottom: '84px', zIndex: 60, textAlign: 'center', fontWeight: 800 }); document.body.appendChild(d); setTimeout(() => d.remove(), 2300); }
+/* block with its own English / Arabic switch */
+function bi(en, ar, cls) {
+  const wrap = H('div', cls || ''); let useAr = E.isAr();
+  const body = H('div'), sw = H('button', 'langb');
+  const paint = () => { body.innerHTML = useAr ? ar : en; body.dir = useAr ? 'rtl' : 'ltr'; sw.textContent = useAr ? 'English' : 'ع  اشرحي بالعربي'; };
+  sw.onclick = () => { useAr = !useAr; paint(); E.pop(); };
+  wrap.append(body, sw); paint(); return wrap;
+}
+/* ---- welcome ---- */
+const WEL = {
+  en: `<h2>Hi Amina! 👋</h2><p>It’s me, <b>Mishmish</b> 🐱 — today I’m a computer scientist! 💻</p><p>In ICT we learn how technology helps us: tools that find treasures under the ground 🛰️, how a computer thinks 🧠, how technology helps people of determination 🦾, and how to stay safe online 🛡️.</p><p>Here you’ll find: 📚 every lesson explained with a story, key points, a trick and the important words · ✏️ all the exercises from your book · 🏆 Test Yourself, the October & November exams, model exams and a surprise final exam · 🖨️ print any quiz and solve it on paper.</p><p>Stuck on a question? Tap <b>🔗 In the lesson</b> to see where the answer is, or <b>ع</b> to see the words in Arabic.</p>`,
+  ar: `<h2>أهلاً يا أمينة! 👋</h2><p>أنا <b>مشمش</b> 🐱 — والنهارده أنا عالِم كمبيوتر! 💻</p><p>في الـICT بنتعلم إزاي التكنولوجيا بتساعدنا: أدوات بتلاقي الكنوز تحت الأرض 🛰️، وإزاي الكمبيوتر بيفكر 🧠، وإزاي التكنولوجيا بتساعد أصحاب الهمم 🦾، وإزاي نفضل في أمان على الإنترنت 🛡️.</p><p>هنا هتلاقي: 📚 كل درس مشروح بحكاية ونقط مهمة وحيلة وكلمات مهمة · ✏️ كل تمارين الكتاب · 🏆 Test Yourself وامتحان أكتوبر ونوفمبر والنماذج وامتحان نهائي مفاجأة · 🖨️ اطبعي أي كويز وحلّيه على الورق.</p><p>وقفتي في سؤال؟ دوسي <b>🔗 في الدرس</b> تعرفي الإجابة فين، أو <b>ع</b> تشوفي الكلمات بالعربي.</p>`
+};
+const Wd = document.getElementById('welcome'), wt = document.getElementById('wtext'), wl = document.getElementById('wLang'); let wAr = false;
+const paintW = () => { wt.innerHTML = wAr ? WEL.ar : WEL.en; wt.dir = wAr ? 'rtl' : 'ltr'; wl.textContent = wAr ? 'English' : 'ع  اقري بالعربي'; };
+wl.onclick = () => { wAr = !wAr; paintW(); };
+document.getElementById('openW').onclick = () => { wAr = E.isAr(); paintW(); Wd.classList.remove('hide'); };
+document.getElementById('wGo').onclick = () => { Wd.classList.add('hide'); S.welcomed = 1; E.save(); E.ding(); };
+if (!S.welcomed) { wAr = E.isAr(); paintW(); Wd.classList.remove('hide'); }
+/* ---- router ---- */
+const tabs = document.getElementById('tabs');
+tabs.onclick = e => { const b = e.target.closest('button'); if (b) go(b.dataset.v); };
+document.getElementById('home-t').onclick = () => go('home');
+let cur = { v: 'home' };
+function go(v, a, b, keep) { try { speechSynthesis.cancel(); } catch (e) {} const y = window.scrollY; cur = { v, a, b }; [...tabs.children].forEach(t => t.classList.toggle('on', t.dataset.v === v || (v === 'set' && t.dataset.v === (b || 'practice')))); app.innerHTML = ''; (V[v] || V.home)(a, b); window.scrollTo(0, keep ? y : 0); }
+const back = (label, fn) => { const b = H('button', 'back', '← ' + label); b.onclick = fn; app.appendChild(b); };
+const V = {};
+V.home = () => {
+  const n = E.count();
+  app.appendChild(H('div', 'hero', `<img src="../social/img/explorer.webp" alt=""><div><b class="big">Hi, Amina! 💻</b><p>You have <b>${n}</b> star${n === 1 ? '' : 's'} ⭐ ${n ? '— amazing!' : '— let’s get the first one!'}</p><p style="font-size:15px">ICT · Primary 4 · First Term</p></div>`));
+  const t = H('div', 'tiles');
+  [['lessons', '📚', 'Lessons', '12 lessons, story + trick'], ['practice', '✏️', 'Practice', 'All the book exercises'], ['exams', '🏆', 'Exams', 'Tests, monthly & model exams'], ['words', '🔤', 'Words', 'Important words in Arabic']].forEach(([v, e, a, s]) => { const b = H('button', 'tile', `<b>${e}</b><span>${a}</span><small>${s}</small>`); b.onclick = () => go(v); t.appendChild(b); });
+  app.appendChild(t);
+  const sec = H('div', 'section'); sec.appendChild(H('h3', '', '🧭 How do I study here?'));
+  sec.appendChild(bi('<ol><li>Read the lesson in <b>📚 Lessons</b> (story, points, trick, words).</li><li>Solve the lesson exercises in <b>✏️ Practice</b>. Stuck? Tap <b>🔗 In the lesson</b>.</li><li>After every two lessons, do <b>Test Yourself</b> in 🏆 Exams.</li><li>Before the exam, print a model exam 🖨️ and solve it on paper.</li></ol>', '<ol><li>اقري الدرس في <b>📚 Lessons</b> (حكاية، نقط، حيلة، كلمات).</li><li>حلّي تمارين الدرس في <b>✏️ Practice</b>. لو وقفتي دوسي <b>🔗 في الدرس</b>.</li><li>بعد كل درسين حلّي <b>Test Yourself</b> من 🏆 Exams.</li><li>قبل الامتحان اطبعي نموذج 🖨️ وحلّيه على الورق.</li></ol>'));
+  app.appendChild(sec);
+};
+const WAYS = [['story', '📖 Story'], ['points', '📌 Key points'], ['trick', '⚡ Trick'], ['words', '🔤 Words'], ['try', '✏️ Exercises']];
+V.lessons = (uid) => {
+  app.appendChild(H('h2', '', '📚 Lessons'));
+  UNITS.forEach(u => {
+    app.appendChild(H('div', 'uhead', `${u.emoji} Unit ${u.n}: ${u.en}<small dir="rtl">${u.ar}</small>`)).style.background = u.color;
+    u.lessons.forEach(l => {
+      const c = H('div', 'lesson'); const hd = H('div', 'lhead', `<h3>${l.emoji} ${l.n}. ${l.en}</h3>`); hd.style.background = u.color; hd.appendChild(H('small', '', l.ar)).dir = 'rtl';
+      const ways = H('div', 'ways'), body = H('div', 'wbody');
+      const show = k => {
+        [...ways.children].forEach(b => b.classList.toggle('on', b.dataset.k === k)); body.innerHTML = '';
+        if (k === 'story') body.appendChild(bi(l.story, l.storyAr));
+        if (k === 'points') body.appendChild(bi('<ul>' + l.points.map(p => `<li>${p}</li>`).join('') + '</ul>', '<ul>' + l.pointsAr.map(p => `<li>${p}</li>`).join('') + '</ul>'));
+        if (k === 'trick') body.appendChild(H('div', 'trick', l.trick));
+        if (k === 'words') { const g = H('div', 'wlist'); l.words.forEach(([e, a]) => { const d = H('div', '', `<b>${esc(e)}</b><span dir="rtl">${esc(a)}</span>`); d.onclick = () => E.speak(e, 'en'); g.appendChild(d); }); body.append(H('div', 'mini', 'Tap a word to hear it 🔊'), g); }
+        if (k === 'try') { const s = SETS.find(x => x.unit === u.n && x.lesson === l.n); if (s) { const b = H('button', 'btn', `✏️ ${s.title} (${s.qs.length} questions)`); b.onclick = () => go('set', s.id, 'practice'); body.appendChild(b); } }
+        if (k === 'story' || k === 'points') { const sp = H('button', 'btn ghost', '🔊 Listen'); sp.style.marginTop = '8px'; sp.onclick = () => { const t = body.firstChild.firstChild; E.speak(t.textContent, t.dir === 'rtl' ? 'ar' : 'en'); }; body.appendChild(sp); }
+      };
+      WAYS.forEach(([k, lab]) => { const b = H('button', '', lab); b.dataset.k = k; b.onclick = () => { show(k); E.pop(); }; ways.appendChild(b); });
+      c.append(hd, ways, body); app.appendChild(c); show('story');
+    });
+  });
+};
+const setItem = (s, tab) => { const got = setStars(s); const b = H('button', 'item', `<b>${s.kind === 'ex' ? (E.lessonOf(s.unit, s.lesson) || {}).emoji || '✏️' : s.kind === 'model' ? '📝' : s.kind === 'month' ? '📅' : '🎯'}</b><div><span style="display:block">${esc(s.title)}</span><small>Unit ${s.unit}${s.lesson ? ' · ' + esc(E.lessonOf(s.unit, s.lesson).en) : ''} · ${s.qs.length} questions</small><div class="prog"><i style="width:${got / s.qs.length * 100}%"></i></div></div><span class="pill">${got}/${s.qs.length} ⭐</span>`); b.onclick = () => go('set', s.id, tab); return b; };
+V.practice = () => {
+  app.appendChild(H('h2', '', '✏️ Practice — the book exercises'));
+  app.appendChild(bi('All the questions of “Exercises on Lesson” from your book. Answers are checked with the book’s model answers.', 'كل أسئلة «Exercises on Lesson» من كتابك، والإجابات متراجعة على نموذج إجابة الكتاب.', 'mini'));
+  UNITS.forEach(u => { app.appendChild(H('div', 'uhead', `${u.emoji} Unit ${u.n}: ${u.en}`)).style.background = u.color; const Lst = H('div', 'list'); SETS.filter(s => s.unit === u.n && s.kind === 'ex').forEach(s => Lst.appendChild(setItem(s, 'practice'))); app.appendChild(Lst); });
+};
+V.exams = () => {
+  app.appendChild(H('h2', '', '🏆 Exams'));
+  const fin = H('div', 'section', '<h3>🎲 Surprise final exam</h3>'); fin.appendChild(bi('A new exam every time, from all the questions of both units: 10 choose · 8 true/false · 4 complete · 1 match.', 'امتحان جديد كل مرة من كل أسئلة الوحدتين: 10 اختيار · 8 صح وغلط · 4 أكمل · 1 توصيل.', 'mini'));
+  const fb = H('button', 'btn', '🎲 Start a final exam'); fb.onclick = () => go('final'); fin.appendChild(fb); app.appendChild(fin);
+  UNITS.forEach(u => { app.appendChild(H('div', 'uhead', `${u.emoji} Unit ${u.n}: ${u.en}`)).style.background = u.color; const Lst = H('div', 'list'); SETS.filter(s => s.unit === u.n && s.kind !== 'ex').forEach(s => Lst.appendChild(setItem(s, 'exams'))); app.appendChild(Lst); });
+};
+function runList(qs, keyBase, ctxOf, box) { qs.forEach((q, i) => box.appendChild(E.card(q, keyBase + i, i + 1, ctxOf(q)))); }
+V.set = (id, tab) => {
+  const s = SETS.find(x => x.id === id), i = SETS.indexOf(s);
+  back(tab === 'exams' ? 'Exams' : 'Practice', () => go(tab || 'practice'));
+  app.appendChild(H('h2', '', esc(s.title)));
+  app.appendChild(H('div', 'mini', `Unit ${s.unit}: ${esc(UNITS[s.unit - 1].en)} · ${KIND[s.kind]} · ${s.qs.length} questions`));
+  const pr = H('div', 'printb'), p = H('button', 'btn ghost', '🖨️ ' + L('Print this quiz', 'اطبعي الكويز ده')); p.onclick = () => E.print(s.qs, s.title, `ICT · Primary 4 · Term 1 · Unit ${s.unit}`); pr.appendChild(p); app.appendChild(pr);
+  const box = H('div'); app.appendChild(box);
+  runList(s.qs, `set:${s.id}:`, () => ({ unit: s.unit, lesson: s.lesson, lessons: s.lessons }), box);
+  const nx = SETS.slice(i + 1).find(x => (x.kind === 'ex') === (s.kind === 'ex'));
+  const end = H('div', 'section', '<h3>🎉 Finished?</h3>'); if (nx) { const b = H('button', 'btn', esc(nx.title) + ' →'); b.onclick = () => go('set', nx.id, tab); end.appendChild(b); } app.appendChild(end);
+};
+V.final = () => {
+  back('Exams', () => go('exams'));
+  const all = []; SETS.forEach(s => s.qs.forEach((q, i) => all.push({ q, s, i })));
+  const pick = (t, n) => E.shuf(all.filter(x => x.q.t === t)).slice(0, n);
+  const fills = []; E.shuf(all.filter(x => x.q.t === 'fill')).forEach(x => { if (fills.length < 4 && !fills.some(f => f.q.o.join() === x.q.o.join())) fills.push(x); });
+  const exam = [].concat(pick('mcq', 10), pick('tf', 8), fills, pick('match', 1));
+  app.appendChild(H('h2', '', '🎲 Final exam'));
+  app.appendChild(H('div', 'mini', 'ICT · Primary 4 · Term 1 · both units · ' + exam.length + ' questions'));
+  const pr = H('div', 'printb'), p = H('button', 'btn ghost', '🖨️ ' + L('Print this exam', 'اطبعي الامتحان ده')); p.onclick = () => E.print(exam.map(x => x.q), 'Final exam (practice)', 'ICT · Primary 4 · Term 1'); const nw = H('button', 'btn ghost', '🎲 ' + L('Another exam', 'امتحان تاني')); nw.onclick = () => go('final'); pr.append(p, nw); app.appendChild(pr);
+  const box = H('div'); app.appendChild(box);
+  exam.forEach((x, k) => box.appendChild(E.card(x.q, `set:${x.s.id}:${x.i}`, k + 1, { unit: x.s.unit, lesson: x.s.lesson, lessons: x.s.lessons })));
+};
+V.words = () => {
+  app.appendChild(H('h2', '', '🔤 Important words'));
+  const inp = H('input', 'srch'); inp.placeholder = 'Search… / ابحثي…'; app.appendChild(inp);
+  const box = H('div'); app.appendChild(box);
+  const draw = () => { const t = inp.value.trim().toLowerCase(); box.innerHTML = ''; UNITS.forEach(u => u.lessons.forEach(l => { const ws = l.words.filter(([e, a]) => !t || e.toLowerCase().includes(t) || a.includes(t)); if (!ws.length) return; box.appendChild(H('h3', '', `${l.emoji} ${l.en}`)); const g = H('div', 'wlist'); ws.forEach(([e, a]) => { const d = H('div', '', `<b>${esc(e)}</b><span dir="rtl">${esc(a)}</span>`); d.onclick = () => E.speak(e, 'en'); g.appendChild(d); }); box.appendChild(g); })); };
+  inp.oninput = draw; draw();
+};
+go('home');
+})();
+</script>
+</body>
+</html>

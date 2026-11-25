@@ -4,6 +4,7 @@
      الرياضيات: ../math/q1–q5.js + qm1–qm2.js (+ steps_en.js للخطوات بالإنجليزي)
      الدراسات:  ../social/s1–s3.js + sm1–sm3.js
      العلوم:    ../science/bank.js  (C, Q, MN, SV…)
+     الـICT:    ../ict/q1.js + q2.js (+ lessons.js لأسماء الدروس)
    وبتحوّلها لشكل واحد تفهمه اللعبة: window.SK = { lands, items }
    ===================================================================== */
 (function () {
@@ -61,12 +62,30 @@
   SC.forEach((name, c) => sciStages.push({ id: 'c-' + c, title: name, sub: SCI_AR[c] || '', emoji: SCI_EMO[c] || '🔬', ids: SQB.map((r, i) => (!r[9] && r[0] === c) ? 'c:' + i : null).filter(Boolean) }));
   [1, 2, 3].forEach(m => sciBoss.push({ id: 'cb-' + m, title: ['التقييم الشهري الأول', 'التقييم الشهري التاني', 'التقييم الشهري التالت'][m - 1], sub: (typeof MN !== 'undefined' ? MN[m - 1] : ''), ids: SQB.map((r, i) => r[9] === m ? 'c:' + i : null).filter(Boolean) }));
 
+  /* ---------------- الـICT ---------------- */
+  const ictStages = [], ictBoss = [];
+  const ISETS = (window.ICTQ && window.ICTQ.sets) || [], ILES = window.ICTL || [];
+  const ictItem = (set, q, i) => add({ id: `i:${set.id}:${i}`, s: 'ict', stage: set.id, q, lang: 'en', set, paper: q.t === 'self' || q.t === 'tf' });
+  ISETS.forEach(set => {
+    const ids = set.qs.map((q, i) => ictItem(set, q, i));
+    const les = set.lesson && ILES[set.unit - 1] ? ILES[set.unit - 1].lessons[set.lesson - 1] : null;
+    if (set.kind === 'ex' || set.kind === 'test') ictStages.push({ id: 'i-' + set.id, title: set.title, sub: `Unit ${set.unit}` + (les ? ' · ' + les.ar : ''), emoji: les ? les.emoji : '🎯', ids });
+  });
+  const bossOf = (title, sub, kinds, unit) => ({ id: 'ib-' + title.replace(/\s+/g, ''), title, sub, ids: [].concat(...ISETS.filter(st => kinds.includes(st.kind) && (!unit || st.unit === unit) && (st.kind !== 'month' || st.unit === unit)).map(st => st.qs.map((_, i) => `i:${st.id}:${i}`))) });
+  if (ISETS.length) {
+    ictBoss.push(bossOf('امتحان أكتوبر', 'October Exam · Lessons 1–5', ['month'], 1));
+    ictBoss.push(bossOf('امتحان نوفمبر', 'November Exam · Unit 2 lessons 1–4', ['month'], 2));
+    ictBoss.push(bossOf('نماذج الوحدة الأولى', 'Revision on Unit 1 · 5 model exams', ['model'], 1));
+    ictBoss.push(bossOf('نماذج الوحدة التانية', 'Revision on Unit 2 · 5 model exams', ['model'], 2));
+  }
+
   /* ---------------- الأراضي ---------------- */
   const lands = [
     { id: 'math', name: 'وادي المطبخ', sub: 'الرياضيات', emoji: '🧁', col: '#ff7a59', bg: '#fff0e8', stages: mathStages, boss: mathBoss, bossName: 'الشيف العملاق', bossEmoji: '🧑‍🍳' },
     { id: 'sci', name: 'غابة الحيوانات', sub: 'العلوم', emoji: '🌿', col: '#2fa36b', bg: '#e6f7ee', stages: sciStages, boss: sciBoss, bossName: 'التنين النعسان', bossEmoji: '🐉' },
-    { id: 'soc', name: 'جزيرة المستكشف', sub: 'الدراسات الاجتماعية', emoji: '🧭', col: '#3b7fc4', bg: '#e6effa', stages: socStages, boss: socBoss, bossName: 'حارس الخريطة', bossEmoji: '🗿' }
-  ];
+    { id: 'soc', name: 'جزيرة المستكشف', sub: 'الدراسات الاجتماعية', emoji: '🧭', col: '#3b7fc4', bg: '#e6effa', stages: socStages, boss: socBoss, bossName: 'حارس الخريطة', bossEmoji: '🗿' },
+    { id: 'ict', name: 'مدينة الروبوتات', sub: 'الـICT', emoji: '🤖', col: '#5b6cff', bg: '#eceeff', stages: ictStages, boss: ictBoss, bossName: 'الروبوت المتمرّد', bossEmoji: '👾' }
+  ].filter(l => l.stages.length);
   lands.forEach(l => { l.all = [].concat(...l.stages.map(s => s.ids), ...l.boss.map(b => b.ids)); });
 
   window.SK = { lands, items, socKeyPool, landOf: id => lands.find(l => l.id === items[id].s) };
