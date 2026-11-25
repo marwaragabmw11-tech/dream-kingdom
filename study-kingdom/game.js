@@ -33,7 +33,8 @@
   const speak = (text, lang) => { try { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(String(text).replace(/<[^>]+>/g, ' ').replace(/……|_{3,}|\.\.\./g, lang === 'ar' ? ' فراغ ' : ' blank ').replace(/×/g, lang === 'ar' ? ' في ' : ' times ').replace(/÷/g, ' divided by ').replace(/−/g, ' minus ')); u.lang = lang === 'ar' ? 'ar-EG' : 'en-US'; u.rate = .9; const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith(lang === 'ar' ? 'ar' : 'en')); if (v) u.voice = v; speechSynthesis.speak(u); } catch (e) {} };
 
   /* ------------------------- المملكة ------------------------- */
-  const ARL = it => it.s === 'soc' || it.s === 'ar';   /* أسئلة عربي الشكل (دراسات + لغة عربية) */
+  const ARL = it => it.s === 'soc' || it.s === 'ar' || it.s === 'rel';   /* أسئلة عربي الشكل (دراسات + عربي + دين) */
+  const ENL = it => it.s === 'ict' || it.s === 'eng';   /* أسئلة إنجليزي الشكل (ICT + English) */
   const BLD = {
     math: [
       { id: 'bakery', name: 'مخبز الكب كيك', looks: ['🥚', '🧁', '🧁🍰', '🎂🧁', '🎂🧁👑'], d: 'هنا بنخبز الأرقام: كل كيكة متقسمة حتت متساوية زي القسمة بالظبط.' },
@@ -64,6 +65,18 @@
       { id: 'palmtree', name: 'نخلة الكلمات', looks: ['🌱', '🌴', '🌴🌴', '🌴🐪', '🌴🐪🏜️'], d: 'كل كلمة ليها معنى ومضاد وجمع: «الحلم» ← «الأحلام».' },
       { id: 'penhouse', name: 'بيت القلم', looks: ['✏️', '🖋️', '🖋️📜', '🖋️📜✨', '🏡🖋️📜'], d: 'الجملة الاسمية: مبتدأ + خبر. «الشجرةُ عجوزٌ».' },
       { id: 'stage', name: 'مسرح الشعر', looks: ['🎤', '🎭', '🎭🎶', '🎪🎭', '🎪🎭⭐'], d: 'اسلمي يا مصر، وطريق السعادة، وفي البستان: نقرا الشعر بصوت عالي ونفهم معاني كلماته.' }
+    ],
+    eng: [
+      { id: 'abc', name: 'بيت الحروف', looks: ['🔤', '🔤📗', '🏠🔤', '🏫🔤', '🏫🔤⭐'], d: 'Short vowel or long vowel? cake · bike · cube = long (silent e).' },
+      { id: 'zoo', name: 'حديقة الحيوانات', looks: ['🐾', '🦒', '🦒🐘', '🦒🐘🦁', '🦒🐘🦁🐒'], d: 'The giraffe has a long neck, and the elephant has a trunk.' },
+      { id: 'firestation', name: 'محطة الأبطال', looks: ['🧯', '🚒', '🚒👩‍🚒', '🚒👩‍🚒🪜', '🏢🚒⭐'], d: 'Heroes help people: firefighters, doctors, teachers.' },
+      { id: 'nileboat', name: 'مركب النيل', looks: ['🛶', '⛵', '⛵🏝️', '🚢🏜️', '🚢🔺🔺'], d: 'Egypt my homeland: the Nile, the Pyramids, Siwa and St. Catherine.' }
+    ],
+    rel: [
+      { id: 'mosque', name: 'المسجد', looks: ['🧱', '🕌', '🕌🌴', '🕌🌙', '🕌🌙✨'], d: 'أول عمل عمله النبي ﷺ في المدينة: بناء المسجد من اللبن وجذوع النخل.' },
+      { id: 'mushaf', name: 'بيت القرآن', looks: ['📖', '📖✨', '📖🕯️', '📖🌟', '📖🌙⭐'], d: 'حفظ سور الانفطار والتكوير وعبس، وأحكام لام «أل» والإظهار الحلقي.' },
+      { id: 'zakat', name: 'بيت الزكاة', looks: ['🪙', '🪙🪙', '💰', '💰🤲', '💰🤲💚'], d: 'الزكاة الركن التالت من أركان الإسلام، وبتطهّر نفس الغني من البخل.' },
+      { id: 'guesthouse', name: 'دار الضيافة', looks: ['🏕️', '🏠', '🏡🍯', '🏡🍯☕', '🏘️🍯☕'], d: 'إكرام الضيف من علامات الإيمان، زي أبو أيوب الأنصاري لما استضاف النبي ﷺ.' }
     ]
   };
   const CASTLE = { looks: ['🛖', '🏠', '🏯', '🏰', '🏰👑'], gold: [40, 80, 140, 220, 320], stars: [0, 6, 15, 30, 50] };
@@ -161,7 +174,7 @@
       <button class="tile" data-go="kingdom"><b>${CASTLE.looks[Math.max(0, G.castle - 1)]}</b><span>مملكتي</span><small>ابني وطوّري</small></button>
       <button class="tile" data-a="mix"><b>🎲</b><span>خلطة كل المواد</span><small>8 أسئلة من كل حاجة</small></button>
       <button class="tile" data-go="review"><b>🔁</b><span>صندوق الأخطاء</span><small>${due ? due + ' سؤال مستنيكي' : 'فاضي 🎉'}</small></button>
-      <button class="tile" data-go="garden"><b>🌱</b><span>حديقة الكلمات</span><small>عربي + علوم + ICT</small></button>
+      <button class="tile" data-go="garden"><b>🌱</b><span>حديقة الكلمات</span><small>عربي + English + علوم + ICT</small></button>
       <button class="tile" data-go="factory"><b>🧩</b><span>مصنع الجمل</span><small>نبني جمل بالفصحى</small></button>
     </div>
     <div class="card"><h3>🗺️ أراضي المملكة</h3>${SK.lands.map(l => { const m = mastery(l); return `<button class="lrow" data-go="land" data-arg="${l.id}" style="--c:${l.col};--bg:${l.bg}"><span class="le">${l.emoji}</span><span class="lt"><b>${l.name}</b><small>${l.sub} · ${l.all.length} سؤال</small><span class="bar"><i style="width:${m}%"></i></span></span><span class="lp">${m}%</span></button>`; }).join('')}</div>
@@ -255,7 +268,7 @@
       else if (t === 'num') c.kind = 'input';
       else if (t === 'multi') c.kind = 'smulti';
       else if ((q.keys || []).length && !q.open) { c.kind = 'keys'; keyChips(it, c); } else c.kind = 'self';
-    } else if (it.s === 'ict') {
+    } else if (ENL(it)) {
       const t = q.t;
       if (t === 'mcq' || t === 'odd') { c.opts = q.o.slice(); c.ans = q.a; }
       else if (t === 'tf') c.kind = 'tf';
@@ -291,9 +304,12 @@
   }
   function keyChips(it, c) {
     const keys = [...new Set(it.q.keys || [])], K = keys.map(normAr);
-    const KP = it.s === 'ar' ? SK.arKeyPool : SK.socKeyPool;
+    const KP = (SK.keyPools && SK.keyPools[it.s]) || SK.socKeyPool;
     let pool = (KP[it.stage] || []).concat(...Object.values(KP));
-    pool = [...new Set(pool)].filter(w => { const n = normAr(w); return !K.some(k => k === n || k.includes(n) || n.includes(k)) && !normAr(it.q.model).includes(n); });
+    /* «جذر» تقريبي: من غير ال/و/ب/ل والضمير في الآخر — علشان «العبادة» متطلعش كلمة غلط جنب «عبادته» */
+    const stem = w => normAr(w).split(' ').map(t => t.replace(/^(ال|وال|بال|لل|فال|و|ف|ب|ل)(?=..)/, '').replace(/(تهم|تها|ته|هم|ها|ه|ات|ون|ين)$/, '').slice(0, 4)).filter(t => t.length >= 2);
+    const MS = new Set([].concat(...keys.map(stem), ...String(it.q.model || '').split(/\s+/).map(stem)));
+    pool = [...new Set(pool)].filter(w => { const n = normAr(w); return !K.some(k => k === n || k.includes(n) || n.includes(k)) && !normAr(it.q.model).includes(n) && !stem(w).some(t => MS.has(t)); });
     const extra = shuf(pool).slice(0, Math.max(3, Math.min(5, 8 - keys.length)));
     c.keys = keys; c.chips = shuf(keys.concat(extra));
   }
@@ -326,7 +342,7 @@
   function answerText(it) {
     const q = it.q;
     if (it.s === 'sci') return esc(it.row[4][0]);
-    if (it.s === 'ict') {
+    if (ENL(it)) {
       if (q.t === 'mcq' || q.t === 'odd') return esc(q.o[q.a]);
       if (q.t === 'tf') return (q.a ? '✔ True' : '✘ False') + (q.fix ? ' — ' + esc(q.fix) : '');
       if (q.t === 'fill') return esc(q.a);
@@ -379,7 +395,7 @@
   const STOP = 'that this with from have they their them when what which will your into than then there these those very much more most also only does both each make makes made were been being about after before because over under such like just some many other another'.split(' ');
   function paperKeys(it) {
     if (ARL(it)) return (it.q.keys || []).length ? [...new Set(it.q.keys)] : it.s === 'ar' ? ['الجملة مكتوبة كاملة', 'الحروف واضحة ومنقوطة', 'الكتابة على السطر'] : ['الإجابة مكتوبة كاملة', 'فيها سبب أو تبرير', 'الكتابة واضحة'];
-    if (it.s === 'ict') { const src = it.q.t === 'self' ? (it.q.keys || []).join(' ') : (it.q.fix || ''); const ws = (src.match(/[A-Za-z+#@]+/g) || []).filter(w => w.length >= 4 && !STOP.includes(w.toLowerCase())); const k = [...new Set(ws.map(w => w.toLowerCase()))].slice(0, 4); if (it.q.t === 'self') return k.length ? k : ['the answer is complete']; return it.q.a ? ['✔ True — she marked it right'] : ['✘ False — she marked it wrong'].concat(k.length ? k : ['the correction is right']); }
+    if (ENL(it)) { const src = it.q.t === 'self' ? ((it.q.keys || []).join(' ') || it.q.model || '') : (it.q.fix || ''); const ws = (src.match(/[A-Za-z+#@]+/g) || []).filter(w => w.length >= 4 && !STOP.includes(w.toLowerCase())); const k = [...new Set(ws.map(w => w.toLowerCase()))].slice(0, 4); if (it.q.t === 'self') return k.length ? k : ['the answer is complete']; return it.q.a ? ['✔ True — she marked it right'] : ['✘ False — she marked it wrong'].concat(k.length ? k : ['the correction is right']); }
     if (it.s === 'sci') { const ws = (String(it.row[4][0]).match(/[A-Za-z]+/g) || []).filter(w => w.length >= 4 && !STOP.includes(w.toLowerCase())); return [...new Set(ws.map(w => w.toLowerCase()))].slice(0, 5); }
     return ['الناتج صح', 'الخطوات مكتوبة بالترتيب', 'الكتابة واضحة والوحدة مكتوبة (لو فيه)'];
   }
@@ -388,8 +404,8 @@
   function qHead(it) {
     const l = SK.lands.find(x => x.id === it.s);
     let h = '';
-    if (it.s === 'ict') {
-      const q = it.q; h += `<div class="qt" dir="ltr">${q.t === 'odd' ? 'Cross out the odd word:' : esc(q.q)}</div>`;
+    if (ENL(it)) {
+      const q = it.q; if (it.s === 'eng' && q.p && window.EPAS && EPAS[q.p]) h += `<details class="psg" open dir="ltr"><summary>📖 Read</summary><p>${EPAS[q.p]}</p></details>`; h += `<div class="qt" dir="ltr">${q.t === 'odd' ? 'Cross out the odd word:' : esc(q.q)}</div>`;
       if (q.t === 'imatch' || q.t === 'match') h += `<div class="rlist" dir="ltr">${q.R.map((x, i) => `<div><b>${'abcde'[i]})</b> ${esc(x)}</div>`).join('')}</div>`;
     } else if (it.s === 'sci') {
       const r = it.row; h += `<div class="qt" dir="ltr">${esc(r[3])}</div>`;
@@ -402,7 +418,8 @@
       if (q.t === 'col') h += `<div class="colv" dir="ltr"><div>${fmt(q.x)}</div><div>${q.op === '+' ? '+' : '−'} ${fmt(q.y)}</div></div>`;
       if (q.t === 'bar') { const whole = q.total == null; h += `<div class="barm" dir="ltr"><div class="btot">${whole ? 'X = ?' : fmt(q.total)}</div><div class="bbar"><div class="bp">${fmt(q.part)}</div><div class="bx">${whole ? fmt(q.other) : 'X'}</div></div></div>`; }
     }
-    return `<div class="qtag" style="--c:${l.col}">${l.emoji} ${l.sub}<button class="say" data-a="say">🔊</button></div>` + h;
+    const noTTS = it.q && (it.q.quran || /﴿/.test(it.q.q || ''));   /* مفيش قراءة آلية للقرآن */
+    return `<div class="qtag" style="--c:${l.col}">${l.emoji} ${l.sub}${noTTS ? '' : '<button class="say" data-a="say">🔊</button>'}</div>` + h;
   }
   function qBody(c) {
     const it = c.it, q = it.q, dir = c.dir;
@@ -437,8 +454,8 @@
         const useAr = (G.arHelp && ar.length) || !en.length;
         h += `<div class="steps"><div class="sh"><b>${useAr ? '👣 الخطوات (الوصفة)' : '👣 Steps (the recipe)'}</b>${en.length && ar.length ? `<button class="langb" data-a="arhelp">${useAr ? 'English' : 'ع  اشرحي بالعربي'}</button>` : ''}</div><ol dir="${useAr ? 'rtl' : 'ltr'}">${(useAr ? ar : en).map(s => `<li>${s}</li>`).join('')}</ol></div>`;
       }
-    } else if (it.s === 'ict') {
-      const les = it.set && it.set.lesson && window.ICTL ? window.ICTL[it.set.unit - 1].lessons[it.set.lesson - 1] : null;
+    } else if (ENL(it)) {
+      const les = it.s === 'ict' && it.set && it.set.lesson && window.ICTL ? window.ICTL[it.set.unit - 1].lessons[it.set.lesson - 1] : null;
       const ex = q.t === 'tf' && !q.a && q.fix ? `✍️ <b>Correct it:</b> ${esc(q.fix)}` : (q.why ? '💡 ' + esc(q.why) : '');
       if (ex || les) h += `<div class="steps" dir="ltr">${ex ? `<p>${ex}</p>` : ''}${les ? `<p>📚 Lesson ${les.n}: ${esc(les.en)} <span dir="rtl">(${les.ar})</span></p>` : ''}</div>`;
     } else if (it.s === 'sci') {
@@ -462,7 +479,7 @@
     }
     if (CUR.phase === 'write') {
       return top + `<div class="qcard golden"><div class="gtitle">✍️ اكتبي على الورقة</div>${qHead(it)}
-        <ol class="note"><li>اكتبي رقم السؤال والإجابة كاملة على ورقة أو في الكشكول.</li><li>${it.s === 'ict' ? (it.q.t === 'tf' ? 'Write (✓) or (✗). If it is wrong, write the correct sentence.' : 'Write a full answer in English.') : it.s === 'math' ? 'Write the steps (the recipe) and the final answer.' : it.s === 'sci' ? 'Write a full sentence: “Because …” / “It … because …”.' : 'في «بم تفسر» ابدئي بـ«لأن»، وفي «دلل» هاتي مثال.'}</li><li>لما تخلصي، نادي ماما واضغطي «خلّصت».</li></ol>
+        <ol class="note"><li>اكتبي رقم السؤال والإجابة كاملة على ورقة أو في الكشكول.</li><li>${ENL(it) ? (it.q.t === 'tf' ? 'Write (✓) or (✗). If it is wrong, write the correct sentence.' : 'Write a full answer in English.') : it.s === 'math' ? 'Write the steps (the recipe) and the final answer.' : it.s === 'sci' ? 'Write a full sentence: “Because …” / “It … because …”.' : 'في «بم تفسر» ابدئي بـ«لأن»، وفي «دلل» هاتي مثال.'}</li><li>لما تخلصي، نادي ماما واضغطي «خلّصت».</li></ol>
         <button class="btn gold wide" data-a="wrote">✅ خلّصت — ماما تصحح</button><button class="btn ghost wide" data-a="nopaper">🎮 أرجع ألعبها عادي</button></div>`;
     }
     return top + `<div class="qcard">${qHead(it)}${CUR.phase === 'q' ? qBody(CUR) : feedback(CUR)}</div>`;
@@ -522,7 +539,7 @@
   function referee() {
     const it = CUR.it, keys = paperKeys(it);
     CUR.ticks = new Set();
-    const model = it.s === 'ict' ? (it.q.t === 'self' ? esc(it.q.model) : it.q.a ? '✔ True' : '✘ False — ' + esc(it.q.fix || '')) : it.s === 'sci' ? esc(it.row[4][0]) : ARL(it) ? it.q.model : (answerText(it) + ((it.q.e || genSteps(it.q)).length ? '<ol dir="ltr">' + (it.q.e || genSteps(it.q)).map(s => `<li>${s}</li>`).join('') + '</ol>' : ''));
+    const model = ENL(it) ? (it.q.t === 'self' ? esc(it.q.model) : it.q.a ? '✔ True' : '✘ False — ' + esc(it.q.fix || '')) : it.s === 'sci' ? esc(it.row[4][0]) : ARL(it) ? it.q.model : (answerText(it) + ((it.q.e || genSteps(it.q)).length ? '<ol dir="ltr">' + (it.q.e || genSteps(it.q)).map(s => `<li>${s}</li>`).join('') + '</ol>' : ''));
     sheet(`<h2>👩‍⚖️ تصحيح الورقة الذهبية</h2><p class="note">ماما: قارني ورقة أمينة بالنموذج، وعلّمي على كل حاجة موجودة في إجابتها.</p>
       <div class="model" dir="${it.lang === 'ar' ? 'rtl' : 'ltr'}"><b>📖 ${it.lang === 'ar' ? 'الإجابة النموذجية' : 'Model answer'}:</b><br>${model}</div>
       <p><b>✔ علّمي على اللي اتكتب صح:</b></p><div class="ticks" dir="auto">${keys.map((k, i) => `<button class="tick" data-a="tick" data-i="${i}">☐ ${esc(k)}</button>`).join('')}</div>
@@ -671,7 +688,7 @@
     const tab = VA || 'all', list = wordsOf(tab === 'all' ? null : tab);
     const planted = list.filter(w => G.wb[w.id]), due = planted.filter(w => G.wb[w.id].due <= today());
     const bloom = planted.filter(w => G.wb[w.id].b >= 4).length;
-    const tabs = [['all', 'الكل'], ['ar', '📖 العربي'], ['sci', '🔬 العلوم'], ['ict', '💻 ICT']].map(([k, n]) => `<button class="${tab === k ? 'on' : ''}" data-go="garden" data-arg="${k}">${n}</button>`).join('');
+    const tabs = [['all', 'الكل'], ['ar', '📖 عربي'], ['eng', '🇬🇧 English'], ['sci', '🔬 Science'], ['ict', '💻 ICT']].map(([k, n]) => `<button class="${tab === k ? 'on' : ''}" data-go="garden" data-arg="${k}">${n}</button>`).join('');
     return `<h2>🌱 حديقة الكلمات</h2>
       ${mish('كل يوم <b>5 كلمات جديدة بس</b> 🌱. الكلمة بتكبر لما تفتكريها، ولو نسيتيها <b>تعطش</b> 🥀 وترجعلك تسقيها. مفيش حفظ، كله لعب!')}
       <div class="wtabs">${tabs}</div>
@@ -707,7 +724,7 @@
     const room = Math.min(newLeft(), SESSION_MAX - list.length);
     if (room > 0) {
       let fresh = wordsOf(subj).filter(w => !G.wb[w.id]).sort((a, b) => a.n - b.n);
-      if (!subj) { const qs = ['ar', 'sci', 'ict'].map(k => fresh.filter(w => w.s === k)); fresh = []; while (qs.some(q => q.length)) qs.forEach(q => { if (q.length) fresh.push(q.shift()); }); }
+      if (!subj) { const qs = ['ar', 'eng', 'sci', 'ict'].map(k => fresh.filter(w => w.s === k)); fresh = []; while (qs.some(q => q.length)) qs.forEach(q => { if (q.length) fresh.push(q.shift()); }); }
       list = fresh.slice(0, room).map(w => ({ w, isNew: true })).concat(list);
     }
     if (!list.length) { toast('مفيش كلمات عطشانة النهارده 🌻 تعالي بكرة!'); return; }
@@ -726,7 +743,8 @@
     const isA = w.s === 'ar', R = isA ? REL[w.rel] : null;
     const big = `<div class="wbig ${isA ? 'arw' : ''}" dir="${isA ? 'rtl' : 'ltr'}">${esc(w.en)} <button class="say" data-a="wsay">🔊</button></div>`;
     const ans = isA ? `<div class="war"><small>${R.f}:</small> ${esc(w.ar)}</div>` : `<div class="war">${esc(w.ar)}</div>`;
-    const tag = `<div class="qtag" style="--c:${isA ? '#c98a12' : w.s === 'sci' ? '#2fa36b' : '#5b6cff'}">${isA ? '📖 العربي' : w.s === 'sci' ? '🔬 Science' : '💻 ICT'} · ${esc(w.g)}</div>`;
+    const SB = { ar: ['📖 العربي', '#c98a12'], eng: ['🇬🇧 English', '#d1495b'], sci: ['🔬 Science', '#2fa36b'], ict: ['💻 ICT', '#5b6cff'] }[w.s];
+    const tag = `<div class="qtag" style="--c:${SB[1]}">${SB[0]} · ${esc(w.g)}</div>`;
     if (WS.phase === 'intro') {
       return h + `<div class="qcard">${tag}<div class="gtitle">🌰 كلمة جديدة!</div>${big}${ans}${w.def ? `<p class="wdef" dir="ltr">💡 ${esc(w.def)}</p>` : ''}
         <div class="steps"><b>🎨 حيلة تثبيت:</b> ${isA ? R.tip : 'قوليها بصوتك 3 مرات، وارسمي لها رسمة صغيرة في الكشكول جنب معناها.'}</div>
@@ -775,12 +793,12 @@
     const bp = SW.sentences.filter(x => inSub(x) && x.wc >= 4 && x.wc <= 35), fp = SW.sentences.filter(x => inSub(x) && x.type);
     const d = dailyToday(), sb = bp.length, bf = bp.filter(x => G.fz.build[x.id]).length;
     const fr = fp.length, ff = fp.filter(x => G.fz.frame[x.id]).length;
-    const tabs = [['all', 'الكل'], ['ar', '📖 العربي'], ['soc', '🧭 الدراسات']].map(([k, n]) => `<button class="${sub === k ? 'on' : ''}" data-go="factory" data-arg="${k}">${n}</button>`).join('');
+    const tabs = [['all', 'الكل'], ['ar', '📖 العربي'], ['rel', '🕌 الدين'], ['soc', '🧭 الدراسات']].map(([k, n]) => `<button class="${sub === k ? 'on' : ''}" data-go="factory" data-arg="${k}">${n}</button>`).join('');
     return `<h2>🧩 مصنع الجمل</h2>
       ${mish('الإجابة بالفصحى زي الكيكة 🎂: ليها مكونات بترتيب. هنا بنتمرن نبني الجملة <b>من غير ما نكتب</b>، ولما تتعودي هتكتبيها لوحدك على الورقة الذهبية ✍️')}
       <p class="note">النهارده: ${Math.min(d.s, 3)}/3 جمل ${d.s >= 3 ? '✅' : ''}</p>
       <div class="wtabs">${tabs}</div>
-      <button class="bigland" data-a="fstart" data-m="build" data-s="${sub}" style="--c:#e07a5f"><span class="le">🧩</span><span class="lt"><b>ركّبي الجملة</b><small>رتّبي حتت الإجابة النموذجية لأسئلة العربي والدراسات</small><span class="bar"><i style="width:${bf / sb * 100}%"></i></span><small>${bf} من ${sb}</small></span></button>
+      <button class="bigland" data-a="fstart" data-m="build" data-s="${sub}" style="--c:#e07a5f"><span class="le">🧩</span><span class="lt"><b>ركّبي الجملة</b><small>رتّبي حتت الإجابة النموذجية لأسئلة العربي والدين والدراسات</small><span class="bar"><i style="width:${bf / sb * 100}%"></i></span><small>${bf} من ${sb}</small></span></button>
       <button class="bigland" data-a="fstart" data-m="frame" data-s="${sub}" style="--c:#3d85c6"><span class="le">🪜</span><span class="lt"><b>أول الإجابة</b><small>«بم تفسر» نبدأها بإيه؟ و«دلل»؟ و«ماذا يحدث»؟</small><span class="bar"><i style="width:${ff / fr * 100}%"></i></span><small>${ff} من ${fr}</small></span></button>
       <button class="bigland" data-a="fstart" data-m="fusha" style="--c:#2a9d8f"><span class="le">🔄</span><span class="lt"><b>من العامية للفصحى</b><small>اختاري الجملة اللي كلها فصحى</small><span class="bar"><i style="width:${Object.keys(G.fz.fusha).length / SW.fusha.length * 100}%"></i></span><small>${Object.keys(G.fz.fusha).length} من ${SW.fusha.length}</small></span></button>
       <div class="card"><h3>🪜 قوالب الإجابة</h3>${Object.values(SW.FRAMES).map(f => `<p class="note">${f.tip}</p>`).join('')}</div>`;
@@ -812,12 +830,12 @@
     const it = FS.list[FS.k], x = it.x, n = FS.list.length;
     let h = `<div class="top"><button class="hb" data-a="fquit">✕</button><div class="prog"><i style="width:${FS.k / n * 100}%"></i></div><b>${FS.k + 1}/${n}</b></div><div class="qcard">`;
     if (FS.mode === 'build') {
-      h += `<div class="qtag" style="--c:#e07a5f">🧩 ركّبي الجملة · ${x.sub === 'ar' ? '📖 عربي' : '🧭 دراسات'}</div>${psg(x)}<div class="qt">${esc(x.q)}</div>`;
+      h += `<div class="qtag" style="--c:#e07a5f">🧩 ركّبي الجملة · ${({ ar: '📖 عربي', rel: '🕌 دين', soc: '🧭 دراسات' })[x.sub]}</div>${psg(x)}<div class="qt">${esc(x.q)}</div>`;
       if (FS.phase === 'q') h += `<p class="note">رتّبي الحتت علشان تعملي الإجابة بالفصحى:</p><div class="sline">${FS.seq.map(i => `<span>${esc(it.ch[i])}</span>`).join(' ') || '<em>اضغطي على الحتت بالترتيب…</em>'}</div><div class="chips">${it.order.map(i => `<button class="chip" data-a="fch" data-i="${i}" ${FS.seq.includes(i) ? 'disabled' : ''}>${esc(it.ch[i])}</button>`).join('')}</div><div class="row"><button class="btn ghost sm" data-a="fback">⌫ رجّعي حتة</button><button class="btn" data-a="fcheck">تمّ ✔</button></div>${FS.tries ? `<div class="fb no"><b>قربتي! الحتت الخضرا في مكانها الصح 💪</b><div class="sline">${FS.lastSeq.map((v, k) => `<span class="${v === k ? 'g' : 'r'}">${esc(it.ch[v])}</span>`).join(' ')}</div></div>` : ''}`;
     }
     if (FS.mode === 'frame') {
       const F = SW.FRAMES;
-      h += `<div class="qtag" style="--c:#3d85c6">🪜 أول الإجابة · ${x.sub === 'ar' ? '📖 عربي' : '🧭 دراسات'}</div>${psg(x)}<div class="qt">${esc(x.q)}</div>`;
+      h += `<div class="qtag" style="--c:#3d85c6">🪜 أول الإجابة · ${({ ar: '📖 عربي', rel: '🕌 دين', soc: '🧭 دراسات' })[x.sub]}</div>${psg(x)}<div class="qt">${esc(x.q)}</div>`;
       if (FS.phase === 'q') h += `<p class="note">الإجابة دي نبدأها بإيه؟</p><div class="opts">${it.o.map(k => `<button class="opt" data-a="fpick" data-k="${k}">${esc(F[k].o)}</button>`).join('')}</div>`;
     }
     if (FS.mode === 'fusha') {

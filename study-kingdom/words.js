@@ -35,7 +35,11 @@
     def: { o: 'هو / هي …', tip: 'في «ما المقصود» بنبدأ بـ<b>هو</b> أو <b>هي</b> وبعدين التعريف.' },
     cmp: { o: '… بينما …', tip: 'في «قارن» بنكتب الحاجتين ونربطهم بـ<b>بينما</b>.' },
     rel: { o: 'العلاقة بينهما أن …', tip: 'في «ما العلاقة» بنكتب: «<b>العلاقة بينهما أن</b> …».' }
-  };
+  };  (window.ENGL || []).forEach(u => u.lessons.forEach(l => (l.words || []).forEach(([en, ar], i) => {
+    const id = 'w:eng:' + en.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    if (!words.some(w => w.id === id)) words.push({ id, s: 'eng', en, ar, def: '', g: `Unit ${u.n} · ${l.emoji || ''} ${l.en}`, n: u.n * 100 + l.n * 10 + i });
+  })));
+
   /* كلمات العربي: en = الكلمة، ar = الإجابة، rel = نوع العلاقة */
   const arAll = [];
   Object.values(window.AQ || {}).forEach(ws => ws.forEach(w => Object.values(w.models).forEach(qs => qs.forEach(q => arAll.push([q, w])))));
@@ -73,6 +77,8 @@
   (window.SMONTH || []).forEach(mo => { let sec = ''; mo.qs.forEach((q, i) => { if (q.sec) sec = q.sec; pushQ(q, `${mo.id}:${i}`, sec); }); });
   Object.keys(window.AQ || {}).forEach(u => (window.AQ[u] || []).forEach(w => Object.keys(w.models).forEach(m => w.models[m].forEach((q, i) => pushQ(q, `ar:${w.id}:${m}:${i}`, '', 'ar')))));
   (window.AMONTH || []).forEach(mo => mo.qs.forEach((q, i) => pushQ(q, `ar:${mo.id}:${i}`, '', 'ar')));
+  Object.keys(window.RQ || {}).forEach(u => (window.RQ[u] || []).forEach(w => Object.keys(w.models).forEach(m => w.models[m].forEach((q, i) => pushQ(q, `rel:${w.id}:${m}:${i}`, '', 'rel')))));
+  (window.RMONTH || []).forEach(mo => mo.qs.forEach((q, i) => pushQ(q, `rel:${mo.id}:${i}`, '', 'rel')));
   /* أسهل الأول: الجمل القصيرة */
   sentences.sort((a, b) => a.wc - b.wc);
 
