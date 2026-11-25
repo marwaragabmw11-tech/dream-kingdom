@@ -105,6 +105,22 @@ select.cb{appearance:none;text-align:center}
 .lab{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0}
 .lab input[type=range]{flex:1 1 220px;accent-color:var(--coral);height:32px}
 .tbl{border-collapse:collapse;margin-top:8px;font-weight:600}.tbl td,.tbl th{border:2px solid var(--line);padding:6px 12px;text-align:center}
+.welcome{position:fixed;inset:0;z-index:50;background:rgba(10,30,50,.55);display:grid;place-items:center;padding:80px 14px 14px;overflow:auto}
+.welcome[hidden]{display:none}
+.wcard{background:var(--card);color:var(--ink);border-radius:26px;max-width:560px;width:100%;padding:18px clamp(16px,4vw,28px) 22px;box-shadow:0 20px 50px -10px rgba(0,0,0,.5);text-align:center}
+.wcard svg.wd{width:120px;height:126px;display:block;margin:-80px auto 0;filter:drop-shadow(0 8px 10px rgba(0,0,0,.25))}
+.wcard h2{margin:4px 0 8px;font:800 26px/1.2 "Baloo Bhaijaan 2","Baloo 2",sans-serif;color:var(--nile)}
+.wcard ul{list-style:none;margin:0;padding:0;text-align:start;display:grid;gap:8px}
+.wcard li{background:color-mix(in srgb,var(--nile) 8%,transparent);border-radius:14px;padding:8px 12px;font:600 17px/1.5 "Baloo Bhaijaan 2","Baloo 2",sans-serif}
+.wcard li b{color:var(--coral)}
+.wcard .row{justify-content:center}
+.wd .hand{animation:wavehand .6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0% 100%}
+@keyframes wavehand{from{transform:rotate(-20deg)}to{transform:rotate(25deg)}}
+.cap{display:flex;gap:12px;align-items:center}
+.cap .txt{flex:1}
+.capdewy{width:54px;height:72px;flex:none}
+.playing .capdewy{animation:bob .5s ease-in-out infinite}
+.dewyBtn{border:0;background:#fff;color:var(--nile);border-radius:99px;padding:4px 12px;font:800 15px "Baloo Bhaijaan 2","Baloo 2",sans-serif;cursor:pointer;min-height:36px}
 footer{max-width:1000px;margin:0 auto;padding:0 max(3vw,10px) 30px;color:var(--muted);font-size:14px}
 /* stage motion */
 [data-r]{opacity:0;transition:opacity .8s}
@@ -205,15 +221,31 @@ footer{max-width:1000px;margin:0 auto;padding:0 max(3vw,10px) 30px;color:var(--m
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="artdefs"></defs></svg>
+<div class="welcome" id="welcome" role="dialog" aria-modal="true" aria-labelledby="wTitle" hidden>
+  <div class="wcard" dir="rtl">
+    <svg class="wd" viewBox="-14 -10 88 92" aria-hidden="true"><use href="#dewy" x="0" y="0" width="60" height="80"/><g class="hand"><path d="M54 52q10-4 14-16" stroke="#1d78bd" stroke-width="5" stroke-linecap="round" fill="none"/><circle cx="68" cy="34" r="5" fill="#5cc0f2" stroke="#1d78bd" stroke-width="2"/></g></svg>
+    <h2 id="wTitle">أهلاً يا أمينة! أنا ديوي 💧</h2>
+    <p style="margin:0 0 10px;font:600 17px 'Baloo Bhaijaan 2',sans-serif">نقطة مية صغيرة، وهكون معاكي في رحلة كتاب العلوم كله!</p>
+    <ul>
+      <li>🎬 <b>ابدئي:</b> اختاري فصل من الدواير الملونة، وبعدين درس، ودوسي ▶. أنا هحكيلك والرسومات هتتحرك قدامك.</li>
+      <li>🔊 <b>مش فاهمة جملة؟</b> دوسي «عربي» وتطلعلك الترجمة. وزرار «Voice» يخليني أتكلم عربي.</li>
+      <li>🕹️ <b>العبي:</b> في كل درس تجربة بإيدك: لفّي المراية، حرّكي الشمس، اضربي الطبلة، وسابقي العربيات!</li>
+      <li>⭐ <b>اجمعي النجوم:</b> كل إجابة صح من أول مرة بنجمة. هتوصلي للـ 267؟</li>
+      <li>✏️ <b>تحدي الكراسة:</b> اكتبي الإجابة بإيدك، وقارنيها بالنموذجية، وخدي نجومك… والنجوم دي على الأمانة 😉</li>
+    </ul>
+    <div class="row"><button class="btn" type="button" id="wGo">يلا نبدأ! 🦋</button><button class="btn ghostb" type="button" id="wSay">🔊 اسمعي الرسالة</button></div>
+  </div>
+</div>
 <header>
   <h1 id="htitle">Science · Primary 4 · Term 1<small id="hsub">Animated lessons</small></h1>
+  <button class="dewyBtn" type="button" id="openW">💧 رسالة ديوي</button>
   <div class="starbox" aria-live="polite"><b>★</b> <span id="stars">0</span></div>
 </header>
 <main>
   <nav class="chaps" id="chaps" aria-label="Chapters"></nav>
   <nav class="lessons" id="lessons" aria-label="Lessons"></nav>
   <div class="stage" id="stage"><div id="scene"></div><button id="startBtn" type="button">Start the lesson ▶</button></div>
-  <div class="cap" aria-live="polite"><p class="en" id="capEn">Press start, turn the sound on, and watch!</p><p class="ar" dir="rtl" id="capAr">اضغطي ابدئي، شغّلي الصوت، واتفرجي!</p></div>
+  <div class="cap" aria-live="polite"><svg class="capdewy" viewBox="0 0 60 80" aria-hidden="true"><use href="#dewy" width="60" height="80"/></svg><div class="txt"><p class="en" id="capEn">Press start, turn the sound on, and watch!</p><p class="ar" dir="rtl" id="capAr">اضغطي ابدئي، شغّلي الصوت، واتفرجي!</p></div></div>
   <div class="controls">
     <button class="cb" id="prev" type="button" aria-label="Previous scene">◀</button>
     <button class="cb play" id="play" type="button" aria-label="Play or pause">▶</button>
@@ -309,7 +341,7 @@ if(!synth){wd=setTimeout(f,900+text.length*70/sp);return}
 try{synth.cancel();utt=new SpeechSynthesisUtterance(text);const v=voiceFor(lang);if(v)utt.voice=v;utt.lang=lang==='ar'?'ar-EG':'en-US';utt.rate=sp;utt.onend=f;utt.onerror=f;synth.speak(utt);wd=setTimeout(f,2500+text.length*120/sp)}catch(e){wd=setTimeout(f,900+text.length*70/sp)}}
 function setStep(n){step=n;const sc=$('#scene');sc.querySelectorAll('[data-r]').forEach(e=>e.classList.toggle('shown',+e.dataset.r<=n));sc.querySelectorAll('[data-a]').forEach(e=>e.classList.toggle('act',+e.dataset.a<=n))}
 function cap(l){$('#capEn').textContent=l[0];$('#capAr').textContent=l[1]}
-function updPlay(){$('#play').textContent=playing?'❚❚':'▶'}
+function updPlay(){$('#play').textContent=playing?'❚❚':'▶';document.body.classList.toggle('playing',playing)}
 function stop(){run++;playing=false;clearTimeout(wd);try{synth&&synth.cancel()}catch(e){}updPlay()}
 function play(){const L=les.scenes[cur].L,my=++run;playing=true;updPlay();$('#next').classList.remove('nudge');let k=0;
 const nx=()=>{if(my!==run)return;if(k>=L.length){playing=false;updPlay();if(cur<les.scenes.length-1&&!les.scenes[cur].act)$('#next').classList.add('nudge');return}
@@ -344,6 +376,12 @@ $('#voice').onclick=()=>{S.voice=S.voice==='ar'?'en':'ar';if(S.voice==='ar'){S.a
 document.addEventListener('keydown',e=>{if(/input|select|textarea/i.test(e.target.tagName))return;
 if(e.key==='ArrowRight')go(cur+1);else if(e.key==='ArrowLeft')go(cur-1);else if(e.key===' '&&e.target.tagName!=='BUTTON'){e.preventDefault();$('#play').click()}else if(e.key==='c'||e.key==='C')$('#cc').click();else if(e.key==='a'||e.key==='A')$('#arb').click()});
 window.addEventListener('hashchange',()=>{const m=location.hash.match(/^#lesson-(.+)$/);if(m&&m[1]!==les.id)openLesson(m[1],true)});
+
+const W=$('#welcome');const showW=()=>{W.hidden=false;setTimeout(()=>$('#wGo').focus(),50)};const hideW=()=>{W.hidden=true;try{synth&&synth.cancel()}catch(e){}};
+$('#openW').onclick=showW;$('#wGo').onclick=()=>{hideW();S.welcomed=1;save();if(!started)begin()};
+W.addEventListener('click',e=>{if(e.target===W)hideW()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!W.hidden)hideW()});
+$('#wSay').onclick=()=>{const t=[...W.querySelectorAll('h2,p,li')].map(x=>x.textContent.replace(/[\u{1F300}-\u{1FAFF}☀-➿]/gu,'')).join('. ');stop();say(t,'ar',()=>{})};
+if(!S.welcomed)showW();
 applyUI();
 const hm=location.hash.match(/^#lesson-(.+)$/);if(hm&&LS.find(x=>x.id===hm[1])){les=LS.find(x=>x.id===hm[1]);S.lesson=les.id}
 cur=Math.min(+S.pos[les.id]||0,les.scenes.length-1);renderLessons();render();setStep(les.scenes[cur].L.length);
