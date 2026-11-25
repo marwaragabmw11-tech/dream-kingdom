@@ -5,6 +5,7 @@
      الدراسات:  ../social/s1–s3.js + sm1–sm3.js
      العلوم:    ../science/bank.js  (C, Q, MN, SV…)
      الـICT:    ../ict/q1.js + q2.js (+ lessons.js لأسماء الدروس)
+     العربي:    ../arabic/a1–a3.js + a_rev.js (+ alearn.js لأسماء الوحدات)
    وبتحوّلها لشكل واحد تفهمه اللعبة: window.SK = { lands, items }
    ===================================================================== */
 (function () {
@@ -79,14 +80,32 @@
     ictBoss.push(bossOf('نماذج الوحدة التانية', 'Revision on Unit 2 · 5 model exams', ['model'], 2));
   }
 
+  /* ---------------- اللغة العربية ---------------- */
+  const arStages = [], arBoss = [];
+  const AUN = window.AUNITS || [], AEMO = { u1: '🌟', u2: '💛', u3: '🌳' };
+  const arItem = (id, q, stage) => add({ id, s: 'ar', stage, q, lang: 'ar', paper: q.t === 'self' });
+  AUN.forEach(u => ((window.AQ || {})[u.id] || []).forEach(w => {
+    const ids = [];
+    Object.keys(w.models).forEach(m => w.models[m].forEach((q, i) => ids.push(arItem(`a:${w.id}:${m}:${i}`, q, w.id))));
+    arStages.push({ id: 'a-' + w.id, title: w.title, sub: `الأسبوع ${arStages.length + 1} · ص ${w.page}`, emoji: AEMO[u.id] || u.emoji || '📖', ids });
+  }));
+  (window.AMONTH || []).forEach(mo => {
+    arBoss.push({ id: 'ab-' + mo.id, title: mo.title, sub: mo.sub || '', ids: mo.qs.map((q, i) => arItem(`a:${mo.id}:${i}`, q, mo.id)) });
+  });
+  const arKeyPool = {};
+  Object.values(items).filter(it => it.s === 'ar' && it.q.t === 'self').forEach(it => {
+    const u = it.stage; (arKeyPool[u] = arKeyPool[u] || []).push(...(it.q.keys || []));
+  });
+
   /* ---------------- الأراضي ---------------- */
   const lands = [
     { id: 'math', name: 'وادي المطبخ', sub: 'الرياضيات', emoji: '🧁', col: '#ff7a59', bg: '#fff0e8', stages: mathStages, boss: mathBoss, bossName: 'الشيف العملاق', bossEmoji: '🧑‍🍳' },
     { id: 'sci', name: 'غابة الحيوانات', sub: 'العلوم', emoji: '🌿', col: '#2fa36b', bg: '#e6f7ee', stages: sciStages, boss: sciBoss, bossName: 'التنين النعسان', bossEmoji: '🐉' },
     { id: 'soc', name: 'جزيرة المستكشف', sub: 'الدراسات الاجتماعية', emoji: '🧭', col: '#3b7fc4', bg: '#e6effa', stages: socStages, boss: socBoss, bossName: 'حارس الخريطة', bossEmoji: '🗿' },
-    { id: 'ict', name: 'مدينة الروبوتات', sub: 'الـICT', emoji: '🤖', col: '#5b6cff', bg: '#eceeff', stages: ictStages, boss: ictBoss, bossName: 'الروبوت المتمرّد', bossEmoji: '👾' }
+    { id: 'ict', name: 'مدينة الروبوتات', sub: 'الـICT', emoji: '🤖', col: '#5b6cff', bg: '#eceeff', stages: ictStages, boss: ictBoss, bossName: 'الروبوت المتمرّد', bossEmoji: '👾' },
+    { id: 'ar', name: 'واحة الحكايات', sub: 'اللغة العربية', emoji: '🌴', col: '#c98a12', bg: '#fff5dc', stages: arStages, boss: arBoss, bossName: 'أسد الواحة', bossEmoji: '🦁' }
   ].filter(l => l.stages.length);
   lands.forEach(l => { l.all = [].concat(...l.stages.map(s => s.ids), ...l.boss.map(b => b.ids)); });
 
-  window.SK = { lands, items, socKeyPool, landOf: id => lands.find(l => l.id === items[id].s) };
+  window.SK = { lands, items, socKeyPool, arKeyPool, landOf: id => lands.find(l => l.id === items[id].s) };
 })();

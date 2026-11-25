@@ -1,7 +1,8 @@
 /* =====================================================================
    مملكة أمينة — بيانات «حديقة الكلمات» و«مصنع الجمل»
    - الكلمات: من قاموس العلوم (D في ../science/bank.js) وكلمات دروس الـICT (../ict/lessons.js)
-   - الجمل: الإجابات النموذجية لأسئلة الدراسات المفتوحة (../social/*.js)
+   - كلمات العربي: معاني ومضاد وجمع من دروس ../arabic/alearn.js + أسئلة المعنى/المضاد/الجمع في ../arabic/a*.js
+   - الجمل: الإجابات النموذجية لأسئلة الدراسات والعربي المفتوحة (../social/*.js و ../arabic/*.js)
    - «من العامية للفصحى»: جمل مكتوبة هنا (عامية ← فصحى + بديلين فيهم غلط)
    ===================================================================== */
 (function () {
@@ -35,18 +36,43 @@
     cmp: { o: '… بينما …', tip: 'في «قارن» بنكتب الحاجتين ونربطهم بـ<b>بينما</b>.' },
     rel: { o: 'العلاقة بينهما أن …', tip: 'في «ما العلاقة» بنكتب: «<b>العلاقة بينهما أن</b> …».' }
   };
+  /* كلمات العربي: en = الكلمة، ar = الإجابة، rel = نوع العلاقة */
+  const arAll = [];
+  Object.values(window.AQ || {}).forEach(ws => ws.forEach(w => Object.values(w.models).forEach(qs => qs.forEach(q => arAll.push([q, w])))));
+  (window.AMONTH || []).forEach(mo => mo.qs.forEach(q => arAll.push([q, null])));
+  const arSeen = new Set();
+  const clean = t => String(t || '').replace(/<[^>]+>/g, '').replace(/[«»"]/g, '').trim();
+  const addAr = (rel, w, a, g, n, bo) => {
+    w = clean(w); a = clean(a); if (!w || !a || w === a) return;
+    if (rel === 'sing') { rel = 'pl'; [w, a] = [a, w]; bo = null; }
+    const id = 'w:ar:' + rel + ':' + w; if (arSeen.has(id)) return; arSeen.add(id);
+    words.push({ id, s: 'ar', lang: 'ar', rel, en: w, ar: a, def: '', g, n, bo: bo || null });
+  };
+  let an = 0;
+  (window.AUNITS || []).forEach(u => u.lessons.forEach(l => {
+    const g = `${u.emoji || '📖'} ${l.t.replace(/\s*\(.*?\)\s*$/, '')}`;
+    (l.words || []).forEach(([w, a]) => addAr('mean', w, a, g, an++));
+    (l.opp || []).forEach(([w, a]) => addAr('opp', w, a, g, an++));
+    (l.pl || []).forEach(([w, a]) => addAr('pl', w, a, g, an++));
+  }));
+  const VRE = /^(معنى|مرادف|مضاد|جمع|مفرد)\s*(كلمة)?\s*«([^»]+)»/, VREL = { 'معنى': 'mean', 'مرادف': 'mean', 'مضاد': 'opp', 'جمع': 'pl', 'مفرد': 'sing' };
+  arAll.forEach(([q, w]) => { if (q.t !== 'mcq') return; const m = q.q.match(VRE); if (!m) return;
+    addAr(VREL[m[1]], m[3], q.o[q.a], w ? '📝 ' + w.title.split('·')[0].trim() : '📝 المراجعات', an++, q.o.map(clean)); });
+
   const sentences = [];
-  const pushQ = (q, src, sec) => {
-    if (!q || q.t !== 'self' || !q.model) return;
+  const pushQ = (q, src, sec, sub) => {
+    if (!q || q.t !== 'self' || !q.model || /^\(الخط\)/.test(q.q)) return;
     const t = (sec || '') + ' ' + q.q, ty = (TYPES.find(([r]) => r.test(t)) || [])[1] || null;
     const wc = q.model.split(/\s+/).length;
     const qq = (!/[؟?]/.test(q.q) && q.q.split(/\s+/).length <= 4) ? (ty === 'def' ? 'ما المقصود بـ«' + q.q.replace(/[.:]$/, '') + '»؟' : q.q) : q.q;
     const lead = { why: 'بم تفسر: ', prove: 'دلّل على أن: ' }[ty];
     const qf = (!/[؟?]/.test(qq) && lead && !/^(فسر|علل|بم|دلل|برهن)/.test(qq)) ? lead + qq : qq;
-    sentences.push({ id: 'f:' + src, q: qf, model: q.model.replace(/<[^>]+>/g, ''), keys: q.keys || [], type: ty, wc });
+    sentences.push({ id: 'f:' + src, q: qf, model: q.model.replace(/<[^>]+>/g, ''), keys: q.keys || [], type: ty, wc, sub: sub || 'soc', p: q.p || null });
   };
   Object.keys(window.SQ || {}).forEach(u => (window.SQ[u] || []).forEach(w => Object.keys(w.models).forEach(m => w.models[m].forEach((q, i) => pushQ(q, `${w.id}:${m}:${i}`)))));
   (window.SMONTH || []).forEach(mo => { let sec = ''; mo.qs.forEach((q, i) => { if (q.sec) sec = q.sec; pushQ(q, `${mo.id}:${i}`, sec); }); });
+  Object.keys(window.AQ || {}).forEach(u => (window.AQ[u] || []).forEach(w => Object.keys(w.models).forEach(m => w.models[m].forEach((q, i) => pushQ(q, `ar:${w.id}:${m}:${i}`, '', 'ar')))));
+  (window.AMONTH || []).forEach(mo => mo.qs.forEach((q, i) => pushQ(q, `ar:${mo.id}:${i}`, '', 'ar')));
   /* أسهل الأول: الجمل القصيرة */
   sentences.sort((a, b) => a.wc - b.wc);
 
