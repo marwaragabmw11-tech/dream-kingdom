@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>مطبخ أمينة للرياضيات</title>
+<title>Amina’s Math Kitchen · مطبخ أمينة للرياضيات</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap" rel="stylesheet">
@@ -19,7 +19,7 @@ body{background-image:radial-gradient(circle at 10% 0,#ffe2d4 0,transparent 40%)
 button{font:inherit;color:inherit;cursor:pointer}
 .hide{display:none!important}
 header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 14px calc(10px);background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:2px dashed var(--line)}
-header h1{font-size:20px;margin:0;flex:1;display:flex;align-items:center;gap:8px;cursor:pointer}
+header h1{font-size:18px;margin:0;flex:1;white-space:nowrap;min-width:0;display:flex;align-items:center;gap:8px;cursor:pointer}
 header h1 svg{width:40px;height:40px}
 .pill{background:var(--card);border-radius:99px;padding:4px 12px;box-shadow:var(--sh);font-weight:800;white-space:nowrap}
 .icon{background:var(--card);border:0;border-radius:14px;width:40px;height:40px;box-shadow:var(--sh);font-size:18px;flex:none}
@@ -269,36 +269,41 @@ header h1 .face{width:42px;height:42px;border-radius:50%;object-fit:cover;border
 .prog i{display:block;height:100%;background:linear-gradient(90deg,var(--sun),var(--brand));border-radius:9px}
 .flag{font-size:13px;color:var(--soft)}
 @media (max-width:420px){.opts{grid-template-columns:1fr}.tiles .tile b{font-size:34px}.heroimg{width:92px;height:92px}.units{grid-template-columns:1fr 1fr}}
+/* language help + print */
+.langb{border:2px solid var(--brand2);background:var(--card);color:var(--brand2);border-radius:99px;padding:2px 12px;font-weight:800;font-size:14px;font-family:'Baloo Bhaijaan 2','Baloo 2',sans-serif}
+.stop{display:flex;justify-content:flex-end;margin-bottom:2px}
+.icon.on{background:var(--brand2);color:#fff}
+.arbtn{display:inline-flex;gap:6px;align-items:center;margin-top:8px}
+[dir=rtl]{text-align:right}
+.printb{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.back{font-size:16px}
 </style>
 </head>
 <body>
 <header>
-  <h1 id="home-t"><span id="mhead"></span>مطبخ أمينة 🍳</h1>
+  <h1 id="home-t"><span id="mhead"></span>Amina’s Kitchen 🍳</h1>
   <span class="pill" id="starpill">⭐ 0</span>
-  <button class="icon" id="openW" title="رسالة مشمش">💌</button>
-  <button class="icon" id="theme" title="الوضع الليلي">🌙</button>
+  <button class="icon" id="arT" title="Explain in Arabic · الشرح بالعربي" style="font-family:'Baloo Bhaijaan 2',sans-serif;font-weight:800">ع</button>
+  <button class="icon" id="openW" title="Mishmish’s message">💌</button>
+  <button class="icon" id="theme" title="Dark mode">🌙</button>
 </header>
 <main id="app"></main>
 <nav class="tabs" id="tabs">
-  <button data-v="home"><b>🏠</b>البيت</button>
-  <button data-v="learn"><b>📚</b>أتعلّم</button>
-  <button data-v="times"><b>✖️</b>جدول الضرب</button>
-  <button data-v="quiz"><b>📝</b>الكويزات</button>
-  <button data-v="month"><b>🏆</b>الشهري</button>
+  <button data-v="home"><b>🏠</b>Home</button>
+  <button data-v="learn"><b>📚</b>Learn</button>
+  <button data-v="times"><b>✖️</b>Times</button>
+  <button data-v="quiz"><b>📝</b>Quizzes</button>
+  <button data-v="month"><b>🏆</b>Monthly</button>
 </nav>
 <div id="welcome" class="hide"><div class="wbox">
   <div id="wm"></div>
-  <h2>أهلاً يا أمينة! 👋</h2>
-  <p>أنا <b>الشيف مِشمِش</b> 🐱👩‍🍳، وده مطبخي اللي بنطبخ فيه الأرقام!</p>
-  <p>عرفت إن دماغك <b>سريعة جداً</b> وبتحلي في دماغك على طول… دي قوة خارقة بجد! 🦸‍♀️</p>
-  <p>بس تعرفي سر؟ <b>الخطوات زي الوصفة</b> 📝. الشيف الشاطرة بتكتب وصفتها علشان أي حد يقدر يعمل نفس الكيكة الحلوة، والمدرّسة لما تشوف الوصفة بتعرف إنك فاهمة مش بتخمّني. علشان كده كل إجابة هنا بعدها "وصفة" صغيرة.</p>
-  <p>والرياضة مستخبية في كل حاجة بتحبيها: 🍰 مقادير الطبخ، 🎨 الأشكال والمساحات في الرسم، 🎮 النقط في الألعاب، و🐶 حتى أكل الحيوانات بيتوزع بالقسمة!</p>
-  <p>هنا هتلاقي: 📚 شرح بكذا طريقة (حكاية، صورة، خطوات، حيلة)، ✖️ جدول الضرب بالطريقة اليابانية وحيل سريعة، 📝 كويزات زي اللي في المدرسة بالظبط، و🏆 امتحانات الشهر.</p>
-  <p>وكل إجابة صح = ⭐. ولو غلطتي؟ <b>عادي جداً</b> 🌸 الغلط هنا محدش بيشوفه غيرك، وهو اللي بيخلّي الدماغ تكبر.</p>
-  <button class="btn big" id="wGo">يلا نطبخ أرقام! 🍳</button>
+  <div id="wtext"></div>
+  <button class="langb" id="wLang"></button>
+  <button class="btn big" id="wGo">Let’s cook numbers! 🍳</button>
 </div></div>
 <script src="engine.js"></script>
 <script src="learn.js"></script>
+<script src="learn_en.js"></script>
 <script src="times.js"></script>
 <script src="q1.js"></script>
 <script src="q2.js"></script>
@@ -307,29 +312,14 @@ header h1 .face{width:42px;height:42px;border-radius:50%;object-fit:cover;border
 <script src="q5.js"></script>
 <script src="qm1.js"></script>
 <script src="qm2.js"></script>
+<script src="steps_en.js"></script>
+<script src="../shared/print.js"></script>
+<script src="mprint.js"></script>
 <script>
 (function(){
-const E = ENG, H = E.H, S = E.S, app = document.getElementById('app');
-/* ---- mascot: chef cat Mishmish (original) ---- */
-const mascot = (mood) => `<svg class="mascot" viewBox="0 0 200 200" aria-label="الشيف مشمش">
-<path class="tail" d="M150 150 C185 140 190 100 172 92" stroke="#f08a3c" stroke-width="13" fill="none" stroke-linecap="round"/>
-<ellipse cx="100" cy="158" rx="50" ry="34" fill="#ffffff" stroke="#e7d9c8" stroke-width="3"/>
-<path d="M78 140 h44 v34 h-44z" fill="#ff7a59" rx="6"/><circle cx="100" cy="152" r="4" fill="#fff"/>
-<circle cx="100" cy="100" r="52" fill="#f6a04d"/>
-<path d="M58 72 L52 30 L86 54Z M142 72 L148 30 L114 54Z" fill="#f6a04d"/><path d="M62 64 L60 42 L78 56Z M138 64 L140 42 L122 56Z" fill="#ffc9d6"/>
-<path d="M70 70 q10 -6 18 0 M112 70 q10 -6 18 0" stroke="#d9772a" stroke-width="5" fill="none" stroke-linecap="round"/>
-<g class="eye"><ellipse cx="80" cy="98" rx="8" ry="${mood === 'wink' ? 2 : 10}" fill="#2d2a32"/><circle cx="83" cy="94" r="3" fill="#fff"/></g>
-<g class="eye"><ellipse cx="120" cy="98" rx="8" ry="10" fill="#2d2a32"/><circle cx="123" cy="94" r="3" fill="#fff"/></g>
-<ellipse cx="72" cy="116" rx="9" ry="5" fill="#ff9fb4" opacity=".7"/><ellipse cx="128" cy="116" rx="9" ry="5" fill="#ff9fb4" opacity=".7"/>
-<path d="M95 110 h10 l-5 6z" fill="#e5577a"/>
-<path d="M100 116 q-8 12 -16 4 M100 116 q8 12 16 4" stroke="#2d2a32" stroke-width="3" fill="none" stroke-linecap="round"/>
-<path d="M60 110 h-22 M60 118 h-20 M140 110 h22 M140 118 h20" stroke="#2d2a32" stroke-width="2" stroke-linecap="round"/>
-<g><rect x="70" y="40" width="60" height="18" rx="5" fill="#fff" stroke="#e7d9c8" stroke-width="3"/>
-<circle cx="78" cy="30" r="15" fill="#fff" stroke="#e7d9c8" stroke-width="3"/><circle cx="100" cy="22" r="18" fill="#fff" stroke="#e7d9c8" stroke-width="3"/><circle cx="122" cy="30" r="15" fill="#fff" stroke="#e7d9c8" stroke-width="3"/>
-<rect x="66" y="38" width="68" height="10" fill="#fff"/><text x="100" y="54" font-size="12" text-anchor="middle" fill="#ff7a59" font-weight="800">π ✕ ÷</text></g>
-</svg>`;
-document.getElementById('mhead').innerHTML = '<img class="face" src="img/face.webp" alt="مشمش">';
-document.getElementById('wm').innerHTML = '<img class="wimg" src="img/cake.webp" alt="الشيف مشمش بيزيّن كيكة">';
+const E = ENG, H = E.H, S = E.S, L = E.L, app = document.getElementById('app');
+document.getElementById('mhead').innerHTML = '<img class="face" src="img/face.webp" alt="Mishmish">';
+document.getElementById('wm').innerHTML = '<img class="wimg" src="img/cake.webp" alt="Chef Mishmish decorating a cake">';
 
 /* ---- data indexes ---- */
 const WEEKS = [];
@@ -350,159 +340,216 @@ const setTheme = d => { document.documentElement.classList.toggle('dark', d); do
 setTheme(S.dark != null ? S.dark : matchMedia('(prefers-color-scheme: dark)').matches);
 th.onclick = () => setTheme(!S.dark);
 
+/* ---- Arabic help (explanations in Arabic on request) ---- */
+const arT = document.getElementById('arT');
+const paintAr = () => { arT.classList.toggle('on', E.isAr()); arT.title = E.isAr() ? 'Arabic help is ON · الشرح بالعربي شغّال' : 'Explain in Arabic · الشرح بالعربي'; };
+arT.onclick = () => { E.setAr(!E.isAr()); paintAr(); E.pop(); go(cur.v, cur.a, cur.b, true); toast(E.isAr() ? 'الشرح بقى بالعربي 🇪🇬 (الأسئلة زي ما هي بالإنجليزي)' : 'Explanations are in English now 🇬🇧'); };
+paintAr();
+function toast(t) { const d = H('div', 'say', t); d.dir = 'auto'; Object.assign(d.style, { position: 'fixed', insetInline: '12px', bottom: '84px', zIndex: 60, textAlign: 'center', fontWeight: 800 }); document.body.appendChild(d); setTimeout(() => d.remove(), 2200); }
+
 /* ---- welcome ---- */
-const W = document.getElementById('welcome');
-document.getElementById('openW').onclick = () => W.classList.remove('hide');
+const WEL = {
+  en: `<h2>Hi Amina! 👋</h2>
+  <p>I’m <b>Chef Mishmish</b> 🐱👩‍🍳, and this is my kitchen where we cook numbers!</p>
+  <p>I know your brain is <b>super fast</b> and you solve things in your head straight away… that’s a real superpower! 🦸‍♀️</p>
+  <p>But do you know a secret? <b>Steps are like a recipe</b> 📝. A good chef writes her recipe so anyone can make the same yummy cake, and when your teacher sees the recipe she knows you understand and aren’t guessing. That’s why every answer here has a little “recipe” after it.</p>
+  <p>Maths is hiding in everything you love: 🍰 cooking amounts, 🎨 shapes and areas in drawing, 🎮 points in games, and 🐶 even sharing food between animals is division!</p>
+  <p>Here you’ll find: 📚 lessons explained in many ways (a story, a picture, steps, a trick), ✖️ the Japanese multiplication method and quick tricks, 📝 quizzes exactly like school, and 🏆 the monthly exams. And 🖨️ you can print any quiz and solve it on paper.</p>
+  <p>Need it in Arabic? Tap the <b>ع</b> button at the top, or the <b>ع</b> button on any explanation 🇪🇬.</p>
+  <p>Every right answer = ⭐. And if you make a mistake? <b>That’s totally fine</b> 🌸 nobody sees it but you, and mistakes are what make your brain grow.</p>`,
+  ar: `<h2>أهلاً يا أمينة! 👋</h2>
+  <p>أنا <b>الشيف مِشمِش</b> 🐱👩‍🍳، وده مطبخي اللي بنطبخ فيه الأرقام!</p>
+  <p>عرفت إن دماغك <b>سريعة جداً</b> وبتحلي في دماغك على طول… دي قوة خارقة بجد! 🦸‍♀️</p>
+  <p>بس تعرفي سر؟ <b>الخطوات زي الوصفة</b> 📝. الشيف الشاطرة بتكتب وصفتها علشان أي حد يقدر يعمل نفس الكيكة الحلوة، والمدرّسة لما تشوف الوصفة بتعرف إنك فاهمة مش بتخمّني. علشان كده كل إجابة هنا بعدها "وصفة" صغيرة.</p>
+  <p>والرياضة مستخبية في كل حاجة بتحبيها: 🍰 مقادير الطبخ، 🎨 الأشكال والمساحات في الرسم، 🎮 النقط في الألعاب، و🐶 حتى أكل الحيوانات بيتوزع بالقسمة!</p>
+  <p>هنا هتلاقي: 📚 شرح بكذا طريقة (حكاية، صورة، خطوات، حيلة)، ✖️ جدول الضرب بالطريقة اليابانية وحيل سريعة، 📝 كويزات زي اللي في المدرسة بالظبط، و🏆 امتحانات الشهر. وكمان 🖨️ تقدري تطبعي أي كويز وتحليه على الورق.</p>
+  <p>الصفحة بالإنجليزي زي كتابك، ولو عايزة الشرح بالعربي اضغطي زرار <b>ع</b> فوق، أو زرار <b>ع</b> اللي جنب أي شرح 🇪🇬.</p>
+  <p>وكل إجابة صح = ⭐. ولو غلطتي؟ <b>عادي جداً</b> 🌸 الغلط هنا محدش بيشوفه غيرك، وهو اللي بيخلّي الدماغ تكبر.</p>`
+};
+const W = document.getElementById('welcome'), wt = document.getElementById('wtext'), wl = document.getElementById('wLang');
+let wAr = false;
+const paintW = () => { wt.innerHTML = ''; wt.appendChild(E.tx(WEL.en, WEL.ar, '', 'div', wAr)); wl.textContent = wAr ? 'English' : 'ع  اقري بالعربي'; };
+wl.onclick = () => { wAr = !wAr; paintW(); };
+document.getElementById('openW').onclick = () => { wAr = E.isAr(); paintW(); W.classList.remove('hide'); };
 document.getElementById('wGo').onclick = () => { W.classList.add('hide'); S.welcomed = 1; E.save(); E.ding(); };
-if (!S.welcomed) W.classList.remove('hide');
+if (!S.welcomed) { wAr = E.isAr(); paintW(); W.classList.remove('hide'); }
+
+/* ---- small helpers ---- */
+/* a block with its own English/Arabic switch (Arabic only when asked) */
+function biBlock(en, ar, cls) {
+  const wrap = H('div', cls || ''); let useAr = E.isAr() && ar != null;
+  const body = H('div'), sw = H('button', 'langb');
+  const paint = () => { body.innerHTML = ''; body.appendChild(E.tx(en, ar, '', 'div', useAr)); sw.textContent = useAr ? 'English' : 'ع  اشرحي بالعربي'; };
+  sw.onclick = () => { useAr = !useAr; paint(); E.pop(); };
+  wrap.append(body); if (ar != null && en != null) { const r = H('div', 'arbtn'); r.appendChild(sw); wrap.appendChild(r); }
+  paint(); return wrap;
+}
+const printBtn = (qs, title, sub) => { const b = H('button', 'btn ghost', '🖨️ ' + L('Print this quiz', 'اطبعي الكويز ده')); b.onclick = () => MPRINT(qs, title, sub); return b; };
 
 /* ---- router ---- */
 const tabs = document.getElementById('tabs');
 tabs.onclick = e => { const b = e.target.closest('button'); if (b) go(b.dataset.v); };
 document.getElementById('home-t').onclick = () => go('home');
-function go(v, a, b) {
+let cur = { v: 'home' };
+function go(v, a, b, keepScroll) {
   try { speechSynthesis.cancel(); } catch(e) {}
+  const y = window.scrollY;
+  cur = { v, a, b };
   [...tabs.children].forEach(t => t.classList.toggle('on', t.dataset.v === v));
-  app.innerHTML = ''; window.scrollTo(0, 0);
+  app.innerHTML = ''; window.scrollTo(0, keepScroll ? y : 0);
   (V[v] || V.home)(a, b);
-  E.bidi(app);
+  if (keepScroll) window.scrollTo(0, y);
 }
-const back = (label, fn) => { const b = H('button', 'back', '→ ' + label); b.onclick = fn; app.appendChild(b); };
+const back = (label, fn) => { const b = H('button', 'back', '← ' + label); b.onclick = fn; app.appendChild(b); };
 const V = {};
 
 V.home = () => {
   const hero = H('div', 'hero');
   const n = E.starCount();
-  hero.innerHTML = `<img class="heroimg" src="img/mishmish.webp" alt="الشيف مشمش"><div><b class="big">أهلاً يا شيف أمينة! 👩‍🍳</b><p>معاكي <b>${n}</b> نجمة ⭐ ${n ? '— كمّلي، أنا فخور بيكي!' : '— يلا نجمع أول نجمة!'}</p><p style="font-size:15px;opacity:.95">النهارده نطبخ إيه؟ 🍳</p></div>`;
+  hero.innerHTML = `<img class="heroimg" src="img/mishmish.webp" alt="Chef Mishmish"><div><b class="big">Hi, Chef Amina! 👩‍🍳</b><p>You have <b>${n}</b> star${n === 1 ? '' : 's'} ⭐ ${n ? '— keep going, I’m proud of you!' : '— let’s get the first star!'}</p><p style="font-size:15px;opacity:.95">What are we cooking today? 🍳</p></div>`;
   app.appendChild(hero);
   const t = H('div', 'tiles');
-  [['learn', '📚', 'أتعلّم', 'شرح بحكاية وصورة وحيلة'], ['times', '✖️', 'جدول الضرب', 'الطريقة اليابانية + حيل'], ['quiz', '📝', 'كويزات الأسبوع', '13 أسبوع × 3 نماذج'], ['month', '🏆', 'امتحانات الشهر', 'الشهر الأول والتاني']].forEach(([v, e, a, s]) => {
+  [['learn', '📚', 'Learn', 'A story, a picture & a trick'], ['times', '✖️', 'Times tables', 'Japanese method + tricks'], ['quiz', '📝', 'Weekly quizzes', '13 weeks × 3 models'], ['month', '🏆', 'Monthly exams', 'Month 1 and Month 2']].forEach(([v, e, a, s]) => {
     const b = H('button', 'tile', `<b>${e}</b><span>${a}</span><small>${s}</small>`); b.onclick = () => go(v); t.appendChild(b);
   });
   app.appendChild(t);
   const sec = H('div', 'section');
-  sec.innerHTML = `<h3>🧭 إزاي أذاكر هنا؟</h3><ol><li>افتحي الدرس من <b>📚 أتعلّم</b> واقري الحكاية وشوفي الصورة.</li><li>جربي الحيلة ⚡ وحلّي سؤال ✋ واحد بس.</li><li>روحي <b>📝 الكويز</b> بتاع نفس الأسبوع وحلّي Model A.</li><li>لو غلطتي اضغطي 👣 وشوفي الخطوات واحدة واحدة.</li><li>بعد يومين حلّي Model B وبعدها C 🌟</li></ol>`;
+  sec.appendChild(H('h3', '', '🧭 How do I study here?'));
+  sec.appendChild(biBlock(
+    `<ol><li>Open the lesson from <b>📚 Learn</b>, read the story and look at the picture.</li><li>Try the trick ⚡ and solve one ✋ question.</li><li>Go to the <b>📝 quiz</b> for the same week and solve Model A.</li><li>If you make a mistake, tap 👣 and look at the steps, then try again.</li><li>Want to practise writing? 🖨️ print the quiz and solve it on paper, then check with Mum.</li><li>At the end of the month, try the <b>🏆 monthly exam</b>.</li></ol>`,
+    `<ol><li>افتحي الدرس من <b>📚 Learn</b> واقري الحكاية وشوفي الصورة.</li><li>جربي الحيلة ⚡ وحلّي سؤال ✋ واحد بس.</li><li>روحي <b>📝 الكويز</b> بتاع نفس الأسبوع وحلّي Model A.</li><li>لو غلطتي اضغطي 👣 وشوفي الخطوات وجربي تاني.</li><li>عايزة تتمرني على الكتابة؟ 🖨️ اطبعي الكويز وحلّيه على الورق وصححيه مع ماما.</li><li>آخر الشهر جربي <b>🏆 امتحان الشهر</b>.</li></ol>`));
   app.appendChild(sec);
 };
 
 V.learn = () => {
-  app.appendChild(H('h2', '', '📚 أتعلّم — اختاري وحدة'));
+  app.appendChild(H('h2', '', '📚 Learn — choose a unit'));
   const g = H('div', 'units');
   UNITS.forEach((u, i) => {
     const got = E.starCount('l:' + u.id + ':');
-    const b = H('button', 'unit', `<img class="ucover" src="img/u${i + 1}.webp" alt="" loading="lazy"><em>${got}/${u.lessons.length} ⭐</em><span>${u.emoji} ${u.t}</span><small dir="ltr" style="text-align:right">Unit ${i + 1} · ${u.en}</small>`);
+    const b = H('button', 'unit', `<img class="ucover" src="img/u${i + 1}.webp" alt="" loading="lazy"><em>${got}/${u.lessons.length} ⭐</em><span>${u.emoji} ${u.en}</span><small>Unit ${i + 1} · <span dir="rtl" style="padding:0">${u.t}</span></small>`);
     b.style.background = `linear-gradient(135deg, ${u.color}, color-mix(in srgb, ${u.color} 70%, #000))`;
     b.onclick = () => go('unit', u.id); g.appendChild(b);
   });
   app.appendChild(g);
 };
 
-const WAYS = [['story', '🍳 حكاية'], ['pic', '🎨 صورة'], ['steps', '🪜 الخطوات'], ['trick', '⚡ حيلة'], ['try', '✋ جربي']];
+const WAYS = [['story', '🍳 Story'], ['pic', '🎨 Picture'], ['steps', '🪜 Steps'], ['trick', '⚡ Trick'], ['try', '✋ Try it']];
 V.unit = (id) => {
   const u = UNITS.find(x => x.id === id), ui = UNITS.indexOf(u);
-  back('كل الوحدات', () => go('learn'));
+  back('All units', () => go('learn'));
   app.appendChild(H('div', 'ubanner', `<img src="img/u${ui + 1}.webp" alt="">`));
-  app.appendChild(H('h2', '', `${u.emoji} Unit ${ui + 1}: ${u.t} <small class="flag" dir="ltr">${u.en}</small>`));
+  app.appendChild(H('h2', '', `${u.emoji} Unit ${ui + 1}: ${u.en} <small class="flag" dir="rtl">${u.t}</small>`));
   u.lessons.forEach((l, li) => {
+    const en = l.E || {};
     const c = H('div', 'lesson');
-    const hd = H('div', 'lhead', `<h3>${li + 1}. ${l.t}</h3><small dir="ltr">${l.en}</small>`); hd.style.background = u.color;
+    const hd = H('div', 'lhead', `<h3>${li + 1}. ${l.en}</h3><small dir="rtl">${l.t}</small>`); hd.style.background = u.color;
     const ways = H('div', 'ways'), body = H('div', 'wbody');
     const show = (k) => {
       [...ways.children].forEach(b => b.classList.toggle('on', b.dataset.k === k)); body.innerHTML = '';
-      if (k === 'story') body.appendChild(E.ar(l.story));
-      if (k === 'pic') body.appendChild(E.ar(l.pic));
-      if (k === 'steps') body.appendChild(E.ar('<ol>' + l.steps.map(s => `<li>${s}</li>`).join('') + '</ol>'));
-      if (k === 'trick') body.appendChild(E.ar(l.trick, 'trick'));
-      if (k === 'try') { body.appendChild(E.ar('سؤال صغير مني (مش من الكتاب) علشان تتأكدي إنك فهمتي:', 'mini')); body.appendChild(E.card(l.try, 'l:' + u.id + ':' + li, '✋')); }
-      if (k !== 'try') { const sp = H('button', 'btn ghost sm', '🔊 اسمعي'); sp.onclick = () => E.speak(body.textContent, 'ar-EG'); body.appendChild(sp); }
+      const ol = a => '<ol>' + a.map(s => `<li>${s}</li>`).join('') + '</ol>';
+      let blk = null;
+      if (k === 'story') blk = biBlock(en.story, l.story);
+      if (k === 'pic') blk = biBlock(en.pic || l.pic, l.pic);
+      if (k === 'steps') blk = biBlock(en.steps ? ol(en.steps) : null, ol(l.steps));
+      if (k === 'trick') blk = biBlock(en.trick, l.trick, 'trick');
+      if (blk) body.appendChild(blk);
+      if (k === 'try') { body.appendChild(E.tx('A little question from me (not from the book) to check you understood:', 'سؤال صغير مني (مش من الكتاب) علشان تتأكدي إنك فهمتي:', 'mini')); body.appendChild(E.card(l.try, 'l:' + u.id + ':' + li, '✋')); }
+      if (k !== 'try') { const sp = H('button', 'btn ghost sm', '🔊 Listen'); sp.style.marginTop = '8px'; sp.onclick = () => { const t = body.firstChild.firstChild; E.speak(t.textContent, t.dir === 'rtl' ? 'ar-EG' : 'en-US'); }; body.appendChild(sp); }
     };
     WAYS.forEach(([k, lab]) => { const b = H('button', '', lab); b.dataset.k = k; b.onclick = () => { show(k); E.pop(); }; ways.appendChild(b); });
     c.append(hd, ways, body); app.appendChild(c); show('story');
   });
   const qs = WEEKS.filter(w => w.unit.id === id);
   if (qs.length) {
-    const s = H('div', 'section', '<h3>📝 كويزات الوحدة دي</h3>');
-    qs.forEach(w => { const b = H('button', 'btn ghost', `<span dir="ltr" style="display:block">${w.title.replace('Weekly Assessment: ', '')}</span><small>صفحة ${w.page}</small>`); b.style.margin = '4px'; b.onclick = () => go('week', w.id); s.appendChild(b); });
+    const s = H('div', 'section', '<h3>📝 Quizzes for this unit</h3>');
+    qs.forEach(w => { const b = H('button', 'btn ghost', `<span style="display:block">${w.title.replace('Weekly Assessment: ', '')}</span><small>Book page ${w.page}</small>`); b.style.margin = '4px'; b.onclick = () => go('week', w.id); s.appendChild(b); });
     app.appendChild(s);
   }
 };
 
 V.times = () => {
-  app.appendChild(H('h2', '', '✖️ جدول الضرب بقى سهل'));
-  const mk = (title, intro, fn) => { const s = H('div', 'section'); s.appendChild(H('h3', '', title)); if (intro) s.appendChild(E.ar(intro, 'mini')); fn(s); app.appendChild(s); };
-  app.appendChild(H('div', 'ubanner wide', '<img src="img/japan.webp" alt="مشمش بيشرح الطريقة اليابانية">'));
-  mk('🎌 الطريقة اليابانية (خطوط ونقط)', 'الرقم الأول خطوط مايلة 🔴، والتاني خطوط مايلة على الناحية التانية 🔵. نعدّ نقط التقاطع في كل عمود، وده الناتج! مش محتاجة تحفظي حاجة.', TIMES.japanese);
-  mk('🖐️ جدول الـ9 على صوابعك', 'افردي إيديكي العشرة. علشان 9 × رقم: اثني الصباع اللي رقمه نفس الرقم.', TIMES.fingers);
-  mk('⚡ حيل سريعة', '', s => {
+  app.appendChild(H('h2', '', '✖️ Times tables made easy'));
+  const mk = (title, en, ar, fn) => { const s = H('div', 'section'); s.appendChild(H('h3', '', title)); if (en) s.appendChild(E.tx(en, ar, 'mini')); fn(s); app.appendChild(s); };
+  app.appendChild(H('div', 'ubanner wide', '<img src="img/japan.webp" alt="Mishmish explains the Japanese method">'));
+  mk('🎌 The Japanese method (lines and dots)', 'The first number is slanted lines 🔴, the second is lines slanted the other way 🔵. Count the crossing dots in each column — that’s the answer! Nothing to memorise.', 'الرقم الأول خطوط مايلة 🔴، والتاني خطوط مايلة على الناحية التانية 🔵. نعدّ نقط التقاطع في كل عمود، وده الناتج! مش محتاجة تحفظي حاجة.', TIMES.japanese);
+  mk('🖐️ The 9 times table on your fingers', 'Spread your ten fingers. For 9 × a number: fold the finger with that number.', 'افردي إيديكي العشرة. علشان 9 × رقم: اثني الصباع اللي رقمه نفس الرقم.', TIMES.fingers);
+  mk('⚡ Quick tricks', '', '', s => {
     const tricks = [
-      ['×2', 'ضعف الرقم: 2 × 7 = 7 + 7 = 14 👯'],
-      ['×4', 'ضعف الضعف: 4 × 6 ← 6 + 6 = 12 ← 12 + 12 = 24'],
-      ['×5', 'اضربي في 10 وخدي النص: 5 × 8 ← 80 ← نصها 40 ✂️ (وناتج ×5 آخره دايماً 0 أو 5)'],
-      ['×10', 'حطي صفر على اليمين: 10 × 7 = 70 🚌'],
-      ['×3', 'ضعف + كمان مرة: 3 × 7 = 14 + 7 = 21'],
-      ['×6', 'لو الرقم زوجي، الناتج آخره نفس الرقم وقدامه نصّه: 6 × 4 = 24 ، 6 × 8 = 48 ✨'],
-      ['×9', 'اضربي ×10 واطرحي الرقم: 9 × 7 = 70 − 7 = 63. ومجموع أرقام الناتج دايماً 9 (6 + 3 = 9) 🎯'],
-      ['×11', 'لرقم من خانة واحدة: كرّريه 11 × 4 = 44. ولرقمين: 11 × 23 ← 2 (2+3) 3 = 253 😲'],
-      ['56 = 7 × 8', 'غنّيها: 5، 6، 7، 8 ← 56 = 7 × 8 🎵'],
-      ['🔄', 'الأماكن مش بتفرق: لو عارفة 3 × 8 يبقى عارفة 8 × 3! نص الجدول بيروح لوحده']
+      ['×2', 'Double the number: 2 × 7 = 7 + 7 = 14 👯', 'ضعف الرقم: 2 × 7 = 7 + 7 = 14 👯'],
+      ['×4', 'Double, then double again: 4 × 6 → 6 + 6 = 12 → 12 + 12 = 24', 'ضعف الضعف: 4 × 6 ← 6 + 6 = 12 ← 12 + 12 = 24'],
+      ['×5', 'Multiply by 10 and take half: 5 × 8 → 80 → half is 40 ✂️ (and ×5 answers always end in 0 or 5)', 'اضربي في 10 وخدي النص: 5 × 8 ← 80 ← نصها 40 ✂️ (وناتج ×5 آخره دايماً 0 أو 5)'],
+      ['×10', 'Put a zero on the right: 10 × 7 = 70 🚌', 'حطي صفر على اليمين: 10 × 7 = 70 🚌'],
+      ['×3', 'Double + once more: 3 × 7 = 14 + 7 = 21', 'ضعف + كمان مرة: 3 × 7 = 14 + 7 = 21'],
+      ['×6', 'For an even number, the answer ends in the same number with half of it in front: 6 × 4 = 24 , 6 × 8 = 48 ✨', 'لو الرقم زوجي، الناتج آخره نفس الرقم وقدامه نصّه: 6 × 4 = 24 ، 6 × 8 = 48 ✨'],
+      ['×9', 'Multiply ×10 and subtract the number: 9 × 7 = 70 − 7 = 63. And the digits always add up to 9 (6 + 3 = 9) 🎯', 'اضربي ×10 واطرحي الرقم: 9 × 7 = 70 − 7 = 63. ومجموع أرقام الناتج دايماً 9 (6 + 3 = 9) 🎯'],
+      ['×11', 'One digit: repeat it, 11 × 4 = 44. Two digits: 11 × 23 → 2 (2+3) 3 = 253 😲', 'لرقم من خانة واحدة: كرّريه 11 × 4 = 44. ولرقمين: 11 × 23 ← 2 (2+3) 3 = 253 😲'],
+      ['56 = 7 × 8', 'Sing it: 5, 6, 7, 8 → 56 = 7 × 8 🎵', 'غنّيها: 5، 6، 7، 8 ← 56 = 7 × 8 🎵'],
+      ['🔄', 'Order doesn’t matter: if you know 3 × 8, you know 8 × 3! Half the table is done for free', 'الأماكن مش بتفرق: لو عارفة 3 × 8 يبقى عارفة 8 × 3! نص الجدول بيروح لوحده']
     ];
-    s.appendChild(E.ar('<div class="three">' + tricks.map(([a, b]) => `<div style="text-align:start"><b>${a}</b>${b}</div>`).join('') + '</div>'));
+    s.appendChild(biBlock('<div class="three">' + tricks.map(([a, b]) => `<div style="text-align:start"><b>${a}</b>${b}</div>`).join('') + '</div>',
+      '<div class="three">' + tricks.map(([a, , c]) => `<div style="text-align:start"><b>${a}</b>${c}</div>`).join('') + '</div>'));
   });
-  mk('🗺️ خريطة الجدول', 'كل لون = حيلة. شوفي: معظم الجدول بقى سهل! الأخضر بس هو اللي محتاج يتحفظ (وهو قليل خالص).', TIMES.map);
-  mk('🚀 لعبة الصاروخ', '', TIMES.game);
+  mk('🗺️ The table map', 'Each colour = a trick. Look: most of the table is easy now! Only the green ones need memorising (and there are very few).', 'كل لون = حيلة. شوفي: معظم الجدول بقى سهل! الأخضر بس هو اللي محتاج يتحفظ (وهو قليل خالص).', TIMES.map);
+  mk('🚀 Rocket game', '', '', TIMES.game);
 };
 
 V.quiz = () => {
-  app.appendChild(H('h2', '', '📝 كويزات الأسبوع'));
-  app.appendChild(E.ar('كل كويز فيه 3 نماذج زي الكتاب بالظبط: Model A و Model B و Model C. ابدأي بـ Model A 🌟', 'mini'));
-  const L = H('div', 'list');
+  app.appendChild(H('h2', '', '📝 Weekly quizzes'));
+  app.appendChild(E.tx('Each quiz has 3 models, exactly like the book: Model A, Model B and Model C. Start with Model A 🌟', 'كل كويز فيه 3 نماذج زي الكتاب بالظبط: Model A و Model B و Model C. ابدأي بـ Model A 🌟', 'mini'));
+  const L2 = H('div', 'list');
   WEEKS.forEach((w, i) => {
     const tq = totalQ(w), got = wStars(w);
-    const b = H('button', 'item', `<b>${w.unit.emoji}</b><div><span dir="ltr" style="display:block;text-align:right">Week ${i + 1}: ${w.title.replace('Weekly Assessment: ', '')}</span><small>Unit ${UNITS.indexOf(w.unit) + 1} — صفحة ${w.page} في الكتاب</small><div class="prog"><i style="width:${got / tq * 100}%"></i></div></div><span class="pill">${got}/${tq} ⭐</span>`);
-    b.onclick = () => go('week', w.id); L.appendChild(b);
+    const b = H('button', 'item', `<b>${w.unit.emoji}</b><div><span style="display:block">Week ${i + 1}: ${w.title.replace('Weekly Assessment: ', '')}</span><small>Unit ${UNITS.indexOf(w.unit) + 1} — book page ${w.page}</small><div class="prog"><i style="width:${got / tq * 100}%"></i></div></div><span class="pill">${got}/${tq} ⭐</span>`);
+    b.onclick = () => go('week', w.id); L2.appendChild(b);
   });
-  app.appendChild(L);
+  app.appendChild(L2);
 };
 
 function runList(qs, keyBase, container) {
   qs.forEach((q, i) => container.appendChild(E.card(q, keyBase + i, i + 1)));
-  E.bidi(container);
 }
 V.week = (id, model) => {
   const w = WEEKS.find(x => x.id === id); model = model || 'A';
-  back('كل الكويزات', () => go('quiz'));
-  app.appendChild(H('h2', '', `${w.unit.emoji} <span dir="ltr">${w.title.replace('Weekly Assessment: ', '')}</span>`));
-  app.appendChild(H('div', 'mini', `Weekly Assessment — صفحة ${w.page} في الكتاب`));
+  const wi = WEEKS.indexOf(w);
+  back('All quizzes', () => go('quiz'));
+  const title = w.title.replace('Weekly Assessment: ', '');
+  app.appendChild(H('h2', '', `${w.unit.emoji} ${title}`));
+  app.appendChild(H('div', 'mini', `Weekly Assessment — book page ${w.page}`));
   const m = H('div', 'models');
   Object.keys(w.models).forEach(k => { const got = E.starCount(`w:${w.id}:${k}:`); const b = H('button', k === model ? 'on' : '', `Model ${k} <small>${got}/${w.models[k].length}⭐</small>`); b.onclick = () => go('week', id, k); m.appendChild(b); });
   app.appendChild(m);
+  const pr = H('div', 'printb'); pr.appendChild(printBtn(w.models[model], `Week ${wi + 1}: ${title} — Model ${model}`, `Amina’s Math Kitchen · Grade 4 · Term 1 · book page ${w.page}`));
+  const all = H('button', 'btn ghost', '🖨️ ' + L('Print all 3 models', 'اطبعي النماذج التلاتة'));
+  all.onclick = () => MPRINT(Object.keys(w.models).flatMap(k => w.models[k].map((q, i) => i ? q : Object.assign({ sec: 'Model ' + k }, q))), `Week ${wi + 1}: ${title} — Models ${Object.keys(w.models).join(', ')}`, `Amina’s Math Kitchen · book page ${w.page}`);
+  pr.appendChild(all); app.appendChild(pr);
   const box = H('div'); app.appendChild(box);
   runList(w.models[model], `w:${w.id}:${model}:`, box);
   const ks = Object.keys(w.models), nx = ks[ks.indexOf(model) + 1];
-  const end = H('div', 'section', `<h3>🎉 خلصتي Model ${model}؟</h3>`);
-  if (nx) { const b = H('button', 'btn', `Model ${nx} ←`); b.onclick = () => go('week', id, nx); end.appendChild(b); }
-  else { const i = WEEKS.indexOf(w); if (WEEKS[i + 1]) { const b = H('button', 'btn', 'الأسبوع اللي بعده ←'); b.onclick = () => go('week', WEEKS[i + 1].id); end.appendChild(b); } }
+  const end = H('div', 'section', `<h3>🎉 Finished Model ${model}?</h3>`);
+  if (nx) { const b = H('button', 'btn', `Model ${nx} →`); b.onclick = () => go('week', id, nx); end.appendChild(b); }
+  else if (WEEKS[wi + 1]) { const b = H('button', 'btn', 'Next week →'); b.onclick = () => go('week', WEEKS[wi + 1].id); end.appendChild(b); }
   app.appendChild(end);
 };
 
 V.month = (id) => {
   if (id) {
     const mo = MONTH.find(x => x.id === id);
-    back('امتحانات الشهر', () => go('month'));
+    back('Monthly exams', () => go('month'));
     app.appendChild(H('h2', '', '🏆 ' + mo.title));
-    app.appendChild(H('div', 'mini', `صفحة ${mo.page} في الكتاب — خدي وقتك، مش لازم تخلّصيه مرة واحدة 🌸`));
+    app.appendChild(E.tx(`Book pages ${mo.page} — take your time, you don’t have to finish it all at once 🌸`, `صفحة ${mo.page} في الكتاب — خدي وقتك، مش لازم تخلّصيه مرة واحدة 🌸`, 'mini'));
+    const pr = H('div', 'printb'); pr.appendChild(printBtn(mo.qs, mo.title, `Amina’s Math Kitchen · Grade 4 · Term 1 · book pages ${mo.page}`)); app.appendChild(pr);
     const box = H('div'); app.appendChild(box); runList(mo.qs, `m:${mo.id}:`, box);
     return;
   }
-  app.appendChild(H('h2', '', '🏆 امتحانات الشهر'));
-  const L = H('div', 'list');
+  app.appendChild(H('h2', '', '🏆 Monthly exams'));
+  const L2 = H('div', 'list');
   MONTH.forEach(mo => {
     const got = mStars(mo);
-    const b = H('button', 'item', `<b>🏆</b><div><span>${mo.title}</span><small>صفحة ${mo.page} — ${mo.qs.length} سؤال</small><div class="prog"><i style="width:${got / mo.qs.length * 100}%"></i></div></div><span class="pill">${got}/${mo.qs.length} ⭐</span>`);
-    b.onclick = () => go('month', mo.id); L.appendChild(b);
+    const b = H('button', 'item', `<b>🏆</b><div><span>${mo.title}</span><small>Book pages ${mo.page} — ${mo.qs.length} questions</small><div class="prog"><i style="width:${got / mo.qs.length * 100}%"></i></div></div><span class="pill">${got}/${mo.qs.length} ⭐</span>`);
+    b.onclick = () => go('month', mo.id); L2.appendChild(b);
   });
-  app.appendChild(L);
-  app.appendChild(E.ar('💡 نصيحة: حلّي امتحان الشهر بعد ما تخلّصي كويزات الأسابيع اللي قبله.', 'say'));
+  app.appendChild(L2);
+  app.appendChild(E.tx('💡 Tip: do the monthly exam after you finish the weekly quizzes before it.', '💡 نصيحة: حلّي امتحان الشهر بعد ما تخلّصي كويزات الأسابيع اللي قبله.', 'say'));
 };
 
 go('home');

@@ -9,6 +9,18 @@ E.S = S;
 E.save = () => { try { localStorage.setItem('amina-math', JSON.stringify(S)); } catch(e) {} };
 E.starCount = (prefix) => Object.keys(S.stars).filter(k => !prefix || k.startsWith(prefix)).length;
 E.onStar = () => {};
+E.onResult = () => {};
+/* language: questions are English; explanations/help are English, Arabic on request (S.ar) */
+E.isAr = () => !!S.ar;
+E.L = (en, ar) => S.ar ? ar : en;
+E.onLang = () => {};
+E.setAr = (v) => { S.ar = !!v; E.save(); E.onLang(); };
+/* text block in the chosen language: Arabic blocks are RTL with LTR math runs kept intact */
+E.tx = (en, ar, cls, tag, forceAr) => {
+  const useAr = forceAr != null ? forceAr : S.ar;
+  if (useAr && ar != null) { const e = E.ar(ar, cls, tag); e.dir = 'rtl'; e.lang = 'ar'; return e; }
+  const e = H(tag || 'div', cls, en != null ? en : ar); e.dir = en != null ? 'ltr' : 'rtl'; return e;
+};
 
 /* ---------- sound + speech ---------- */
 let AC = null;
@@ -87,22 +99,34 @@ function areaFig(a) {
 }
 
 /* ---------- step-by-step reveal ---------- */
-function stepsBox(steps) {
-  const box = H('div', 'steps'), list = H('ol', 'slist'), btn = H('button', 'btn ghost', '👣 الخطوة الجاية');
-  let i = 0;
-  const next = () => {
-    if (i >= steps.length) return;
-    const li = E.ar(steps[i], '', 'li'); list.appendChild(li); E.pop(); i++;
-    if (i >= steps.length) { btn.textContent = '✅ دي كل الخطوات'; btn.disabled = true; }
+function stepsBox(en, ar) {
+  en = en && en.length ? en : null; ar = ar && ar.length ? ar : null;
+  const box = H('div', 'steps'), top = H('div', 'stop'), list = H('ol', 'slist'), btn = H('button', 'btn ghost');
+  const lb = H('button', 'langb'); lb.title = 'English / عربي';
+  let i = 0, useAr = !en || (S.ar && !!ar);
+  const cur = () => (useAr ? ar : en) || [];
+  const n = () => cur().length;
+  const paint = () => {
+    list.innerHTML = ''; list.dir = useAr ? 'rtl' : 'ltr';
+    cur().slice(0, i).forEach(t => list.appendChild(useAr ? E.ar(t, '', 'li') : H('li', '', t)));
+    btn.textContent = i >= n() ? (useAr ? '✅ دي كل الخطوات' : '✅ That’s all the steps') : (useAr ? '👣 الخطوة الجاية' : '👣 Next step');
+    btn.disabled = i >= n();
+    lb.textContent = useAr ? 'English' : 'ع  اشرحي بالعربي';
+    lb.classList.toggle('hide', !(en && ar));
   };
+  const next = () => { if (i >= n()) return; i++; E.pop(); paint(); };
   btn.onclick = next;
-  box.append(list, btn);
-  box.next = next; box.all = () => { while (i < steps.length) next(); };
+  lb.onclick = () => { useAr = !useAr; paint(); };
+  top.appendChild(lb);
+  box.append(top, list, btn);
+  box.next = next; box.all = () => { i = n(); paint(); };
+  paint();
   return box;
 }
 
 /* ---------- generated steps ---------- */
-function colSteps(op, x, y) {
+function colSteps(op, x, y, ar) {
+  if (!ar) return colStepsEn(op, x, y);
   const xs = String(x).split('').reverse().map(Number), ys = String(y).split('').reverse().map(Number);
   const names = ['Ones (الآحاد)', 'Tens (العشرات)', 'Hundreds (المئات)', 'Thousands (الآلاف)', 'Ten thousands', 'Hundred thousands', 'Millions'];
   const out = [`نكتب الرقمين تحت بعض، كل خانة تحت أختها، ونبدأ من اليمين (الآحاد).`];
@@ -131,7 +155,55 @@ function colSteps(op, x, y) {
   return out;
 }
 const r1000 = n => Math.round(n / 1000) * 1000;
-function estSteps(op, x, y) {
+function colStepsEn(op, x, y) {
+  const xs = String(x).split('').reverse().map(Number), ys = String(y).split('').reverse().map(Number);
+  const names = ['Ones', 'Tens', 'Hundreds', 'Thousands', 'Ten thousands', 'Hundred thousands', 'Millions'];
+  const out = ['Write the two numbers under each other, each place under its place, and start from the right (the ones).'];
+  if (op === '+') {
+    let c = 0;
+    for (let i = 0; i < Math.max(xs.length, ys.length); i++) {
+      const a = xs[i] || 0, b = ys[i] || 0, s = a + b + c;
+      out.push(`${names[i] || 'Place ' + (i + 1)}: ${a} + ${b}${c ? ' + ' + c + ' (carried)' : ''} = ${s}` + (s > 9 ? ` → write ${s % 10} and carry 1 🎒` : ` → write ${s}`));
+      c = s > 9 ? 1 : 0;
+    }
+    if (c) out.push('There is 1 carried left → write it at the front.');
+    out.push(`Answer: ${E.fmt(x + y)}`);
+  } else {
+    const a = xs.slice();
+    for (let i = 0; i < a.length; i++) {
+      const b = ys[i] || 0;
+      if (a[i] < b) {
+        let j = i + 1; while (a[j] === 0) j++;
+        a[j]--; for (let k = j - 1; k > i; k--) a[k] = 9; a[i] += 10;
+        out.push(`${names[i] || 'Place ' + (i + 1)}: ${a[i] - 10} is less than ${b} → regroup from the neighbour 🤝, so it becomes ${a[i]}. ${a[i]} − ${b} = ${a[i] - b}`);
+      } else out.push(`${names[i] || 'Place ' + (i + 1)}: ${a[i]} − ${b} = ${a[i] - b}`);
+    }
+    out.push(`Answer: ${E.fmt(x - y)}`);
+    out.push(`Check by adding: ${E.fmt(x - y)} + ${E.fmt(y)} = ${E.fmt(x)} ✔`);
+  }
+  return out;
+}
+function estStepsEn(op, x, y) {
+  const rx = r1000(x), ry = r1000(y), f = E.fmt, o = op === '+' ? '+' : '−';
+  return [
+    `Actual answer: ${f(x)} ${o} ${f(y)} = ${f(op === '+' ? x + y : x - y)}`,
+    'Round to the nearest thousand: look at the hundreds digit. 5 or more → round up; less than 5 → stay.',
+    `${f(x)} → ${f(rx)}  and  ${f(y)} → ${f(ry)}`,
+    `Estimate: ${f(rx)} ${o} ${f(ry)} = ${f(op === '+' ? rx + ry : rx - ry)}`,
+    'The two answers are close → our answer makes sense ✔'
+  ];
+}
+function multStepsEn(how, x, y) {
+  const p = parts(x), f = E.fmt;
+  const st = [`Break ${f(x)} apart by place value: ${p.map(f).join(' + ')}`];
+  if (how === 'area') st.push(`Draw a rectangle split into ${p.length} pieces: ${p.map(f).join(' | ')}, with height ${y}.`);
+  if (how === 'dist') st.push(`${f(x)} × ${y} = ${p.map(v => `(${f(v)} × ${y})`).join(' + ')}`);
+  p.forEach(v => st.push(`${f(v)} × ${y} = ${f(v * y)}` + (v >= 10 ? `   (trick: ${String(v).replace(/0+$/, '')} × ${y} = ${String(v).replace(/0+$/, '') * y}, then put the zeros back)` : '')));
+  st.push(`Add the pieces: ${p.map(v => f(v * y)).join(' + ')} = ${f(x * y)} 🎉`);
+  return st;
+}
+function estSteps(op, x, y, ar) {
+  if (!ar) return estStepsEn(op, x, y);
   const rx = r1000(x), ry = r1000(y), f = E.fmt;
   return [
     `الناتج الحقيقي: ${f(x)} ${op === '+' ? '+' : '−'} ${f(y)} = ${f(op === '+' ? x + y : x - y)}`,
@@ -143,7 +215,8 @@ function estSteps(op, x, y) {
 }
 function parts(x) { const s = String(x), n = s.length; return s.split('').map((d, i) => Number(d) * Math.pow(10, n - 1 - i)).filter(v => v > 0); }
 E.parts = parts;
-function multSteps(how, x, y) {
+function multSteps(how, x, y, ar) {
+  if (!ar) return multStepsEn(how, x, y);
   const p = parts(x), f = E.fmt;
   const st = [`نفك ${f(x)} حسب القيمة المكانية: ${p.map(f).join(' + ')}`];
   if (how === 'area') st.push(`نرسم مستطيل ونقسمه ${p.length} حتت: ${p.map(f).join(' | ')} والارتفاع ${y}.`);
@@ -232,14 +305,14 @@ W.prop = (q, b) => {
   const row = H('div', 'row'), i = input('؟'); row.appendChild(i); b.body.appendChild(row);
   const box = H('div', 'opts small'); let pick = -1;
   PROPS.forEach((p, k) => { const bt = H('button', 'opt', `<span dir="ltr">${p}</span>`); bt.onclick = () => { pick = k; [...box.children].forEach(c => c.classList.remove('sel')); bt.classList.add('sel'); }; box.appendChild(bt); });
-  b.body.append(H('div', 'mini', 'والخاصية اسمها إيه؟'), box);
+  b.body.append(E.tx('And what is the property called?', 'والخاصية اسمها إيه؟', 'mini'), box);
   return { check: () => { if (i.value.trim() === '' || pick < 0) return null; const a = eqNum(i.value, q.a), c = pick === q.p; mark(i, a); mark(box.children[pick], c); return a && c; },
     show: () => { i.value = q.a; pick = q.p; mark(i, true); mark(box.children[q.p], true); } };
 };
 W.ord = (q, b) => {
-  const chips = H('div', 'chips'), line = H('div', 'oline'), reset = H('button', 'btn ghost sm', '↺ من الأول');
+  const chips = H('div', 'chips'), line = H('div', 'oline'), reset = H('button', 'btn ghost sm', '↺ Start again');
   let seq = [];
-  const draw = () => { line.innerHTML = seq.length ? seq.map(k => `<span dir="ltr">${q.items[k]}</span>`).join('<i>›</i>') : '<em>اضغطي على الأرقام بالترتيب…</em>'; [...chips.children].forEach((c, k) => c.disabled = seq.includes(k)); };
+  const draw = () => { line.innerHTML = seq.length ? seq.map(k => `<span dir="ltr">${q.items[k]}</span>`).join('<i>›</i>') : '<em>Tap the numbers in order…</em>'; [...chips.children].forEach((c, k) => c.disabled = seq.includes(k)); };
   q.items.forEach((t, k) => { const c = H('button', 'chip', `<span dir="ltr">${t}</span>`); c.onclick = () => { if (!seq.includes(k)) { seq.push(k); E.pop(); draw(); if (seq.length === q.items.length) b.check(); } }; chips.appendChild(c); });
   reset.onclick = () => { seq = []; mark(line, null); draw(); };
   line.dir = 'ltr'; b.body.append(chips, line, reset); draw();
@@ -253,7 +326,7 @@ W.col = (q, b) => {
   const cell = (t, c) => H('div', 'cc ' + (c || ''), t);
   const carry = [];
   g.appendChild(cell('', 'op'));
-  for (let k = 0; k < L; k++) { const i = input('', 'carry'); i.maxLength = 2; i.title = q.op === '+' ? 'الشايل' : 'بعد الاستلاف'; carry.push(i); const c = cell('', 'cr'); c.appendChild(i); g.appendChild(c); }
+  for (let k = 0; k < L; k++) { const i = input('', 'carry'); i.maxLength = 2; i.title = q.op === '+' ? 'carry' : 'after regrouping'; carry.push(i); const c = cell('', 'cr'); c.appendChild(i); g.appendChild(c); }
   const pad = n => String(n).padStart(L, ' ').split('');
   g.appendChild(cell('', 'op')); pad(q.x).forEach(d => g.appendChild(cell(d.trim())));
   g.appendChild(cell(q.op === '+' ? '+' : '−', 'op')); pad(q.y).forEach(d => g.appendChild(cell(d.trim(), 'ul')));
@@ -261,23 +334,23 @@ W.col = (q, b) => {
   const outs = [];
   for (let k = 0; k < L; k++) { const i = input('', 'dig', 'numeric'); i.maxLength = 1; outs.push(i); const c = cell('', 'ans'); c.appendChild(i); g.appendChild(c); }
   outs.forEach((i, k) => i.addEventListener('input', () => { i.value = E.digits(i.value).replace(/\D/g, '').slice(-1); if (i.value && k > 0) outs[k - 1].focus(); }));
-  b.body.append(E.ar('املي الناتج رقم رقم <b>من اليمين للشمال</b> ⬅️. المربعات الصغيرة فوق للشايل أو الاستلاف لو حبيتي.', 'mini'), g);
+  b.body.append(E.tx('Fill in the answer digit by digit, <b>from right to left</b> ⬅️. The small boxes on top are for carrying or regrouping, if you like.', 'املي الناتج رقم رقم <b>من اليمين للشمال</b> ⬅️. المربعات الصغيرة فوق للشايل أو الاستلاف لو حبيتي.', 'mini'), g);
   setTimeout(() => {}, 0);
   const want = String(res).padStart(L, ' ');
   return {
     check: () => { const got = outs.map(i => i.value).join(''); if (got.replace(/\s/g, '') === '') return null; let ok = true; outs.forEach((i, k) => { const w = want[k].trim(); const v = i.value.trim(); const good = w === '' ? (v === '' || v === '0') : v === w; if (w !== '' || v !== '') mark(i, good); ok = ok && good; }); return ok; },
     show: () => outs.forEach((i, k) => { i.value = want[k].trim(); if (want[k].trim()) mark(i, true); }),
-    steps: colSteps(q.op, q.x, q.y)
+    steps: colSteps(q.op, q.x, q.y), stepsAr: colSteps(q.op, q.x, q.y, 1)
   };
 };
 W.est = (q, b) => {
   const act = q.op === '+' ? q.x + q.y : q.x - q.y, est = q.op === '+' ? r1000(q.x) + r1000(q.y) : r1000(q.x) - r1000(q.y);
   const i1 = input('؟'), i2 = input('؟');
-  const r1 = H('div', 'row'); r1.append(H('span', 'plab', 'الناتج الحقيقي (Actual)'), i1);
-  const r2 = H('div', 'row'); r2.append(H('span', 'plab', 'التقدير (Estimate)'), i2);
+  const r1 = H('div', 'row'); r1.append(H('span', 'plab', 'Actual'), i1);
+  const r2 = H('div', 'row'); r2.append(H('span', 'plab', 'Estimate'), i2);
   b.body.append(r1, r2);
   return { check: () => { if (!i1.value.trim() || !i2.value.trim()) return null; const a = eqNum(i1.value, act), c = eqNum(i2.value, est); mark(i1, a); mark(i2, c); return a && c; },
-    show: () => { i1.value = E.fmt(act); i2.value = E.fmt(est); mark(i1, true); mark(i2, true); }, steps: estSteps(q.op, q.x, q.y) };
+    show: () => { i1.value = E.fmt(act); i2.value = E.fmt(est); mark(i1, true); mark(i2, true); }, steps: estSteps(q.op, q.x, q.y), stepsAr: estSteps(q.op, q.x, q.y, 1) };
 };
 W.bar = (q, b) => {
   const f = E.fmt, whole = q.total == null;
@@ -285,15 +358,17 @@ W.bar = (q, b) => {
   const pw = Math.max(18, Math.min(82, part / tot * 100));
   b.body.appendChild(H('div', 'barm', `<div class="btot" dir="ltr">${whole ? 'X = ?' : f(tot)}</div><div class="bbar" dir="ltr"><div class="bp" style="width:${pw}%">${f(part)}</div><div class="bx">${whole ? f(q.other) : 'X'}</div></div>`));
   const r = single({ a: E.fmt(ans) }, b, 'X = ?', v => eqNum(v, ans));
-  r.steps = q.s || (whole ? [`X هو الشريط كله (الكل).`, `الكل = الجزء + الجزء`, `X = ${f(part)} + ${f(q.other)} = ${f(ans)}`] :
+  r.steps = q.e || (whole ? [`X is the whole bar.`, `Whole = part + part`, `X = ${f(part)} + ${f(q.other)} = ${f(ans)}`] :
+    [`The whole bar = ${f(tot)}, one part = ${f(part)}, and the other part is X.`, `To find a part: whole − the other part`, `X = ${f(tot)} − ${f(part)} = ${f(ans)}`, `Check: ${f(part)} + ${f(ans)} = ${f(tot)} ✔`]);
+  r.stepsAr = q.s || (whole ? [`X هو الشريط كله (الكل).`, `الكل = الجزء + الجزء`, `X = ${f(part)} + ${f(q.other)} = ${f(ans)}`] :
     [`الشريط كله = ${f(tot)} ، وجزء منه = ${f(part)} ، والجزء التاني X.`, `علشان نلاقي جزء: الكل − الجزء التاني`, `X = ${f(tot)} − ${f(part)} = ${f(ans)}`, `نتأكد: ${f(part)} + ${f(ans)} = ${f(tot)} ✔`]);
   return r;
 };
 W.self = (q, b) => {
-  const pad = H('textarea', 'note'); pad.placeholder = 'اكتبي/ارسمي إجابتك هنا أو في الكشكول ✏️'; pad.dir = 'ltr';
-  const mdl = E.ar('<b>الإجابة النموذجية:</b><br><span dir="ltr">' + q.model + '</span>', 'model hide');
-  const show = H('button', 'btn', '👀 قارني بإجابتي');
-  const yes = H('button', 'btn ok hide', '✔ إجابتي زيها'), no = H('button', 'btn ghost hide', '↺ هراجع تاني');
+  const pad = H('textarea', 'note'); pad.placeholder = 'Write or draw your answer here or in your notebook ✏️'; pad.dir = 'ltr';
+  const mdl = H('div', 'model hide', '<b>Model answer:</b><br><span dir="ltr">' + q.model + '</span>'); mdl.dir = 'ltr';
+  const show = H('button', 'btn', '👀 Compare with the model');
+  const yes = H('button', 'btn ok hide', '✔ Mine is like it'), no = H('button', 'btn ghost hide', '↺ I’ll check again');
   show.onclick = () => { mdl.classList.remove('hide'); yes.classList.remove('hide'); no.classList.remove('hide'); show.classList.add('hide'); };
   let st = null; yes.onclick = () => { st = true; b.check(); }; no.onclick = () => { st = false; b.check(); };
   const row = H('div', 'row'); row.append(show, yes, no);
@@ -327,22 +402,25 @@ W.mult = (q, b) => {
     p.slice().reverse().forEach(v => { const r = H('div', 'ppr'); r.appendChild(H('span', 'ppl', `${f(v)} × ${y} =`)); r.appendChild(mk(v)); t.appendChild(r); });
     b.body.appendChild(t);
   }
-  const tr = H('div', 'row'), ti = input('؟'); tr.append(H('span', 'plab', 'الناتج النهائي ='), ti); b.body.appendChild(tr);
+  const tr = H('div', 'row'), ti = input('؟'); tr.append(H('span', 'plab', 'Final answer ='), ti); b.body.appendChild(tr);
   return {
     check: () => { if (!ti.value.trim()) return null; ins.forEach(i => { if (i.value.trim()) mark(i, eqNum(i.value, i._a)); }); const ok = eqNum(ti.value, q.x * y); mark(ti, ok); return ok; },
     show: () => { ins.forEach(i => { i.value = f(i._a); mark(i, true); }); ti.value = f(q.x * y); mark(ti, true); },
-    steps: multSteps(q.how, q.x, y)
+    steps: multSteps(q.how, q.x, y), stepsAr: multSteps(q.how, q.x, y, 1)
   };
 };
 
 /* ---------- question card ---------- */
 const CHEERS = ['برافو يا أمينة! 🎉', 'شيف شاطرة! 👩‍🍳', 'الله عليكي! ⭐', 'صح الصح! 🌟', 'دماغك سريعة! 🚀', 'كده الوصفة مظبوطة! 🍰'];
 const TRY = ['قربتي جداً! جربي تاني 💪', 'مش مشكلة، الغلط بيعلّمنا. بصّي على أول خطوة 👣', 'خدي نفس وجربي تاني 🌸'];
+const CHEERS_EN = ['Bravo, Amina! 🎉', 'Super chef! 👩‍🍳', 'Brilliant! ⭐', 'Exactly right! 🌟', 'Your brain is fast! 🚀', 'The recipe is perfect! 🍰'];
+const TRY_EN = ['So close! Try again 💪', 'No problem — mistakes help us learn. Look at the first step 👣', 'Take a breath and try again 🌸'];
+const pickL = (en, ar, i) => { const L = S.ar ? ar : en; return L[i == null ? Math.floor(Math.random() * L.length) : i]; };
 E.card = (q, key, num) => {
   const c = H('div', 'qcard' + (S.stars[key] ? ' done' : ''));
   const head = H('div', 'qhead');
   head.append(H('span', 'qn', num || ''), H('span', 'qstar', S.stars[key] ? '⭐' : '☆'));
-  const say = H('button', 'icon', '🔊'); say.title = 'اسمعي السؤال'; say.onclick = () => E.speak(q.q); head.appendChild(say);
+  const say = H('button', 'icon', '🔊'); say.title = 'Listen to the question'; say.onclick = () => E.speak(q.q); head.appendChild(say);
   c.appendChild(head);
   const qt = H('div', 'qtext', q.q); qt.dir = 'auto'; c.appendChild(qt);
   if (q.fig && E.figs[q.fig]) c.appendChild(H('div', 'figw', E.figs[q.fig]()));
@@ -351,19 +429,19 @@ E.card = (q, key, num) => {
   const fb = H('div', 'fb'); const bar = H('div', 'qbtns');
   const b = { body, locked: false, tries: 0 };
   const w = (W[q.t] || W.num)(q, b);
-  const steps = q.s || w.steps || [];
-  const sb = stepsBox(steps); sb.classList.add('hide');
-  const chk = H('button', 'btn', 'تحقّقي ✔'), hint = H('button', 'btn ghost', '👣 ورّيني الخطوات'), ans = H('button', 'btn ghost hide', '🙈 الإجابة');
+  const steps = q.e || w.steps || q.s || w.stepsAr || [];
+  const sb = stepsBox(q.e || w.steps, q.s || w.stepsAr); sb.classList.add('hide');
+  const chk = H('button', 'btn', E.L('Check ✔', 'تحقّقي ✔')), hint = H('button', 'btn ghost', E.L('👣 Show me the steps', '👣 ورّيني الخطوات')), ans = H('button', 'btn ghost hide', E.L('🙈 Answer', '🙈 الإجابة'));
   b.check = () => {
-    const r = w.check(); if (r == null) { fb.className = 'fb info'; fb.textContent = 'اكتبي إجابتك الأول 🙂'; return; }
+    const r = w.check(); if (r == null) { fb.className = 'fb info'; fb.textContent = E.L('Write your answer first 🙂', 'اكتبي إجابتك الأول 🙂'); return; }
     b.tries++;
     if (r) {
-      fb.className = 'fb good'; fb.textContent = CHEERS[Math.floor(Math.random() * CHEERS.length)]; E.ding();
+      fb.className = 'fb good'; fb.dir = S.ar ? 'rtl' : 'ltr'; fb.textContent = pickL(CHEERS_EN, CHEERS); E.ding(); E.onResult(q, key, true, b.tries);
       if (!S.stars[key] && b.tries <= 2) { S.stars[key] = 1; E.save(); head.querySelector('.qstar').textContent = '⭐'; c.classList.add('done', 'pulse'); E.onStar(); }
-      if (steps.length) { sb.classList.remove('hide'); fb.appendChild(E.ar(' — دي الوصفة (الخطوات) علشان تكتبيها في الامتحان:', 'mini')); sb.all(); }
+      if (steps.length) { sb.classList.remove('hide'); fb.appendChild(E.tx(' — here is the recipe (the steps) to write in the exam:', ' — دي الوصفة (الخطوات) علشان تكتبيها في الامتحان:', 'mini')); sb.all(); }
       b.locked = q.t === 'mcq' || q.t === 'pick';
     } else {
-      fb.className = 'fb bad'; fb.textContent = TRY[Math.min(b.tries - 1, 2)]; E.boop();
+      fb.className = 'fb bad'; fb.dir = S.ar ? 'rtl' : 'ltr'; fb.textContent = pickL(TRY_EN, TRY, Math.min(b.tries - 1, 2)); E.boop(); E.onResult(q, key, false, b.tries);
       if (b.tries >= 2) ans.classList.remove('hide');
       if (q.t === 'mcq' || q.t === 'pick') setTimeout(() => [...body.querySelectorAll('.opt.bad')].forEach(o => o.classList.remove('bad', 'sel')), 900);
     }

@@ -1,6 +1,6 @@
 /* Multiplication: Japanese line method, fast tricks, table map, speed game */
 (function(){
-const E = window.ENG, H = E.H;
+const E = window.ENG, H = E.H, L = E.L, X = (en, ar, cls) => E.tx(en, ar, cls);
 const T = window.TIMES = {};
 const COLORS = ['#e55039', '#3c6382', '#38ada9', '#f6b93b', '#8e44ad'];
 
@@ -11,12 +11,12 @@ T.japanese = (root) => {
   const a = H('input', 'inp'), b = H('input', 'inp');
   a.value = '23'; b.value = '12'; [a, b].forEach(i => { i.setAttribute('inputmode', 'numeric'); i.maxLength = 3; });
   b.maxLength = 2;
-  const go = H('button', 'btn', 'ارسمي ✏️');
+  const go = H('button', 'btn', L('Draw ✏️', 'ارسمي ✏️'));
   ctl.append(a, H('span', 'x', '×'), b, go);
   const stage = H('div', 'jpstage'), info = H('div', 'jpinfo'), nav = H('div', 'qbtns');
-  const nextB = H('button', 'btn', 'الخطوة الجاية ▶'), againB = H('button', 'btn ghost', '↺ من الأول');
+  const nextB = H('button', 'btn', L('Next step ▶', 'الخطوة الجاية ▶')), againB = H('button', 'btn ghost', L('↺ Start again', '↺ من الأول'));
   nav.append(nextB, againB);
-  box.append(E.ar('اكتبي رقمين (الأول لحد 3 أرقام، التاني لحد رقمين) واضغطي ارسمي. بعدين امشي خطوة خطوة 👣', 'mini'), ctl, stage, info, nav);
+  box.append(X('Write two numbers (the first up to 3 digits, the second up to 2 digits) and tap Draw. Then go step by step 👣', 'اكتبي رقمين (الأول لحد 3 أرقام، التاني لحد رقمين) واضغطي ارسمي. بعدين امشي خطوة خطوة 👣', 'mini'), ctl, stage, info, nav);
   root.appendChild(box);
   let st = null;
   const build = () => {
@@ -52,36 +52,37 @@ T.japanese = (root) => {
     const maxP = ad.length + bd.length - 2;
     st = { A: +A, B: +B, ad, bd, zones, maxP, step: 0 };
     stage.querySelectorAll('line,circle').forEach(e => e.style.opacity = 0);
-    info.innerHTML = ''; info.appendChild(E.ar(`هنضرب ${A} × ${B} من غير جدول ضرب! بس هنرسم خطوط ونعدّ النقط 🔴🔵`, 'say'));
+    info.innerHTML = ''; info.appendChild(X(`We’ll multiply ${A} × ${B} without the times table! We just draw lines and count the dots 🔴🔵`, `هنضرب ${A} × ${B} من غير جدول ضرب! بس هنرسم خطوط ونعدّ النقط 🔴🔵`, 'say'));
     nextB.disabled = false;
   };
-  const names = ['الآحاد (Ones)', 'العشرات (Tens)', 'المئات (Hundreds)', 'الآلاف (Thousands)', 'عشرات الآلاف'];
+  const namesAr = ['الآحاد (Ones)', 'العشرات (Tens)', 'المئات (Hundreds)', 'الآلاف (Thousands)', 'عشرات الآلاف'], namesEn = ['Ones', 'Tens', 'Hundreds', 'Thousands', 'Ten thousands'];
+  const nm = p => E.isAr() ? (namesAr[p] || 'الخانة ' + (p + 1)) : (namesEn[p] || 'Place ' + (p + 1));
   const next = () => {
     if (!st) return; st.step++; E.pop();
     const s = st.step, P = st.maxP;
     if (s === 1) {
       stage.querySelectorAll('.la').forEach(e => e.style.opacity = 1);
-      info.appendChild(E.ar(`🔴 الرقم ${st.A}: كل رقم فيه = مجموعة خطوط. ${st.ad.map(d => d === 0 ? 'الصفر = خط باهت مالوش نقط' : d + ' خطوط').join(' ثم ')}.`, 'say'));
+      info.appendChild(X(`🔴 The number ${st.A}: each digit = a group of lines. ${st.ad.map(d => d === 0 ? 'zero = a faint line with no dots' : d + ' lines').join(', then ')}.`, `🔴 الرقم ${st.A}: كل رقم فيه = مجموعة خطوط. ${st.ad.map(d => d === 0 ? 'الصفر = خط باهت مالوش نقط' : d + ' خطوط').join(' ثم ')}.`, 'say'));
     } else if (s === 2) {
       stage.querySelectorAll('.lb').forEach(e => e.style.opacity = 1);
-      info.appendChild(E.ar(`🔵 الرقم ${st.B}: نرسم خطوطه بالعرض عليهم: ${st.bd.map(d => d === 0 ? 'خط باهت' : d + ' خطوط').join(' ثم ')}.`, 'say'));
+      info.appendChild(X(`🔵 The number ${st.B}: we draw its lines across them: ${st.bd.map(d => d === 0 ? 'a faint line' : d + ' lines').join(', then ')}.`, `🔵 الرقم ${st.B}: نرسم خطوطه بالعرض عليهم: ${st.bd.map(d => d === 0 ? 'خط باهت' : d + ' خطوط').join(' ثم ')}.`, 'say'));
     } else if (s === 3) {
       stage.querySelectorAll('circle').forEach(e => e.style.opacity = 1);
-      info.appendChild(E.ar('✨ كل مكان الخطوط بتتقاطع فيه = نقطة. النقط اتجمعت في عواميد ملوّنة: كل عمود = خانة. اليمين = الآحاد.', 'say'));
+      info.appendChild(X('✨ Every place where the lines cross = a dot. The dots are grouped in coloured columns: each column = a place. The right one = the ones.', '✨ كل مكان الخطوط بتتقاطع فيه = نقطة. النقط اتجمعت في عواميد ملوّنة: كل عمود = خانة. اليمين = الآحاد.', 'say'));
       for (let p = 0; p <= P; p++) stage.querySelectorAll('.z' + p).forEach(c => c.style.fill = COLORS[(p + 2) % COLORS.length]);
     } else if (s - 4 <= P) {
       const p = s - 4, n = st.zones[p] || 0;
       stage.querySelectorAll('circle').forEach(c => c.classList.remove('glow'));
       stage.querySelectorAll('.z' + p).forEach(c => c.classList.add('glow'));
-      info.appendChild(E.ar(`👆 ${names[p] || 'الخانة ' + (p + 1)}: نعدّ النقط = ${n}`, 'say'));
+      info.appendChild(X(`👆 ${nm(p)}: count the dots = ${n}`, `👆 ${nm(p)}: نعدّ النقط = ${n}`, 'say'));
     } else if (s === P + 5) {
       let carry = 0, digits = [], txt = [];
       for (let p = 0; p <= P || carry; p++) {
         const v = (st.zones[p] || 0) + carry; digits.unshift(v % 10);
-        txt.push(`${names[p] || 'الخانة ' + (p + 1)}: ` + (carry ? `${st.zones[p] || 0} + ${carry} شايل = ${v}` : `${v}`) + (v > 9 ? ` ← نكتب ${v % 10} ونشيل ${Math.floor(v / 10)}` : ' ✔'));
+        txt.push(`${nm(p)}: ` + (carry ? `${st.zones[p] || 0} + ${carry} ${L('carried', 'شايل')} = ${v}` : `${v}`) + (v > 9 ? L(` → write ${v % 10} and carry ${Math.floor(v / 10)}`, ` ← نكتب ${v % 10} ونشيل ${Math.floor(v / 10)}`) : ' ✔'));
         carry = Math.floor(v / 10);
       }
-      info.appendChild(E.ar('🎒 لو عمود فيه 10 أو أكتر، نشيل للعمود اللي على شماله:<br>' + txt.join('<br>'), 'say'));
+      info.appendChild(X('🎒 If a column has 10 or more, carry to the column on its left:<br>' + txt.join('<br>'), '🎒 لو عمود فيه 10 أو أكتر، نشيل للعمود اللي على شماله:<br>' + txt.join('<br>'), 'say'));
       info.appendChild(E.ar(`🎉 ${st.A} × ${st.B} = ${E.fmt(st.A * st.B)}`, 'say big'));
       E.ding(); nextB.disabled = true;
     }
@@ -95,13 +96,13 @@ T.japanese = (root) => {
 T.fingers = (root) => {
   const w = H('div', 'fing');
   const hands = H('div', 'hands'); hands.dir = 'ltr';
-  const out = E.ar('اضغطي على أي صباع 👆', 'say');
+  const out = X('Tap any finger 👆', 'اضغطي على أي صباع 👆', 'say');
   for (let i = 1; i <= 10; i++) {
     const f = H('button', 'finger', `<span>${i}</span>`); f.style.setProperty('--h', [62, 74, 82, 76, 50, 50, 76, 82, 74, 62][i - 1] + 'px');
     if (i === 6) hands.appendChild(H('span', 'handgap'));
     f.onclick = () => {
       [...hands.querySelectorAll('.finger')].forEach((x, k) => { x.classList.toggle('down', k + 1 === i); x.classList.toggle('left', k + 1 < i); });
-      out.innerHTML = ''; out.appendChild(E.ar(`9 × ${i}: ثنينا صباع رقم ${i}. الصوابع اللي على شماله = ${i - 1} (عشرات) واللي على يمينه = ${10 - i} (آحاد) ← <b>${9 * i}</b> 🎉`));
+      out.innerHTML = ''; out.appendChild(X(`9 × ${i}: we fold finger number ${i}. Fingers on its left = ${i - 1} (tens) and on its right = ${10 - i} (ones) → <b>${9 * i}</b> 🎉`, `9 × ${i}: ثنينا صباع رقم ${i}. الصوابع اللي على شماله = ${i - 1} (عشرات) واللي على يمينه = ${10 - i} (آحاد) ← <b>${9 * i}</b> 🎉`));
       E.pop();
     };
     hands.appendChild(f);
@@ -112,22 +113,22 @@ T.fingers = (root) => {
 /* ---------- table map (which trick covers which fact) ---------- */
 const trickOf = (r, c) => {
   const [a, b] = [Math.min(r, c), Math.max(r, c)];
-  if (a === 1) return ['×1', 'أي رقم × 1 = نفسه 😎', '#dfe6e9'];
-  if (a === 10 || b === 10) return ['×10', 'حطي صفر على اليمين 🚌', '#c7ecee'];
-  if (a === 2) return ['×2', 'ضعف الرقم (اجمعيه على نفسه) 👯', '#ffeaa7'];
-  if (a === 5 || b === 5) return ['×5', 'اضربي في 10 وخدي النص ✂️', '#fab1a0'];
-  if (a === 9 || b === 9) return ['×9', 'صوابع الـ9 🖐️ أو ×10 ناقص الرقم', '#a29bfe'];
-  if (a === 4 || b === 4) return ['×4', 'ضعف الضعف 👯👯', '#81ecec'];
-  if (a === 3 || b === 3) return ['×3', 'ضعف + الرقم كمان مرة', '#ffd3b6'];
-  if (a === b) return ['²', 'مربع: احفظيه كصورة 🟥', '#fd79a8'];
-  if (a === 6 && b === 8) return ['6×8', '6 × 8 = 48 ← "6 و8 قعدوا على 48" 🎵', '#55efc4'];
-  if (a === 7 && b === 8) return ['56', '5, 6, 7, 8 ← 56 = 7 × 8 🎵', '#55efc4'];
+  if (a === 1) return ['×1', L('Any number × 1 = itself 😎', 'أي رقم × 1 = نفسه 😎'), '#dfe6e9'];
+  if (a === 10 || b === 10) return ['×10', L('Put a zero on the right 🚌', 'حطي صفر على اليمين 🚌'), '#c7ecee'];
+  if (a === 2) return ['×2', L('Double the number (add it to itself) 👯', 'ضعف الرقم (اجمعيه على نفسه) 👯'), '#ffeaa7'];
+  if (a === 5 || b === 5) return ['×5', L('Multiply by 10 and take half ✂️', 'اضربي في 10 وخدي النص ✂️'), '#fab1a0'];
+  if (a === 9 || b === 9) return ['×9', L('The 9 fingers 🖐️ or ×10 minus the number', 'صوابع الـ9 🖐️ أو ×10 ناقص الرقم'), '#a29bfe'];
+  if (a === 4 || b === 4) return ['×4', L('Double, then double again 👯👯', 'ضعف الضعف 👯👯'), '#81ecec'];
+  if (a === 3 || b === 3) return ['×3', L('Double + the number once more', 'ضعف + الرقم كمان مرة'), '#ffd3b6'];
+  if (a === b) return ['²', L('A square: remember it like a picture 🟥', 'مربع: احفظيه كصورة 🟥'), '#fd79a8'];
+  if (a === 6 && b === 8) return ['6×8', L('6 × 8 = 48 → "6 and 8 sat on 48" 🎵', '6 × 8 = 48 ← "6 و8 قعدوا على 48" 🎵'), '#55efc4'];
+  if (a === 7 && b === 8) return ['56', L('5, 6, 7, 8 → 56 = 7 × 8 🎵', '5, 6, 7, 8 ← 56 = 7 × 8 🎵'), '#55efc4'];
   if (a === 6 && b === 7) return ['6×7', '6 × 7 = 42 (6 × 6 = 36 + 6) 🪜', '#55efc4'];
   return ['', '', '#eee'];
 };
 T.map = (root) => {
   const g = H('div', 'tgrid'); g.dir = 'ltr';
-  const tip = E.ar('اضغطي على أي خانة تعرفي الحيلة بتاعتها 👆', 'say');
+  const tip = X('Tap any box to see its trick 👆', 'اضغطي على أي خانة تعرفي الحيلة بتاعتها 👆', 'say');
   g.appendChild(H('div', 'th', '×'));
   for (let c = 1; c <= 10; c++) g.appendChild(H('div', 'th', c));
   for (let r = 1; r <= 10; r++) {
@@ -135,7 +136,7 @@ T.map = (root) => {
     for (let c = 1; c <= 10; c++) {
       const [lab, txt, col] = trickOf(r, c);
       const d = H('button', 'tc', r * c); d.style.background = col;
-      d.onclick = () => { tip.innerHTML = ''; tip.appendChild(E.ar(`<b>${r} × ${c} = ${r * c}</b> — ${txt}` + (r !== c ? ` ، ونفسها ${c} × ${r} 🔄` : ''))); g.querySelectorAll('.tc').forEach(x => x.classList.remove('on')); d.classList.add('on'); E.pop(); };
+      d.onclick = () => { tip.innerHTML = ''; tip.appendChild(X(`<b>${r} × ${c} = ${r * c}</b> — ${txt}` + (r !== c ? `, and the same as ${c} × ${r} 🔄` : ''), `<b>${r} × ${c} = ${r * c}</b> — ${txt}` + (r !== c ? ` ، ونفسها ${c} × ${r} 🔄` : ''))); g.querySelectorAll('.tc').forEach(x => x.classList.remove('on')); d.classList.add('on'); E.pop(); };
       g.appendChild(d);
     }
   }
@@ -147,7 +148,7 @@ T.game = (root) => {
   const w = H('div', 'game');
   const pick = H('div', 'chips'); const chosen = new Set([2, 3, 4, 5]);
   for (let n = 2; n <= 10; n++) { const c = H('button', 'chip' + (chosen.has(n) ? ' sel' : ''), '×' + n); c.onclick = () => { chosen.has(n) ? chosen.delete(n) : chosen.add(n); c.classList.toggle('sel'); }; pick.appendChild(c); }
-  const start = H('button', 'btn big', '🚀 يلا نلعب');
+  const start = H('button', 'btn big', L('🚀 Let’s play', '🚀 يلا نلعب'));
   const play = H('div', 'play hide');
   const prog = H('div', 'rocket', '<i></i><span>🚀</span>');
   const qq = H('div', 'gq'); qq.dir = 'ltr';
@@ -162,12 +163,12 @@ T.game = (root) => {
   };
   const submit = () => {
     if (!val) return; const ok = +val === cur[0] * cur[1]; n++;
-    if (ok) { good++; E.ding(); msg.className = 'fb good'; msg.textContent = 'صح! ⭐'; }
-    else { E.boop(); msg.className = 'fb bad'; msg.innerHTML = ''; msg.appendChild(E.ar(`${cur[0]} × ${cur[1]} = ${cur[0] * cur[1]} — ${trickOf(cur[0], cur[1])[1] || 'جربي الحيلة'}`)); }
+    if (ok) { good++; E.ding(); msg.className = 'fb good'; msg.textContent = L('Correct! ⭐', 'صح! ⭐'); }
+    else { E.boop(); msg.className = 'fb bad'; msg.innerHTML = ''; msg.appendChild(X(`${cur[0]} × ${cur[1]} = ${cur[0] * cur[1]} — ${trickOf(cur[0], cur[1])[1] || 'try the trick'}`, `${cur[0]} × ${cur[1]} = ${cur[0] * cur[1]} — ${trickOf(cur[0], cur[1])[1] || 'جربي الحيلة'}`)); }
     setTimeout(() => {
       if (n >= 10) {
         play.classList.add('hide'); start.classList.remove('hide'); pick.classList.remove('hide');
-        res.innerHTML = ''; res.appendChild(E.ar(`خلّصتي! ${good} من 10 ${good >= 9 ? '🏆 بطلة!' : good >= 6 ? '🌟 شاطرة جداً!' : '💪 كل مرة هتبقي أسرع!'}`, 'say big'));
+        res.innerHTML = ''; res.appendChild(X(`Done! ${good} out of 10 ${good >= 9 ? '🏆 Champion!' : good >= 6 ? '🌟 Very good!' : '💪 You’ll get faster every time!'}`, `خلّصتي! ${good} من 10 ${good >= 9 ? '🏆 بطلة!' : good >= 6 ? '🌟 شاطرة جداً!' : '💪 كل مرة هتبقي أسرع!'}`, 'say big'));
         const k = 'game:' + new Date().toISOString().slice(0, 10) + ':' + Date.now(); if (good >= 8) { E.S.stars[k] = 1; E.save(); E.onStar(); }
       } else newQ();
     }, ok ? 550 : 1800);
@@ -180,7 +181,7 @@ T.game = (root) => {
   const res = H('div', '');
   start.onclick = () => { if (!chosen.size) return; n = 0; good = 0; res.innerHTML = ''; play.classList.remove('hide'); start.classList.add('hide'); pick.classList.add('hide'); newQ(); };
   play.append(prog, qq, disp, pad, msg);
-  w.append(E.ar('اختاري الجداول اللي عايزة تتمرني عليها (من غير وقت، براحتك 🌸):', 'mini'), pick, start, res, play);
+  w.append(X('Choose the tables you want to practise (no timer — take your time 🌸):', 'اختاري الجداول اللي عايزة تتمرني عليها (من غير وقت، براحتك 🌸):', 'mini'), pick, start, res, play);
   root.appendChild(w);
 };
 })();
