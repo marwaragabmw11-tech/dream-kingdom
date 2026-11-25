@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>مطبخ أمينة للرياضيات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Baloo+Bhaijaan+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff8ef;--card:#ffffff;--ink:#2d2a32;--soft:#7a6f7e;--line:#f0e2cf;--brand:#ff7a59;--brand2:#2ec4b6;--sun:#ffd166;--ok:#2bb673;--bad:#e5484d;--sh:0 6px 0 rgba(0,0,0,.06),0 10px 24px rgba(120,80,40,.10);--r:22px}
+.dark{--bg:#1d1b26;--card:#2a2736;--ink:#f6f1ff;--soft:#b6aec6;--line:#3b3650;--sh:0 6px 0 rgba(0,0,0,.25),0 10px 24px rgba(0,0,0,.3)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:500 17px/1.7 'Baloo Bhaijaan 2','Baloo 2',system-ui,sans-serif}
+body{background-image:radial-gradient(circle at 10% 0,#ffe2d4 0,transparent 40%),radial-gradient(circle at 100% 30%,#d9f6f3 0,transparent 35%);background-attachment:fixed;min-height:100vh}
+.dark body,body.dark{background-image:none}
+[dir=ltr],.m,.inp,.qtext{font-family:'Baloo 2','Baloo Bhaijaan 2',system-ui,sans-serif}
+.m{unicode-bidi:isolate;display:inline!important;font-size:inherit!important}
+button{font:inherit;color:inherit;cursor:pointer}
+.hide{display:none!important}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:10px;padding:10px 14px calc(10px);background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:2px dashed var(--line)}
+header h1{font-size:20px;margin:0;flex:1;display:flex;align-items:center;gap:8px;cursor:pointer}
+header h1 svg{width:40px;height:40px}
+.pill{background:var(--card);border-radius:99px;padding:4px 12px;box-shadow:var(--sh);font-weight:800;white-space:nowrap}
+.icon{background:var(--card);border:0;border-radius:14px;width:40px;height:40px;box-shadow:var(--sh);font-size:18px;flex:none}
+main{max-width:860px;margin:0 auto;padding:16px 14px 110px}
+nav.tabs{position:fixed;bottom:0;inset-inline:0;z-index:30;display:flex;justify-content:space-around;background:var(--card);box-shadow:0 -6px 20px rgba(0,0,0,.08);padding:6px 4px calc(6px + env(safe-area-inset-bottom));border-radius:22px 22px 0 0}
+nav.tabs button{border:0;background:none;display:flex;flex-direction:column;align-items:center;font-size:12.5px;font-weight:700;color:var(--soft);padding:4px 6px;border-radius:14px;min-width:62px}
+nav.tabs button b{font-size:22px;line-height:1.2}
+nav.tabs button.on{color:var(--brand);background:color-mix(in srgb,var(--brand) 12%,transparent)}
+h2{font-size:24px;margin:6px 0 12px}
+h3{font-size:19px;margin:4px 0 8px}
+.say{background:var(--card);border-radius:18px;padding:12px 14px;margin:8px 0;box-shadow:var(--sh)}
+.say.big{font-size:22px;font-weight:800;text-align:center}
+.mini{color:var(--soft);font-size:15px;margin:6px 0}
+.hero{display:flex;gap:12px;align-items:center;background:linear-gradient(135deg,#ffb38a,#ff7a59);color:#fff;border-radius:28px;padding:16px;box-shadow:var(--sh);margin-bottom:16px}
+.hero svg{width:110px;height:110px;flex:none;filter:drop-shadow(0 6px 6px rgba(0,0,0,.15))}
+.hero p{margin:4px 0}
+.hero b.big{font-size:23px;display:block}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tile{border:0;border-radius:var(--r);padding:16px 12px;background:var(--card);box-shadow:var(--sh);text-align:center;transition:transform .15s}
+.tile:active{transform:scale(.97)}
+.tile b{display:block;font-size:40px;line-height:1.2}
+.tile span{font-weight:800;font-size:17px;display:block}
+.tile small{color:var(--soft);font-size:13px}
+.units{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.unit{border:0;border-radius:var(--r);padding:14px;color:#fff;text-align:start;box-shadow:var(--sh);position:relative;overflow:hidden;min-height:118px}
+.unit b{font-size:34px;display:block;line-height:1.1}
+.unit span{font-weight:800;display:block}
+.unit small{opacity:.9;font-family:'Baloo 2',system-ui,sans-serif;display:block}
+.unit em{position:absolute;inset-inline-end:10px;top:8px;font-style:normal;background:rgba(0,0,0,.5);color:#fff;font-weight:800;border-radius:99px;padding:0 8px;font-size:13px}
+.lesson{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);margin:14px 0;overflow:hidden}
+.lhead{padding:12px 16px;color:#fff;display:flex;align-items:center;gap:8px}
+.lhead h3{margin:0;flex:1}
+.lhead small{font-family:'Baloo 2',system-ui,sans-serif;opacity:.9}
+.ways{display:flex;gap:6px;padding:10px 10px 0;overflow-x:auto;scrollbar-width:none}
+.ways button{border:0;border-radius:99px;padding:6px 12px;background:var(--bg);font-weight:700;white-space:nowrap;font-size:15px}
+.ways button.on{background:var(--ink);color:var(--card)}
+.wbody{padding:12px 16px 16px;min-height:120px}
+.wbody ol{padding-inline-start:22px;margin:4px 0}
+.wbody li{margin:6px 0}
+.cap{text-align:center;color:var(--soft);font-size:15px;margin:8px 0 0}
+.trick{background:#fff3c4;color:#5b4500;border-radius:16px;padding:12px;border:2px dashed #f6c343}
+.dark .trick{background:#40361a;color:#ffe9a8}
+/* pictures */
+.pv{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.pv{flex-wrap:nowrap!important}.pvg{display:grid;grid-template-columns:repeat(3,28px);gap:3px;text-align:center;border-radius:14px;padding:6px}
+.pvg b{grid-column:1/4;font-size:13px}
+.pvg span{font-size:12px;opacity:.7}
+.pvg i{font-style:normal;font-weight:800;font-size:19px;background:var(--card);border-radius:8px}
+.pvg.m{background:#ffe0e6}.pvg.t{background:#dff3ff}.pvg.o{background:#e3fbe8}
+.dark .pvg.m{background:#4a2b33}.dark .pvg.t{background:#22394a}.dark .pvg.o{background:#243d2b}
+.hl{color:#e5484d;outline:3px solid #e5484d;border-radius:8px}
+.hl2{color:#3c6382}
+.three,.props,.ladder,.order,.pc,.hops,.tape{display:grid;gap:8px}
+.three>div,.props>div,.ladder>div,.order>div,.pc>div,.hops>div{background:var(--bg);border-radius:14px;padding:8px 12px;text-align:center;font-weight:700}
+.three b,.props b{display:block;color:var(--brand)}
+.cmp{display:flex;gap:12px;justify-content:center;align-items:center;font-size:30px;font-weight:800}
+.cmp .sign{color:var(--brand);font-size:40px}
+.nl{display:flex;align-items:center;gap:8px;font-weight:800}
+.nl .line{flex:1;height:6px;background:var(--ink);border-radius:9px;position:relative;margin:28px 0}
+.nl i{position:absolute;top:-30px;transform:translateX(-50%);font-style:normal;font-size:14px;white-space:nowrap}
+.nl i.dot::after{content:'';position:absolute;left:50%;top:26px;width:14px;height:14px;background:var(--brand);border-radius:50%;transform:translateX(-50%)}
+.nl i.mid{top:14px;color:var(--soft)}
+.colx{width:max-content;margin:auto;font-size:26px;font-weight:800;text-align:right;letter-spacing:4px}
+.colx .cr{font-size:15px;color:var(--brand);letter-spacing:2px}
+.colx .ln{border-top:3px solid var(--ink);color:var(--ok)}
+.colx s{text-decoration-color:var(--bad)}
+.tl{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;font-weight:800}
+.tl span{background:var(--sun);color:#3d2c00;border-radius:12px;padding:2px 10px}
+.tl i{font-style:normal;color:var(--soft);font-size:14px}
+.rect{width:220px;height:110px;margin:20px auto 10px;border:4px solid var(--brand);border-radius:6px;position:relative;background:color-mix(in srgb,var(--brand) 12%,transparent)}
+.rect .w{position:absolute;top:-30px;left:50%;transform:translateX(-50%);font-weight:800}
+.rect .h{position:absolute;left:-62px;top:50%;transform:translateY(-50%);font-weight:800}
+.grid53{display:grid;grid-template-columns:repeat(5,34px);gap:3px;width:max-content;margin:auto}
+.grid53 i{height:34px;background:var(--brand2);border-radius:6px;opacity:.85}
+.tape>div{display:flex;gap:4px;align-items:center}
+.tape b{width:36px;font-size:24px}
+.tape i{font-style:normal;background:var(--sun);color:#3d2c00;border-radius:8px;padding:2px 0;width:52px;text-align:center;font-weight:800}
+.arr{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+.cookies{display:grid;gap:2px}.cookies.r3{grid-template-columns:repeat(5,1fr)}.cookies.r5{grid-template-columns:repeat(3,1fr)}
+.cookies i{font-style:normal;font-size:20px}
+.rainbow{position:relative;display:flex;justify-content:space-between;max-width:300px;margin:auto;font-weight:800;font-size:22px;padding:0 10px}
+.rainbow svg{position:absolute;inset:26px 0 auto;width:100%;height:70px;fill:none;stroke-width:4;stroke-linecap:round}
+.rainbow{padding-bottom:70px}
+.a1{stroke:#e55039}.a2{stroke:#f6b93b}.a3{stroke:#38ada9}
+.pc .p{background:#e3fbe8}.pc .c{background:#ffe0e6}.dark .pc .p{background:#243d2b}.dark .pc .c{background:#4a2b33}
+.hops b{color:var(--brand)}
+.fig{overflow:visible;width:100%;max-width:340px;display:block;margin:auto}
+.fig .shape{fill:color-mix(in srgb,var(--brand2) 25%,transparent);stroke:var(--brand2);stroke-width:3}
+.fig text{font:800 14px 'Baloo 2',system-ui,sans-serif;fill:var(--ink)}
+.fig .cut{stroke:var(--brand);stroke-width:3}
+.figw{margin:10px 0}
+/* quiz cards */
+.qcard{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:12px 14px;margin:12px 0;border:3px solid transparent}
+.qcard.done{border-color:color-mix(in srgb,var(--ok) 45%,transparent)}
+.qcard.pulse{animation:pulse .6s}
+@keyframes pulse{50%{transform:scale(1.02)}}
+.qhead{display:flex;align-items:center;gap:8px}
+.qn{background:var(--brand);color:#fff;border-radius:99px;min-width:30px;text-align:center;font-weight:800;padding:0 8px}
+.qstar{flex:1;font-size:20px}
+.qhead .icon{width:36px;height:36px}
+.qtext{font-size:18px;font-weight:700;margin:8px 0;line-height:1.55}
+.qbody{margin:6px 0}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}
+.plab{font-weight:700;color:var(--soft)}
+.uni{font-weight:800;color:var(--soft)}
+.inp{font-size:20px;font-weight:800;border:3px solid var(--line);background:var(--bg);color:var(--ink);border-radius:14px;padding:6px 10px;width:150px;text-align:center;outline:none}
+.inp:focus{border-color:var(--brand2)}
+.inp.wide{width:100%;max-width:520px;text-align:left}
+.inp.ok,.opt.ok,.oline.ok{border-color:var(--ok)!important;background:color-mix(in srgb,var(--ok) 14%,var(--card))!important}
+.inp.bad,.opt.bad,.oline.bad{border-color:var(--bad)!important;background:color-mix(in srgb,var(--bad) 12%,var(--card))!important;animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.opts.small{grid-template-columns:1fr 1fr}
+.opt{border:3px solid var(--line);background:var(--bg);border-radius:16px;padding:8px 10px;font-weight:800;font-size:17px;text-align:start}
+.opt.sel{border-color:var(--brand2)}
+.ol{color:var(--soft)}
+.qbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.btn{border:0;border-radius:16px;padding:8px 16px;background:var(--brand);color:#fff;font-weight:800;box-shadow:0 4px 0 color-mix(in srgb,var(--brand) 60%,#000)}
+.btn:active{transform:translateY(3px);box-shadow:none}
+.btn.ghost{background:var(--bg);color:var(--ink);box-shadow:0 4px 0 var(--line)}
+.btn.ok{background:var(--ok);box-shadow:0 4px 0 #1b7a4c}
+.btn.sm{padding:4px 10px;font-size:14px}
+.btn.big{font-size:22px;padding:12px 28px;display:block;margin:12px auto}
+.btn:disabled{opacity:.5}
+.fb{font-weight:800;margin-top:8px;min-height:1px}
+.fb.good{color:var(--ok)}.fb.bad{color:var(--bad)}.fb.info{color:var(--soft)}
+.steps{background:color-mix(in srgb,var(--brand2) 10%,var(--card));border-radius:16px;padding:8px 12px;margin-top:10px}
+.slist{margin:0;padding-inline-start:22px}
+.slist li{margin:5px 0;animation:fadein .35s}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.chip{border:3px solid var(--line);background:var(--bg);border-radius:99px;padding:4px 14px;font-weight:800;font-size:17px}
+.chip:disabled{opacity:.35}
+.chip.sel{background:var(--brand2);border-color:var(--brand2);color:#fff}
+.oline{border:3px dashed var(--line);border-radius:14px;padding:6px 10px;min-height:44px;font-weight:800;margin:6px 0}
+.oline i{color:var(--brand);font-style:normal;margin:0 6px}
+.oline em{color:var(--soft);font-style:normal;font-weight:500}
+.colgrid{display:grid;grid-template-columns:repeat(var(--n),44px);gap:4px;width:max-content;margin:10px auto;font-size:26px;font-weight:800;text-align:center}
+.cc{height:44px;display:flex;align-items:center;justify-content:center}
+.cc.op{color:var(--brand)}
+.cc.cr{height:30px}
+.cc.ul{border-bottom:3px solid var(--ink)}
+.inp.dig{width:42px;height:44px;padding:0;font-size:24px}
+.inp.carry{width:34px;height:28px;padding:0;font-size:14px;border-width:2px;border-style:dashed}
+.note{width:100%;min-height:70px;border:3px dashed var(--line);border-radius:14px;background:var(--bg);color:var(--ink);font:inherit;padding:8px}
+.model{background:var(--bg);border-radius:14px;padding:10px;margin-top:8px}
+.barm{max-width:420px;margin:10px auto}
+.btot{text-align:center;font-weight:800;border:2px solid var(--soft);border-bottom:0;border-radius:10px 10px 0 0;padding:2px;margin-bottom:4px}
+.bbar{display:flex;height:48px;border-radius:12px;overflow:hidden;font-weight:800}
+.bp{background:var(--sun);color:#3d2c00;display:flex;align-items:center;justify-content:center}
+.bx{flex:1;background:var(--brand2);color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px}
+.amodel{display:grid;grid-template-columns:auto 1fr;gap:4px;max-width:340px;margin:auto;font-weight:800}
+.amodel .aside{grid-row:1;display:flex;align-items:center;font-size:20px;padding:0 6px}
+.acells{display:flex;border:3px solid var(--ink);border-radius:8px;overflow:hidden}
+.acell{flex:1;text-align:center;padding:10px 4px;border-inline-start:2px solid var(--ink);background:color-mix(in srgb,var(--sun) 40%,var(--card))}
+.acell:first-child{border:0}
+.abot{grid-column:2;display:flex}
+.abot div{flex:1;text-align:center}
+.abot .q{color:var(--bad);font-size:22px}
+.areaw{max-width:440px;margin:10px auto}
+.atop,.arow{display:flex;gap:4px}
+.atl{text-align:center;font-weight:800}
+.aside2{width:36px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;flex:none}
+.abox{flex:1;display:flex;border:3px solid var(--ink);border-radius:10px;overflow:hidden;min-height:110px}
+.ab{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px 2px;border-inline-start:2px solid var(--ink);font-weight:800;font-size:20px}
+.ab:first-child{border:0}
+.ab.c0{background:#ffe0d6}.ab.c1{background:#d6f5f2}.ab.c2{background:#fff1c1}.ab.c3{background:#e6dcff}
+.dark .ab.c0{background:#4a3028}.dark .ab.c1{background:#21403c}.dark .ab.c2{background:#45391a}.dark .ab.c3{background:#352c4d}
+.abl{font-size:13px;color:var(--soft)}
+.ab .inp{width:84%;max-width:110px;font-size:18px;padding:4px}
+.eqline{font-weight:800;font-size:18px;text-align:center;margin:8px 0;overflow-x:auto}
+.pprow{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.pprow .inp{width:100px}
+.plus{font-weight:800;font-size:22px}
+.pp{width:max-content;margin:8px auto;font-weight:800;font-size:20px}
+.pph{display:flex;flex-direction:column;align-items:flex-end;border-bottom:3px solid var(--ink);padding-bottom:4px;margin-bottom:6px}
+.ppr{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin:4px 0}
+.ppl{color:var(--soft);font-size:16px}
+.ppr .inp{width:110px}
+.ppr.tot{border-top:3px solid var(--ink);padding-top:4px}
+.demo .ab,.demo .ppr b{font-size:20px}
+.list .item{display:flex;align-items:center;gap:10px;background:var(--card);border:0;width:100%;text-align:start;border-radius:18px;box-shadow:var(--sh);padding:12px 14px;margin:10px 0}
+.item b{font-size:28px}
+.item div{flex:1}
+.item small{color:var(--soft);display:block;font-size:13px}
+.item .pill{box-shadow:none;background:var(--bg)}
+.models{display:flex;gap:8px;margin:8px 0}
+.models button{flex:1;border:3px solid var(--line);background:var(--card);border-radius:16px;padding:8px;font-weight:800}
+.models button.on{border-color:var(--brand);background:var(--brand);color:#fff}
+.back{border:0;background:none;color:var(--brand);font-weight:800;padding:0;margin-bottom:6px}
+.section{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:14px;margin:14px 0}
+.section h3{display:flex;gap:8px;align-items:center}
+/* japanese */
+.jpctl{display:flex;align-items:center;justify-content:center;gap:8px}
+.jpctl .inp{width:90px}
+.jpctl .x{font-size:28px;font-weight:800}
+.jpstage{max-width:380px;margin:8px auto}
+.jpsvg{width:100%;display:block}
+.jpsvg line{stroke-width:3.2;stroke-linecap:round;transition:opacity .6s}
+.jpsvg line.zero{stroke-dasharray:4 6;opacity:.35}
+.jpsvg circle{fill:#999;transition:opacity .5s,r .3s;stroke:#fff;stroke-width:1.2}
+.jpsvg circle.glow{r:6;stroke:#000;stroke-width:1.5}
+.jpinfo{max-height:340px;overflow:auto}
+/* fingers */
+.hands{display:flex;justify-content:center;align-items:flex-end;gap:5px;height:120px;margin:10px 0}
+.finger{width:26px;height:var(--h);border:0;border-radius:14px 14px 8px 8px;background:#ffcfa8;box-shadow:inset 0 -6px 0 rgba(0,0,0,.08);display:flex;align-items:flex-start;justify-content:center;padding-top:6px;font-weight:800;font-size:13px;color:#7a4a2a;transition:height .25s}
+.finger.down{height:24px;background:#e55039;color:#fff}
+.finger.left{background:#ffd166}
+.handgap{width:20px}
+/* table */
+.tgrid{display:grid;grid-template-columns:repeat(11,1fr);gap:3px;max-width:520px;margin:auto}
+.th{text-align:center;font-weight:800;color:var(--brand);font-size:14px;padding:4px 0}
+.tc{border:0;border-radius:8px;font-weight:800;font-size:14px;padding:6px 0;color:#2d2a32}
+.tc.on{outline:3px solid var(--ink);transform:scale(1.12)}
+/* game */
+.rocket{height:16px;background:var(--bg);border-radius:99px;position:relative;margin:24px 6px 10px}
+.rocket i{position:absolute;inset-block:0;inset-inline-start:0;background:var(--brand2);border-radius:99px;transition:width .4s}
+.rocket span{position:absolute;top:-22px;font-size:24px;transition:inset-inline-start .4s;transform:scaleX(-1)}
+.gq{text-align:center;font-size:44px;font-weight:800}
+.gdisp{text-align:center;font-size:40px;font-weight:800;color:var(--brand);min-height:60px}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;margin:auto}
+.key{border:0;border-radius:16px;background:var(--bg);font-size:26px;font-weight:800;padding:10px 0;box-shadow:0 4px 0 var(--line)}
+.key.go{background:var(--ok);color:#fff;box-shadow:0 4px 0 #1b7a4c}
+/* welcome */
+#welcome{position:fixed;inset:0;z-index:50;background:rgba(30,20,40,.55);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
+#welcome .wbox{background:var(--card);border-radius:28px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.3);text-align:center;animation:pop .45s}
+@keyframes pop{from{transform:scale(.8);opacity:0}}
+#welcome svg{width:130px;height:130px}
+#welcome p{text-align:start;margin:8px 0}
+.mascot .tail{transform-origin:150px 150px;animation:wag 2s ease-in-out infinite}
+@keyframes wag{50%{transform:rotate(-12deg)}}
+.mascot .eye{animation:blink 4s infinite;transform-origin:center;transform-box:fill-box}
+@keyframes blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+header h1 .face{width:42px;height:42px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:var(--sh)}
+.heroimg{width:120px;height:120px;border-radius:24px;object-fit:cover;flex:none;border:4px solid rgba(255,255,255,.7)}
+.wimg{width:100%;border-radius:20px;display:block}
+.unit{padding:0!important;background-color:#fff;display:flex;flex-direction:column}
+.unit .ucover{width:100%;aspect-ratio:4/5;object-fit:cover;object-position:top;display:block}
+.unit span,.unit small{padding:0 12px}
+.unit span{padding-top:8px}
+.unit small{padding-bottom:10px}
+.ubanner{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);margin:6px 0 10px;max-height:300px}
+.ubanner img{width:100%;height:300px;object-fit:cover;object-position:top;display:block}
+.ubanner.wide img{object-fit:contain;background:#fff;height:240px}
+.stars-big{font-size:46px;font-weight:800;text-align:center}
+.prog{height:12px;background:var(--bg);border-radius:9px;overflow:hidden;margin:4px 0}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--sun),var(--brand));border-radius:9px}
+.flag{font-size:13px;color:var(--soft)}
+@media (max-width:420px){.opts{grid-template-columns:1fr}.tiles .tile b{font-size:34px}.heroimg{width:92px;height:92px}.units{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="home-t"><span id="mhead"></span>مطبخ أمينة 🍳</h1>
+  <span class="pill" id="starpill">⭐ 0</span>
+  <button class="icon" id="openW" title="رسالة مشمش">💌</button>
+  <button class="icon" id="theme" title="الوضع الليلي">🌙</button>
+</header>
+<main id="app"></main>
+<nav class="tabs" id="tabs">
+  <button data-v="home"><b>🏠</b>البيت</button>
+  <button data-v="learn"><b>📚</b>أتعلّم</button>
+  <button data-v="times"><b>✖️</b>جدول الضرب</button>
+  <button data-v="quiz"><b>📝</b>الكويزات</button>
+  <button data-v="month"><b>🏆</b>الشهري</button>
+</nav>
+<div id="welcome" class="hide"><div class="wbox">
+  <div id="wm"></div>
+  <h2>أهلاً يا أمينة! 👋</h2>
+  <p>أنا <b>الشيف مِشمِش</b> 🐱👩‍🍳، وده مطبخي اللي بنطبخ فيه الأرقام!</p>
+  <p>عرفت إن دماغك <b>سريعة جداً</b> وبتحلي في دماغك على طول… دي قوة خارقة بجد! 🦸‍♀️</p>
+  <p>بس تعرفي سر؟ <b>الخطوات زي الوصفة</b> 📝. الشيف الشاطرة بتكتب وصفتها علشان أي حد يقدر يعمل نفس الكيكة الحلوة، والمدرّسة لما تشوف الوصفة بتعرف إنك فاهمة مش بتخمّني. علشان كده كل إجابة هنا بعدها "وصفة" صغيرة.</p>
+  <p>والرياضة مستخبية في كل حاجة بتحبيها: 🍰 مقادير الطبخ، 🎨 الأشكال والمساحات في الرسم، 🎮 النقط في الألعاب، و🐶 حتى أكل الحيوانات بيتوزع بالقسمة!</p>
+  <p>هنا هتلاقي: 📚 شرح بكذا طريقة (حكاية، صورة، خطوات، حيلة)، ✖️ جدول الضرب بالطريقة اليابانية وحيل سريعة، 📝 كويزات زي اللي في المدرسة بالظبط، و🏆 امتحانات الشهر.</p>
+  <p>وكل إجابة صح = ⭐. ولو غلطتي؟ <b>عادي جداً</b> 🌸 الغلط هنا محدش بيشوفه غيرك، وهو اللي بيخلّي الدماغ تكبر.</p>
+  <button class="btn big" id="wGo">يلا نطبخ أرقام! 🍳</button>
+</div></div>
+<script src="engine.js"></script>
+<script src="learn.js"></script>
+<script src="times.js"></script>
+<script src="q1.js"></script>
+<script src="q2.js"></script>
+<script src="q3.js"></script>
+<script src="q4.js"></script>
+<script src="q5.js"></script>
+<script src="qm1.js"></script>
+<script src="qm2.js"></script>
+<script>
+(function(){
+const E = ENG, H = E.H, S = E.S, app = document.getElementById('app');
+/* ---- mascot: chef cat Mishmish (original) ---- */
+const mascot = (mood) => `<svg class="mascot" viewBox="0 0 200 200" aria-label="الشيف مشمش">
+<path class="tail" d="M150 150 C185 140 190 100 172 92" stroke="#f08a3c" stroke-width="13" fill="none" stroke-linecap="round"/>
+<ellipse cx="100" cy="158" rx="50" ry="34" fill="#ffffff" stroke="#e7d9c8" stroke-width="3"/>
+<path d="M78 140 h44 v34 h-44z" fill="#ff7a59" rx="6"/><circle cx="100" cy="152" r="4" fill="#fff"/>
+<circle cx="100" cy="100" r="52" fill="#f6a04d"/>
+<path d="M58 72 L52 30 L86 54Z M142 72 L148 30 L114 54Z" fill="#f6a04d"/><path d="M62 64 L60 42 L78 56Z M138 64 L140 42 L122 56Z" fill="#ffc9d6"/>
+<path d="M70 70 q10 -6 18 0 M112 70 q10 -6 18 0" stroke="#d9772a" stroke-width="5" fill="none" stroke-linecap="round"/>
+<g class="eye"><ellipse cx="80" cy="98" rx="8" ry="${mood === 'wink' ? 2 : 10}" fill="#2d2a32"/><circle cx="83" cy="94" r="3" fill="#fff"/></g>
+<g class="eye"><ellipse cx="120" cy="98" rx="8" ry="10" fill="#2d2a32"/><circle cx="123" cy="94" r="3" fill="#fff"/></g>
+<ellipse cx="72" cy="116" rx="9" ry="5" fill="#ff9fb4" opacity=".7"/><ellipse cx="128" cy="116" rx="9" ry="5" fill="#ff9fb4" opacity=".7"/>
+<path d="M95 110 h10 l-5 6z" fill="#e5577a"/>
+<path d="M100 116 q-8 12 -16 4 M100 116 q8 12 16 4" stroke="#2d2a32" stroke-width="3" fill="none" stroke-linecap="round"/>
+<path d="M60 110 h-22 M60 118 h-20 M140 110 h22 M140 118 h20" stroke="#2d2a32" stroke-width="2" stroke-linecap="round"/>
+<g><rect x="70" y="40" width="60" height="18" rx="5" fill="#fff" stroke="#e7d9c8" stroke-width="3"/>
+<circle cx="78" cy="30" r="15" fill="#fff" stroke="#e7d9c8" stroke-width="3"/><circle cx="100" cy="22" r="18" fill="#fff" stroke="#e7d9c8" stroke-width="3"/><circle cx="122" cy="30" r="15" fill="#fff" stroke="#e7d9c8" stroke-width="3"/>
+<rect x="66" y="38" width="68" height="10" fill="#fff"/><text x="100" y="54" font-size="12" text-anchor="middle" fill="#ff7a59" font-weight="800">π ✕ ÷</text></g>
+</svg>`;
+document.getElementById('mhead').innerHTML = '<img class="face" src="img/face.webp" alt="مشمش">';
+document.getElementById('wm').innerHTML = '<img class="wimg" src="img/cake.webp" alt="الشيف مشمش بيزيّن كيكة">';
+
+/* ---- data indexes ---- */
+const WEEKS = [];
+UNITS.forEach(u => (QUIZ[u.id] || []).forEach(w => WEEKS.push(Object.assign({ unit: u }, w))));
+const totalQ = w => Object.values(w.models).reduce((s, m) => s + m.length, 0);
+const wStars = w => E.starCount('w:' + w.id + ':');
+const mStars = m => E.starCount('m:' + m.id + ':');
+
+/* ---- star pill ---- */
+const pill = document.getElementById('starpill');
+const upd = () => pill.textContent = '⭐ ' + E.starCount();
+E.onStar = () => { upd(); pill.animate([{ transform: 'scale(1.4)' }, { transform: 'scale(1)' }], 400); };
+upd();
+
+/* ---- theme ---- */
+const th = document.getElementById('theme');
+const setTheme = d => { document.documentElement.classList.toggle('dark', d); document.body.classList.toggle('dark', d); th.textContent = d ? '☀️' : '🌙'; S.dark = d; E.save(); };
+setTheme(S.dark != null ? S.dark : matchMedia('(prefers-color-scheme: dark)').matches);
+th.onclick = () => setTheme(!S.dark);
+
+/* ---- welcome ---- */
+const W = document.getElementById('welcome');
+document.getElementById('openW').onclick = () => W.classList.remove('hide');
+document.getElementById('wGo').onclick = () => { W.classList.add('hide'); S.welcomed = 1; E.save(); E.ding(); };
+if (!S.welcomed) W.classList.remove('hide');
+
+/* ---- router ---- */
+const tabs = document.getElementById('tabs');
+tabs.onclick = e => { const b = e.target.closest('button'); if (b) go(b.dataset.v); };
+document.getElementById('home-t').onclick = () => go('home');
+function go(v, a, b) {
+  try { speechSynthesis.cancel(); } catch(e) {}
+  [...tabs.children].forEach(t => t.classList.toggle('on', t.dataset.v === v));
+  app.innerHTML = ''; window.scrollTo(0, 0);
+  (V[v] || V.home)(a, b);
+  E.bidi(app);
+}
+const back = (label, fn) => { const b = H('button', 'back', '→ ' + label); b.onclick = fn; app.appendChild(b); };
+const V = {};
+
+V.home = () => {
+  const hero = H('div', 'hero');
+  const n = E.starCount();
+  hero.innerHTML = `<img class="heroimg" src="img/mishmish.webp" alt="الشيف مشمش"><div><b class="big">أهلاً يا شيف أمينة! 👩‍🍳</b><p>معاكي <b>${n}</b> نجمة ⭐ ${n ? '— كمّلي، أنا فخور بيكي!' : '— يلا نجمع أول نجمة!'}</p><p style="font-size:15px;opacity:.95">النهارده نطبخ إيه؟ 🍳</p></div>`;
+  app.appendChild(hero);
+  const t = H('div', 'tiles');
+  [['learn', '📚', 'أتعلّم', 'شرح بحكاية وصورة وحيلة'], ['times', '✖️', 'جدول الضرب', 'الطريقة اليابانية + حيل'], ['quiz', '📝', 'كويزات الأسبوع', '13 أسبوع × 3 نماذج'], ['month', '🏆', 'امتحانات الشهر', 'الشهر الأول والتاني']].forEach(([v, e, a, s]) => {
+    const b = H('button', 'tile', `<b>${e}</b><span>${a}</span><small>${s}</small>`); b.onclick = () => go(v); t.appendChild(b);
+  });
+  app.appendChild(t);
+  const sec = H('div', 'section');
+  sec.innerHTML = `<h3>🧭 إزاي أذاكر هنا؟</h3><ol><li>افتحي الدرس من <b>📚 أتعلّم</b> واقري الحكاية وشوفي الصورة.</li><li>جربي الحيلة ⚡ وحلّي سؤال ✋ واحد بس.</li><li>روحي <b>📝 الكويز</b> بتاع نفس الأسبوع وحلّي Model A.</li><li>لو غلطتي اضغطي 👣 وشوفي الخطوات واحدة واحدة.</li><li>بعد يومين حلّي Model B وبعدها C 🌟</li></ol>`;
+  app.appendChild(sec);
+};
+
+V.learn = () => {
+  app.appendChild(H('h2', '', '📚 أتعلّم — اختاري وحدة'));
+  const g = H('div', 'units');
+  UNITS.forEach((u, i) => {
+    const got = E.starCount('l:' + u.id + ':');
+    const b = H('button', 'unit', `<img class="ucover" src="img/u${i + 1}.webp" alt="" loading="lazy"><em>${got}/${u.lessons.length} ⭐</em><span>${u.emoji} ${u.t}</span><small dir="ltr" style="text-align:right">Unit ${i + 1} · ${u.en}</small>`);
+    b.style.background = `linear-gradient(135deg, ${u.color}, color-mix(in srgb, ${u.color} 70%, #000))`;
+    b.onclick = () => go('unit', u.id); g.appendChild(b);
+  });
+  app.appendChild(g);
+};
+
+const WAYS = [['story', '🍳 حكاية'], ['pic', '🎨 صورة'], ['steps', '🪜 الخطوات'], ['trick', '⚡ حيلة'], ['try', '✋ جربي']];
+V.unit = (id) => {
+  const u = UNITS.find(x => x.id === id), ui = UNITS.indexOf(u);
+  back('كل الوحدات', () => go('learn'));
+  app.appendChild(H('div', 'ubanner', `<img src="img/u${ui + 1}.webp" alt="">`));
+  app.appendChild(H('h2', '', `${u.emoji} Unit ${ui + 1}: ${u.t} <small class="flag" dir="ltr">${u.en}</small>`));
+  u.lessons.forEach((l, li) => {
+    const c = H('div', 'lesson');
+    const hd = H('div', 'lhead', `<h3>${li + 1}. ${l.t}</h3><small dir="ltr">${l.en}</small>`); hd.style.background = u.color;
+    const ways = H('div', 'ways'), body = H('div', 'wbody');
+    const show = (k) => {
+      [...ways.children].forEach(b => b.classList.toggle('on', b.dataset.k === k)); body.innerHTML = '';
+      if (k === 'story') body.appendChild(E.ar(l.story));
+      if (k === 'pic') body.appendChild(E.ar(l.pic));
+      if (k === 'steps') body.appendChild(E.ar('<ol>' + l.steps.map(s => `<li>${s}</li>`).join('') + '</ol>'));
+      if (k === 'trick') body.appendChild(E.ar(l.trick, 'trick'));
+      if (k === 'try') { body.appendChild(E.ar('سؤال صغير مني (مش من الكتاب) علشان تتأكدي إنك فهمتي:', 'mini')); body.appendChild(E.card(l.try, 'l:' + u.id + ':' + li, '✋')); }
+      if (k !== 'try') { const sp = H('button', 'btn ghost sm', '🔊 اسمعي'); sp.onclick = () => E.speak(body.textContent, 'ar-EG'); body.appendChild(sp); }
+    };
+    WAYS.forEach(([k, lab]) => { const b = H('button', '', lab); b.dataset.k = k; b.onclick = () => { show(k); E.pop(); }; ways.appendChild(b); });
+    c.append(hd, ways, body); app.appendChild(c); show('story');
+  });
+  const qs = WEEKS.filter(w => w.unit.id === id);
+  if (qs.length) {
+    const s = H('div', 'section', '<h3>📝 كويزات الوحدة دي</h3>');
+    qs.forEach(w => { const b = H('button', 'btn ghost', `<span dir="ltr" style="display:block">${w.title.replace('Weekly Assessment: ', '')}</span><small>صفحة ${w.page}</small>`); b.style.margin = '4px'; b.onclick = () => go('week', w.id); s.appendChild(b); });
+    app.appendChild(s);
+  }
+};
+
+V.times = () => {
+  app.appendChild(H('h2', '', '✖️ جدول الضرب بقى سهل'));
+  const mk = (title, intro, fn) => { const s = H('div', 'section'); s.appendChild(H('h3', '', title)); if (intro) s.appendChild(E.ar(intro, 'mini')); fn(s); app.appendChild(s); };
+  app.appendChild(H('div', 'ubanner wide', '<img src="img/japan.webp" alt="مشمش بيشرح الطريقة اليابانية">'));
+  mk('🎌 الطريقة اليابانية (خطوط ونقط)', 'الرقم الأول خطوط مايلة 🔴، والتاني خطوط مايلة على الناحية التانية 🔵. نعدّ نقط التقاطع في كل عمود، وده الناتج! مش محتاجة تحفظي حاجة.', TIMES.japanese);
+  mk('🖐️ جدول الـ9 على صوابعك', 'افردي إيديكي العشرة. علشان 9 × رقم: اثني الصباع اللي رقمه نفس الرقم.', TIMES.fingers);
+  mk('⚡ حيل سريعة', '', s => {
+    const tricks = [
+      ['×2', 'ضعف الرقم: 2 × 7 = 7 + 7 = 14 👯'],
+      ['×4', 'ضعف الضعف: 4 × 6 ← 6 + 6 = 12 ← 12 + 12 = 24'],
+      ['×5', 'اضربي في 10 وخدي النص: 5 × 8 ← 80 ← نصها 40 ✂️ (وناتج ×5 آخره دايماً 0 أو 5)'],
+      ['×10', 'حطي صفر على اليمين: 10 × 7 = 70 🚌'],
+      ['×3', 'ضعف + كمان مرة: 3 × 7 = 14 + 7 = 21'],
+      ['×6', 'لو الرقم زوجي، الناتج آخره نفس الرقم وقدامه نصّه: 6 × 4 = 24 ، 6 × 8 = 48 ✨'],
+      ['×9', 'اضربي ×10 واطرحي الرقم: 9 × 7 = 70 − 7 = 63. ومجموع أرقام الناتج دايماً 9 (6 + 3 = 9) 🎯'],
+      ['×11', 'لرقم من خانة واحدة: كرّريه 11 × 4 = 44. ولرقمين: 11 × 23 ← 2 (2+3) 3 = 253 😲'],
+      ['56 = 7 × 8', 'غنّيها: 5، 6، 7، 8 ← 56 = 7 × 8 🎵'],
+      ['🔄', 'الأماكن مش بتفرق: لو عارفة 3 × 8 يبقى عارفة 8 × 3! نص الجدول بيروح لوحده']
+    ];
+    s.appendChild(E.ar('<div class="three">' + tricks.map(([a, b]) => `<div style="text-align:start"><b>${a}</b>${b}</div>`).join('') + '</div>'));
+  });
+  mk('🗺️ خريطة الجدول', 'كل لون = حيلة. شوفي: معظم الجدول بقى سهل! الأخضر بس هو اللي محتاج يتحفظ (وهو قليل خالص).', TIMES.map);
+  mk('🚀 لعبة الصاروخ', '', TIMES.game);
+};
+
+V.quiz = () => {
+  app.appendChild(H('h2', '', '📝 كويزات الأسبوع'));
+  app.appendChild(E.ar('كل كويز فيه 3 نماذج زي الكتاب بالظبط: Model A و Model B و Model C. ابدأي بـ Model A 🌟', 'mini'));
+  const L = H('div', 'list');
+  WEEKS.forEach((w, i) => {
+    const tq = totalQ(w), got = wStars(w);
+    const b = H('button', 'item', `<b>${w.unit.emoji}</b><div><span dir="ltr" style="display:block;text-align:right">Week ${i + 1}: ${w.title.replace('Weekly Assessment: ', '')}</span><small>Unit ${UNITS.indexOf(w.unit) + 1} — صفحة ${w.page} في الكتاب</small><div class="prog"><i style="width:${got / tq * 100}%"></i></div></div><span class="pill">${got}/${tq} ⭐</span>`);
+    b.onclick = () => go('week', w.id); L.appendChild(b);
+  });
+  app.appendChild(L);
+};
+
+function runList(qs, keyBase, container) {
+  qs.forEach((q, i) => container.appendChild(E.card(q, keyBase + i, i + 1)));
+  E.bidi(container);
+}
+V.week = (id, model) => {
+  const w = WEEKS.find(x => x.id === id); model = model || 'A';
+  back('كل الكويزات', () => go('quiz'));
+  app.appendChild(H('h2', '', `${w.unit.emoji} <span dir="ltr">${w.title.replace('Weekly Assessment: ', '')}</span>`));
+  app.appendChild(H('div', 'mini', `Weekly Assessment — صفحة ${w.page} في الكتاب`));
+  const m = H('div', 'models');
+  Object.keys(w.models).forEach(k => { const got = E.starCount(`w:${w.id}:${k}:`); const b = H('button', k === model ? 'on' : '', `Model ${k} <small>${got}/${w.models[k].length}⭐</small>`); b.onclick = () => go('week', id, k); m.appendChild(b); });
+  app.appendChild(m);
+  const box = H('div'); app.appendChild(box);
+  runList(w.models[model], `w:${w.id}:${model}:`, box);
+  const ks = Object.keys(w.models), nx = ks[ks.indexOf(model) + 1];
+  const end = H('div', 'section', `<h3>🎉 خلصتي Model ${model}؟</h3>`);
+  if (nx) { const b = H('button', 'btn', `Model ${nx} ←`); b.onclick = () => go('week', id, nx); end.appendChild(b); }
+  else { const i = WEEKS.indexOf(w); if (WEEKS[i + 1]) { const b = H('button', 'btn', 'الأسبوع اللي بعده ←'); b.onclick = () => go('week', WEEKS[i + 1].id); end.appendChild(b); } }
+  app.appendChild(end);
+};
+
+V.month = (id) => {
+  if (id) {
+    const mo = MONTH.find(x => x.id === id);
+    back('امتحانات الشهر', () => go('month'));
+    app.appendChild(H('h2', '', '🏆 ' + mo.title));
+    app.appendChild(H('div', 'mini', `صفحة ${mo.page} في الكتاب — خدي وقتك، مش لازم تخلّصيه مرة واحدة 🌸`));
+    const box = H('div'); app.appendChild(box); runList(mo.qs, `m:${mo.id}:`, box);
+    return;
+  }
+  app.appendChild(H('h2', '', '🏆 امتحانات الشهر'));
+  const L = H('div', 'list');
+  MONTH.forEach(mo => {
+    const got = mStars(mo);
+    const b = H('button', 'item', `<b>🏆</b><div><span>${mo.title}</span><small>صفحة ${mo.page} — ${mo.qs.length} سؤال</small><div class="prog"><i style="width:${got / mo.qs.length * 100}%"></i></div></div><span class="pill">${got}/${mo.qs.length} ⭐</span>`);
+    b.onclick = () => go('month', mo.id); L.appendChild(b);
+  });
+  app.appendChild(L);
+  app.appendChild(E.ar('💡 نصيحة: حلّي امتحان الشهر بعد ما تخلّصي كويزات الأسابيع اللي قبله.', 'say'));
+};
+
+go('home');
+})();
+</script>
+</body>
+</html>
