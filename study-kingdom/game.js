@@ -21,7 +21,7 @@
 
   /* ------------------------- الحفظ ------------------------- */
   const KEY = 'study-kingdom-v1';
-  const NEW = () => ({ name: 'أمينة', gold: 50, ok: {}, bad: {}, st: {}, boss: {}, b: {}, castle: 0, decos: [], pets: [], outfits: [], outfit: '', ach: {}, pens: 0, paperStars: 0, keysPerfect: 0, bestStreak: 0, days: [], lastDay: '', pin: '', sound: true, answers: 0, fixed: 0, arHelp: false });
+  const NEW = () => ({ name: 'أمينة', gold: 50, ok: {}, bad: {}, st: {}, boss: {}, b: {}, castle: 0, decos: [], pets: [], outfits: [], outfit: '', ach: {}, pens: 0, paperStars: 0, keysPerfect: 0, bestStreak: 0, days: [], lastDay: '', pin: '', sound: true, answers: 0, fixed: 0, arHelp: false, wb: {}, fz: { build: {}, frame: {}, fusha: {} }, mdays: [], daily: {} });
   let G = NEW();
   try { const s = JSON.parse(localStorage.getItem(KEY) || 'null'); if (s) G = Object.assign(NEW(), s); } catch (e) {}
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(G)); } catch (e) {} };
@@ -108,7 +108,11 @@
     ['pets3', '🐾', '3 حيوانات في المملكة', () => G.pets.length >= 3],
     ['days3', '📅', 'لعبتي 3 أيام مختلفة', () => G.days.length >= 3],
     ['days7', '🗓️', 'لعبتي 7 أيام مختلفة', () => G.days.length >= 7],
-    ['land50', '🧠', 'إتقان 50% من أرض كاملة', () => SK.lands.some(l => mastery(l) >= 50)]
+    ['land50', '🧠', 'إتقان 50% من أرض كاملة', () => SK.lands.some(l => mastery(l) >= 50)],
+    ['words20', '🌱', '20 كلمة في الحديقة', () => Object.keys(G.wb || {}).length >= 20],
+    ['bloom30', '🌻', '30 كلمة ثابتة (فتّحت)', () => Object.values(G.wb || {}).filter(e => e.b >= 4).length >= 30],
+    ['sent20', '🧩', '20 جملة فصحى', () => G.fz ? Object.keys(G.fz.build).length + Object.keys(G.fz.frame).length + Object.keys(G.fz.fusha).length >= 20 : false],
+    ['mission7', '📅', 'مهمة اليوم 7 أيام', () => (G.mdays || []).length >= 7]
   ];
   function checkAch() {
     const got = [];
@@ -134,7 +138,7 @@
   function draw() {
     hud();
     document.querySelectorAll('#nav button').forEach(b => b.classList.toggle('on', b.dataset.go === V || (V === 'land' && b.dataset.go === 'lands')));
-    $('#nav').classList.toggle('hide', V === 'play' || V === 'paper');
+    $('#nav').classList.toggle('hide', V === 'play' || V === 'paper' || V === 'wplay' || V === 'fplay');
     app.innerHTML = (VIEWS[V] || VIEWS.home)();
     if (V === 'play' && CUR) afterDraw();
   }
@@ -144,11 +148,14 @@
   VIEWS.home = () => {
     const due = Object.keys(G.bad).filter(id => SK.items[id]).length;
     return `<section class="hero"><img src="../social/img/explorer.webp" alt="مشمش المستكشف"><div><h2>أهلاً يا ${esc(G.name)}! 👋</h2><p>دي مملكتك 🏰 كل إجابة صح بتجيب ذهب، والذهب بيبني المملكة. ومفيش حاجة بتضيع لو غلطتي 🌸</p></div></section>
+    ${missionCard()}
     <div class="tiles">
       <button class="tile" data-go="lands"><b>🎮</b><span>يلا نلعب</span><small>اختاري أرض ومرحلة</small></button>
       <button class="tile" data-go="kingdom"><b>${CASTLE.looks[Math.max(0, G.castle - 1)]}</b><span>مملكتي</span><small>ابني وطوّري</small></button>
       <button class="tile" data-a="mix"><b>🎲</b><span>خلطة كل المواد</span><small>8 أسئلة من كل حاجة</small></button>
       <button class="tile" data-go="review"><b>🔁</b><span>صندوق الأخطاء</span><small>${due ? due + ' سؤال مستنيكي' : 'فاضي 🎉'}</small></button>
+      <button class="tile" data-go="garden"><b>🌱</b><span>حديقة الكلمات</span><small>كلمات العلوم والـICT</small></button>
+      <button class="tile" data-go="factory"><b>🧩</b><span>مصنع الجمل</span><small>نبني جمل بالفصحى</small></button>
     </div>
     <div class="card"><h3>🗺️ أراضي المملكة</h3>${SK.lands.map(l => { const m = mastery(l); return `<button class="lrow" data-go="land" data-arg="${l.id}" style="--c:${l.col};--bg:${l.bg}"><span class="le">${l.emoji}</span><span class="lt"><b>${l.name}</b><small>${l.sub} · ${l.all.length} سؤال</small><span class="bar"><i style="width:${m}%"></i></span></span><span class="lp">${m}%</span></button>`; }).join('')}</div>
     ${mish(pickOne(['الورقة الذهبية 📜 بتجيب أكبر مكافأة في اللعبة! اكتبيها على ورقة وورّيها لماما.', 'صيد الكلمات 🔑: في أسئلة «بم تفسر» اختاري الكلمات المهمة اللي لازم تبقى في الإجابة.', 'كل مبنى في المملكة محتاج إتقان أرضه… يعني كل ما تذاكري أكتر المملكة تكبر 🏗️', 'لو عايزة تحلي كتابة من غير لعب، صفحات المواد فيها زرار طباعة 🖨️']))}`;
@@ -622,6 +629,237 @@
     if (a === 'grade') return applyGrade(false);
     if (a === 'gradeAgain') return applyGrade(true);
     if (a === 'next') { RUN.k++; if (RUN.k >= RUN.list.length || (RUN.mode === 'boss' && RUN.hp <= 0 && RUN.k >= 7)) { if (RUN.mode === 'boss') RUN.list = RUN.list.slice(0, RUN.k); return endRun(); } newQ(); draw(); window.scrollTo(0, 0); }
+  });
+
+  /* =====================================================================
+     🌱 حديقة الكلمات (مراجعة متباعدة) + 🧩 مصنع الجمل (فصحى)
+     ===================================================================== */
+  const SW = window.SKW || { words: [], sentences: [], fusha: [], FRAMES: {} };
+  const INT = [0, 1, 3, 7, 14, 30];          // أيام المراجعة لكل صندوق
+  const NEW_PER_DAY = 5, SESSION_MAX = 12;
+  const addDays = n => { const d = new Date(); d.setDate(d.getDate() + n); return d.toISOString().slice(0, 10); };
+  const dailyToday = () => { if (G.daily.d !== today()) G.daily = { d: today(), w: false, s: 0, done: false }; return G.daily; };
+  const WBY = id => SW.words.find(w => w.id === id);
+  const wordsOf = s => SW.words.filter(w => !s || w.s === s);
+  const dueWords = s => wordsOf(s).filter(w => G.wb[w.id] && G.wb[w.id].due <= today());
+  const PLANT = ['🌰', '🌱', '🌿', '🪴', '🌷', '🌻'];
+  const newLeft = () => { const d = dailyToday(); return Math.max(0, NEW_PER_DAY - (d.nw || 0)); };
+  function missionCheck() {
+    const d = dailyToday();
+    if (!d.done && d.w && d.s >= 3) { d.done = true; G.gold += 20; if (!G.mdays.includes(d.d)) G.mdays.push(d.d); save(); setTimeout(() => toast('📅 خلّصتي مهمة اليوم! +20 🪙', 'gold'), 500); }
+  }
+  const missionCard = () => {
+    const d = dailyToday(), due = dueWords().length;
+    return `<div class="card mission"><h3>📅 مهمة اليوم <small>(10 دقايق)</small></h3>
+      <button class="mrow2 ${d.w ? 'ok' : ''}" data-go="garden"><span>${d.w ? '✅' : '🌱'}</span><b>جلسة حديقة الكلمات</b><small>${d.w ? 'خلصت' : (due ? due + ' كلمة عطشانة + ' : '') + newLeft() + ' كلمة جديدة'}</small></button>
+      <button class="mrow2 ${d.s >= 3 ? 'ok' : ''}" data-go="factory"><span>${d.s >= 3 ? '✅' : '🧩'}</span><b>3 جمل في مصنع الجمل</b><small>${Math.min(d.s, 3)}/3</small></button>
+      ${G.mdays.length ? `<p class="note">🔥 خلّصتي المهمة ${G.mdays.length} يوم</p>` : ''}</div>`;
+  };
+
+  /* ---------- 🌱 الحديقة ---------- */
+  let WS = null;
+  VIEWS.garden = () => {
+    const tab = VA || 'all', list = wordsOf(tab === 'all' ? null : tab);
+    const planted = list.filter(w => G.wb[w.id]), due = planted.filter(w => G.wb[w.id].due <= today());
+    const bloom = planted.filter(w => G.wb[w.id].b >= 4).length;
+    const tabs = [['all', 'الكل'], ['sci', '🔬 العلوم'], ['ict', '💻 الـICT']].map(([k, n]) => `<button class="${tab === k ? 'on' : ''}" data-go="garden" data-arg="${k}">${n}</button>`).join('');
+    return `<h2>🌱 حديقة الكلمات</h2>
+      ${mish('كل يوم <b>5 كلمات جديدة بس</b> 🌱. الكلمة بتكبر لما تفتكريها، ولو نسيتيها <b>تعطش</b> 🥀 وترجعلك تسقيها. مفيش حفظ، كله لعب!')}
+      <div class="wtabs">${tabs}</div>
+      <div class="card"><div class="kv"><span>🌱 مزروعة</span><b>${planted.length} من ${list.length}</b></div><div class="kv"><span>🥀 عطشانة النهارده</span><b>${due.length}</b></div><div class="kv"><span>🌻 ثابتة في دماغك</span><b>${bloom}</b></div>
+      <button class="btn gold wide" data-a="wstart" data-s="${tab}">🌱 يلا جلسة اليوم (${Math.min(SESSION_MAX, due.length + newLeft())} ${Math.min(SESSION_MAX, due.length + newLeft()) <= 10 ? 'كلمات' : 'كلمة'})</button></div>
+      <div class="garden2">${planted.length ? planted.map(w => { const e = G.wb[w.id], thirsty = e.due <= today(); return `<button class="pl2 ${thirsty ? 'th' : ''}" data-a="wshow" data-i="${w.id}"><span>${thirsty ? '🥀' : PLANT[Math.min(5, e.b)]}</span><small dir="ltr">${esc(w.en.split('/')[0])}</small></button>`; }).join('') : '<p class="note">الحديقة لسه فاضية… أول جلسة هتزرع أول 5 كلمات 🌰</p>'}</div>`;
+  };
+  function wordOpts(w, field) {
+    let pool = SW.words.filter(x => x.s === w.s && x.id !== w.id && x[field] && x[field] !== w[field]);
+    const same = shuf(pool.filter(x => x.g === w.g)), other = shuf(pool.filter(x => x.g !== w.g));
+    const picks = [...new Set(same.concat(other).map(x => x[field]))].slice(0, 3);
+    const o = shuf([w[field]].concat(picks)); return { o, a: o.indexOf(w[field]) };
+  }
+  function wNewQ() {
+    const it = WS.list[WS.k], w = it.w, e = G.wb[w.id];
+    const canSpell = /^[a-z]{3,12}$/i.test(w.en), box = e ? e.b : 0;
+    let modes = ['listen', 'ar2en', 'en2ar'];
+    if (w.def) modes.push('def');
+    if (canSpell && box >= 2) modes.push('spell', 'spell');
+    it.mode = it.isNew && !it.seen ? 'intro' : pickOne(modes);
+    WS.phase = it.mode === 'intro' ? 'intro' : 'q';
+    WS.built = []; WS.pickOk = null;
+    if (it.mode === 'listen' || it.mode === 'ar2en' || it.mode === 'def') Object.assign(it, wordOpts(w, 'en'));
+    if (it.mode === 'en2ar') Object.assign(it, wordOpts(w, 'ar'));
+    if (it.mode === 'spell') it.tiles = shuf(w.en.toLowerCase().split('').map((c, i) => ({ c, i })));
+    if (it.mode === 'listen') setTimeout(() => speak(w.en, 'en'), 300);
+  }
+  function wStart(s) {
+    const subj = s === 'all' ? null : s;
+    const due = dueWords(subj).sort((a, b) => G.wb[a.id].due.localeCompare(G.wb[b.id].due) || G.wb[a.id].b - G.wb[b.id].b);
+    let list = due.slice(0, SESSION_MAX).map(w => ({ w }));
+    const room = Math.min(newLeft(), SESSION_MAX - list.length);
+    if (room > 0) {
+      let fresh = wordsOf(subj).filter(w => !G.wb[w.id]).sort((a, b) => a.n - b.n);
+      if (!subj) { const sci = fresh.filter(w => w.s === 'sci'), ict = fresh.filter(w => w.s === 'ict'); fresh = []; while (sci.length || ict.length) { if (sci.length) fresh.push(sci.shift()); if (ict.length) fresh.push(ict.shift()); } }
+      list = fresh.slice(0, room).map(w => ({ w, isNew: true })).concat(list);
+    }
+    if (!list.length) { toast('مفيش كلمات عطشانة النهارده 🌻 تعالي بكرة!'); return; }
+    WS = { list, k: 0, right: 0, gold: 0, planted: 0, s };
+    wNewQ(); go('wplay');
+  }
+  VIEWS.wplay = () => {
+    if (!WS) return VIEWS.garden();
+    const it = WS.list[WS.k], w = it.w, n = WS.list.length;
+    let h = `<div class="top"><button class="hb" data-a="wquit">✕</button><div class="prog"><i style="width:${WS.k / n * 100}%"></i></div><b>${WS.k + 1}/${n}</b></div>`;
+    const big = `<div class="wbig" dir="ltr">${esc(w.en)} <button class="say" data-a="wsay">🔊</button></div>`;
+    const tag = `<div class="qtag" style="--c:${w.s === 'sci' ? '#2fa36b' : '#5b6cff'}">${w.s === 'sci' ? '🔬 Science' : '💻 ICT'} · ${esc(w.g)}</div>`;
+    if (WS.phase === 'intro') {
+      return h + `<div class="qcard">${tag}<div class="gtitle">🌰 كلمة جديدة!</div>${big}<div class="war">${esc(w.ar)}</div>${w.def ? `<p class="wdef" dir="ltr">💡 ${esc(w.def)}</p>` : ''}
+        <div class="steps"><b>🎨 حيلة تثبيت:</b> قوليها بصوتك 3 مرات، وارسمي لها رسمة صغيرة في الكشكول جنب معناها.</div>
+        <button class="btn wide" data-a="wgo">يلا نجرب! ▶</button></div>`;
+    }
+    const opts = arr => `<div class="opts">${arr.map((o, i) => `<button class="opt" data-a="wpick" data-i="${i}" dir="auto">${esc(o)}</button>`).join('')}</div>`;
+    let body = '';
+    if (WS.phase === 'q') {
+      if (it.mode === 'listen') body = `<p class="note">🔊 اسمعي الكلمة واختاريها:</p><button class="btn ghost wide" data-a="wsay">🔊 اسمعي تاني</button>${opts(it.o)}`;
+      if (it.mode === 'ar2en') body = `<p class="note">إيه الكلمة الإنجليزي اللي معناها:</p><div class="war">${esc(w.ar)}</div>${opts(it.o)}`;
+      if (it.mode === 'en2ar') body = `<p class="note">معنى الكلمة دي إيه؟</p>${big}${opts(it.o)}`;
+      if (it.mode === 'def') body = `<p class="note">أنهي كلمة ليها التعريف ده؟</p><p class="wdef" dir="ltr">💡 ${esc(w.def)}</p>${opts(it.o)}`;
+      if (it.mode === 'spell') body = `<p class="note">ركّبي الكلمة اللي معناها <b>${esc(w.ar)}</b> 🔤 <button class="say" data-a="wsay">🔊</button></p><div class="spell" dir="ltr">${WS.built.map(t => `<span>${t.c}</span>`).join('') || '<em>…</em>'}</div><div class="chips tiles2" dir="ltr">${it.tiles.map((t, i) => `<button class="chip" data-a="wtile" data-i="${i}" ${WS.built.includes(t) ? 'disabled' : ''}>${t.c}</button>`).join('')}</div><div class="row"><button class="btn ghost sm" data-a="wback">⌫</button><button class="btn ghost sm" data-a="wclear">↺</button></div>`;
+    } else {
+      const ok = WS.pickOk;
+      body = `<div class="fb ${ok ? 'ok' : 'no'}"><b>${ok ? pickOne(['🌱 كبرت!', 'برافو! 💛', 'الله عليكي! ⭐']) : '🥀 مش مشكلة، هترجعلك تاني'}</b>${WS.lastGain ? ` <span class="gain">+${WS.lastGain} 🪙</span>` : ''}</div>${big}<div class="war">${esc(w.ar)}</div>${w.def ? `<p class="wdef" dir="ltr">💡 ${esc(w.def)}</p>` : ''}<button class="btn wide" data-a="wnext">${WS.k + 1 >= n ? 'خلصت 🏁' : 'التالي ▶'}</button>`;
+    }
+    return h + `<div class="qcard">${tag}${body}</div>`;
+  };
+  function wAnswer(ok) {
+    const it = WS.list[WS.k], w = it.w; let e = G.wb[w.id];
+    const first = !e;
+    if (!e) e = G.wb[w.id] = { b: 0, due: today(), n: 0 };
+    e.n++;
+    let gain = 0;
+    if (ok) { e.b = Math.min(5, e.b + 1); e.due = addDays(INT[e.b]); gain = it.isNew ? 3 : 2 + Math.min(3, e.b); WS.right++; sfx.ok(); }
+    else { e.b = Math.max(1, Math.min(e.b, 1)); e.due = today(); sfx.no(); if (!it.again) WS.list.push({ w, again: true }); it.again = true; }
+    if (first) { WS.planted++; const d = dailyToday(); d.nw = (d.nw || 0) + 1; }
+    G.gold += gain; WS.gold += gain; WS.lastGain = gain; WS.pickOk = ok; WS.phase = 'fb'; save(); draw(); checkAch();
+  }
+  function wEnd() {
+    const d = dailyToday(); d.w = true; G.gold += 10; WS.gold += 10; save(); sfx.win();
+    const R = WS; WS = null;
+    go('garden');
+    sheet(`<h2>🌻 خلصت جلسة الكلمات!</h2><div class="kv"><span>🌱 كلمات جديدة اتزرعت</span><b>${R.planted}</b></div><div class="kv"><span>✔ إجابات صح</span><b>${R.right}</b></div><div class="kv"><span>🪙 الذهب</span><b>+${R.gold}</b></div><p class="note">الكلمات هترجعلك تتسقي بعد يوم، وبعدين 3 أيام، وبعدين أسبوع… لحد ما تفتّح 🌻</p><button class="btn gold wide" data-go="factory">🧩 كمّلي مهمة اليوم في مصنع الجمل</button>`);
+    missionCheck(); checkAch();
+  }
+
+  /* ---------- 🧩 مصنع الجمل ---------- */
+  let FS = null;
+  const fzCount = () => Object.keys(G.fz.build).length + Object.keys(G.fz.frame).length + Object.keys(G.fz.fusha).length;
+  VIEWS.factory = () => {
+    const d = dailyToday(), sb = SW.sentences.length, bf = Object.keys(G.fz.build).length;
+    const sbAll = sb; void sbAll; const fr = SW.sentences.filter(x => x.type).length, ff = Object.keys(G.fz.frame).length;
+    return `<h2>🧩 مصنع الجمل</h2>
+      ${mish('الإجابة بالفصحى زي الكيكة 🎂: ليها مكونات بترتيب. هنا بنتمرن نبني الجملة <b>من غير ما نكتب</b>، ولما تتعودي هتكتبيها لوحدك على الورقة الذهبية ✍️')}
+      <p class="note">النهارده: ${Math.min(d.s, 3)}/3 جمل ${d.s >= 3 ? '✅' : ''}</p>
+      <button class="bigland" data-a="fstart" data-m="build" style="--c:#e07a5f"><span class="le">🧩</span><span class="lt"><b>ركّبي الجملة</b><small>رتّبي حتت الإجابة النموذجية بتاعة أسئلة الدراسات</small><span class="bar"><i style="width:${bf / sb * 100}%"></i></span><small>${bf} من ${sb}</small></span></button>
+      <button class="bigland" data-a="fstart" data-m="frame" style="--c:#3d85c6"><span class="le">🪜</span><span class="lt"><b>أول الإجابة</b><small>«بم تفسر» نبدأها بإيه؟ و«دلل»؟ و«ماذا يحدث»؟</small><span class="bar"><i style="width:${ff / fr * 100}%"></i></span><small>${ff} من ${fr}</small></span></button>
+      <button class="bigland" data-a="fstart" data-m="fusha" style="--c:#2a9d8f"><span class="le">🔄</span><span class="lt"><b>من العامية للفصحى</b><small>اختاري الجملة اللي كلها فصحى</small><span class="bar"><i style="width:${Object.keys(G.fz.fusha).length / SW.fusha.length * 100}%"></i></span><small>${Object.keys(G.fz.fusha).length} من ${SW.fusha.length}</small></span></button>
+      <div class="card"><h3>🪜 قوالب الإجابة</h3>${Object.values(SW.FRAMES).map(f => `<p class="note">${f.tip}</p>`).join('')}</div>`;
+  };
+  function chunkify(model) {
+    const ws = model.split(/\s+/).filter(Boolean), ch = []; let cur = [];
+    const target = ws.length <= 7 ? 1 : ws.length <= 14 ? 2 : ws.length <= 24 ? 3 : 4;
+    ws.forEach((w, i) => { cur.push(w); if (/[،؛.:,!؟?]$/.test(w) || cur.length >= target || i === ws.length - 1) { ch.push(cur.join(' ')); cur = []; } });
+    while (ch.length > 7) { let k = 0, best = 1e9; for (let i = 0; i < ch.length - 1; i++) { const l = ch[i].length + ch[i + 1].length; if (l < best) { best = l; k = i; } } ch.splice(k, 2, ch[k] + ' ' + ch[k + 1]); }
+    return ch;
+  }
+  function fPick(mode) {
+    const done = G.fz[mode];
+    if (mode === 'fusha') { const left = SW.fusha.filter(x => !done[x.id]); return shuf(left.length ? left : SW.fusha).slice(0, 5); }
+    const pool = SW.sentences.filter(x => mode === 'frame' ? x.type : (x.wc >= 4 && x.wc <= 35));
+    const left = pool.filter(x => !done[x.id]);
+    return (left.length ? left.slice(0, 12) : shuf(pool)).sort(() => Math.random() - .5).slice(0, 5);
+  }
+  function fNewQ() {
+    const it = FS.list[FS.k]; FS.phase = 'q'; FS.tries = 0; FS.seq = []; FS.res = null;
+    if (FS.mode === 'build') { it.ch = chunkify(it.x.model); let o; do { o = shuf(it.ch.map((t, i) => i)); } while (it.ch.length > 2 && o.every((v, i) => v === i)); it.order = o; }
+    if (FS.mode === 'frame') { const all = Object.keys(SW.FRAMES); it.o = shuf([it.x.type].concat(shuf(all.filter(k => k !== it.x.type)).slice(0, 3))); }
+    if (FS.mode === 'fusha') it.o = shuf(it.x.o.slice());
+  }
+  function fStart(mode) { FS = { mode, list: fPick(mode).map(x => ({ x })), k: 0, right: 0, gold: 0 }; fNewQ(); go('fplay'); }
+  VIEWS.fplay = () => {
+    if (!FS) return VIEWS.factory();
+    const it = FS.list[FS.k], x = it.x, n = FS.list.length;
+    let h = `<div class="top"><button class="hb" data-a="fquit">✕</button><div class="prog"><i style="width:${FS.k / n * 100}%"></i></div><b>${FS.k + 1}/${n}</b></div><div class="qcard">`;
+    if (FS.mode === 'build') {
+      h += `<div class="qtag" style="--c:#e07a5f">🧩 ركّبي الجملة</div><div class="qt">${esc(x.q)}</div>`;
+      if (FS.phase === 'q') h += `<p class="note">رتّبي الحتت علشان تعملي الإجابة بالفصحى:</p><div class="sline">${FS.seq.map(i => `<span>${esc(it.ch[i])}</span>`).join(' ') || '<em>اضغطي على الحتت بالترتيب…</em>'}</div><div class="chips">${it.order.map(i => `<button class="chip" data-a="fch" data-i="${i}" ${FS.seq.includes(i) ? 'disabled' : ''}>${esc(it.ch[i])}</button>`).join('')}</div><div class="row"><button class="btn ghost sm" data-a="fback">⌫ رجّعي حتة</button><button class="btn" data-a="fcheck">تمّ ✔</button></div>${FS.tries ? `<div class="fb no"><b>قربتي! الحتت الخضرا في مكانها الصح 💪</b><div class="sline">${FS.lastSeq.map((v, k) => `<span class="${v === k ? 'g' : 'r'}">${esc(it.ch[v])}</span>`).join(' ')}</div></div>` : ''}`;
+    }
+    if (FS.mode === 'frame') {
+      const F = SW.FRAMES;
+      h += `<div class="qtag" style="--c:#3d85c6">🪜 أول الإجابة</div><div class="qt">${esc(x.q)}</div>`;
+      if (FS.phase === 'q') h += `<p class="note">الإجابة دي نبدأها بإيه؟</p><div class="opts">${it.o.map(k => `<button class="opt" data-a="fpick" data-k="${k}">${esc(F[k].o)}</button>`).join('')}</div>`;
+    }
+    if (FS.mode === 'fusha') {
+      h += `<div class="qtag" style="--c:#2a9d8f">🔄 من العامية للفصحى</div><p class="note">بالعامية:</p><div class="ammi">🗣️ ${esc(x.ammi)}</div>`;
+      if (FS.phase === 'q') h += `<p class="note">أنهي جملة <b>كلها فصحى</b>؟</p><div class="opts one">${it.o.map((o, i) => `<button class="opt" data-a="fpick" data-i="${i}">${esc(o)}</button>`).join('')}</div>`;
+    }
+    if (FS.phase === 'fb') {
+      const r = FS.res;
+      h += `<div class="fb ${r.ok ? 'ok' : 'no'}"><b>${r.msg}</b>${r.gain ? ` <span class="gain">+${r.gain} 🪙</span>` : ''}</div>`;
+      if (FS.mode === 'fusha') h += `<div class="steps"><p>✅ <b>${esc(x.ok)}</b></p><div class="kw">${x.pairs.map(([a, f]) => `<span>${esc(a)} ← <b>${esc(f)}</b></span>`).join('')}</div></div>`;
+      else h += `<div class="steps">${FS.mode === 'frame' ? `<p>${SW.FRAMES[x.type].tip}</p>` : ''}<p>📖 <b>الإجابة النموذجية:</b> ${esc(x.model)}</p></div><p class="note">🗣️ اقريها بصوتك مرة، وبعدين قوليها من غير ما تبصّي.</p>`;
+      h += `<div class="row"><button class="btn ghost" data-a="fsay">🔊 اسمعيها</button><button class="btn" data-a="fnext">${FS.k + 1 >= n ? 'خلصت 🏁' : 'التالي ▶'}</button></div>`;
+    }
+    return h + '</div>';
+  };
+  function fResult(ok, msg) {
+    const it = FS.list[FS.k], gain = ok ? (FS.mode === 'build' ? (FS.tries <= 1 ? 5 : 3) : 3) : 0;
+    if (ok) { G.fz[FS.mode][it.x.id] = today(); FS.right++; sfx.ok(); } else sfx.no();
+    const d = dailyToday(); d.s = (d.s || 0) + 1;
+    G.gold += gain; FS.gold += gain; FS.res = { ok, msg, gain }; FS.phase = 'fb'; save(); draw(); missionCheck(); checkAch();
+  }
+  function fEnd() {
+    G.gold += 10; FS.gold += 10; save(); sfx.win();
+    const R = FS; FS = null;
+    go('factory');
+    sheet(`<h2>🧩 برافو يا شاطرة!</h2><div class="kv"><span>✔ صح</span><b>${R.right} من ${R.list.length}</b></div><div class="kv"><span>🪙 الذهب</span><b>+${R.gold}</b></div><p class="note">جربي تكتبي جملة من دول على ورقة وورّيها لماما ✍️</p>`);
+    missionCheck();
+  }
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    const a = b.dataset.a, i = b.dataset.i;
+    if (a === 'wstart') return wStart(b.dataset.s);
+    if (a === 'wshow') { const w = WBY(i), en = G.wb[i]; speak(w.en, 'en'); return sheet(`<h2 dir="ltr">${PLANT[Math.min(5, en.b)]} ${esc(w.en)}</h2><div class="war">${esc(w.ar)}</div>${w.def ? `<p class="wdef" dir="ltr">💡 ${esc(w.def)}</p>` : ''}<p class="note">${en.due <= today() ? '🥀 عطشانة: هتيجي في جلسة النهارده' : 'المراجعة الجاية: ' + en.due}</p>`); }
+    if (WS) {
+      const it = WS.list[WS.k];
+      if (a === 'wsay') return speak(it.w.en, 'en');
+      if (a === 'wgo') { it.seen = true; wNewQ(); if (it.mode === 'intro') { it.mode = 'listen'; } return draw(); }
+      if (a === 'wpick' && WS.phase === 'q') { const ok = +i === it.a; b.classList.add(ok ? 'good' : 'bad'); return setTimeout(() => wAnswer(ok), 250); }
+      if (a === 'wtile' && WS.phase === 'q') { const t = it.tiles[+i]; if (!WS.built.includes(t)) WS.built.push(t); sfx.pop(); if (WS.built.length === it.tiles.length) return wAnswer(WS.built.map(x => x.c).join('') === it.w.en.toLowerCase()); return draw(); }
+      if (a === 'wback') { WS.built.pop(); return draw(); }
+      if (a === 'wclear') { WS.built = []; return draw(); }
+      if (a === 'wnext') { WS.k++; if (WS.k >= WS.list.length) return wEnd(); wNewQ(); draw(); return window.scrollTo(0, 0); }
+      if (a === 'wquit') { if (!confirm('تخرجي من الجلسة؟ اللي اتزرع محفوظ.')) return; WS = null; return go('garden'); }
+    }
+    if (a === 'fstart') return fStart(b.dataset.m);
+    if (FS) {
+      const it = FS.list[FS.k];
+      if (a === 'fch') { const k = +i; if (!FS.seq.includes(k)) FS.seq.push(k); sfx.pop(); return draw(); }
+      if (a === 'fback') { FS.seq.pop(); return draw(); }
+      if (a === 'fcheck') {
+        if (FS.seq.length < it.ch.length) return toast('حطي كل الحتت الأول 🙂');
+        const same = FS.seq.map(k => it.ch[k]).join(' ') === it.ch.join(' ');
+        FS.tries++;
+        if (same) return fResult(true, FS.tries === 1 ? '🎉 جملة فصحى مظبوطة من أول مرة!' : '👏 مظبوطة!');
+        if (FS.tries >= 3) return fResult(false, 'مش مشكلة 🌸 بصّي على الترتيب الصح');
+        FS.lastSeq = FS.seq.slice(); FS.seq = []; sfx.no(); return draw();
+      }
+      if (a === 'fpick' && FS.phase === 'q') {
+        if (FS.mode === 'frame') { const ok = b.dataset.k === it.x.type; return fResult(ok, ok ? '🪜 بداية مظبوطة!' : 'لأ، البداية الصح: ' + SW.FRAMES[it.x.type].o); }
+        const ok = it.o[+i] === it.x.ok; return fResult(ok, ok ? '🔄 فصحى 100%!' : 'الجملة دي لسه فيها عامية 🙂');
+      }
+      if (a === 'fsay') return speak(FS.mode === 'fusha' ? it.x.ok : it.x.model, 'ar');
+      if (a === 'fnext') { FS.k++; if (FS.k >= FS.list.length) return fEnd(); fNewQ(); draw(); return window.scrollTo(0, 0); }
+      if (a === 'fquit') { FS = null; return go('factory'); }
+    }
   });
 
   /* ------------------------- البداية ------------------------- */
