@@ -272,7 +272,7 @@
       const t = q.t;
       if (t === 'mcq' || t === 'odd') { c.opts = q.o.slice(); c.ans = q.a; }
       else if (t === 'tf') c.kind = 'tf';
-      else if (t === 'fill') { c.opts = q.o.slice(); c.ans = q.o.indexOf(q.a); }
+      else if (t === 'fill') { c.opts = q.o.slice(); c.ans = q.o.indexOf(q.a); c.alt = (q.alt || []).map(x => q.o.indexOf(x)); }
       else if (t === 'match') c.kind = 'imatch';
       else if (t === 'sort') c.kind = 'isort';
       else c.kind = 'self';
@@ -635,7 +635,7 @@
     if (!CUR) return;
     if (a === 'say') { const it = CUR.it; return speak(it.s === 'sci' ? it.row[3] : (it.q.q || '') + (it.q.o ? '. ' + it.q.o.join(', ') : ''), it.lang); }
     if (a === 'sayans') { const it = CUR.it; const t = (it.s === 'sci' ? it.row[4][0] + '. ' + (it.row[5] || '') : String(answerText(it))); return speak(t, ARL(it) ? 'ar' : /[؀-ۿ]/.test(t) && it.s === 'math' ? 'ar' : it.lang); }
-    if (a === 'pick' && CUR.phase === 'q') { const k = +i; b.classList.add(k === CUR.ans ? 'good' : 'bad'); return setTimeout(() => finish(k === CUR.ans), 250); }
+    if (a === 'pick' && CUR.phase === 'q') { const k = +i, ok = k === CUR.ans || (CUR.alt || []).includes(k); b.classList.add(ok ? 'good' : 'bad'); return setTimeout(() => finish(ok), 250); }
     if (a === 'tf' && CUR.phase === 'q') return finish((b.dataset.v === '1') === !!CUR.it.q.a);
     if (a === 'prop') { CUR.prop = +i; document.querySelectorAll('[data-a=prop]').forEach(x => x.classList.toggle('sel', +x.dataset.i === CUR.prop)); return sfx.pop(); }
     if (a === 'ord') { const k = +i; if (!CUR.seq.includes(k)) CUR.seq.push(k); sfx.pop(); return draw(); }
