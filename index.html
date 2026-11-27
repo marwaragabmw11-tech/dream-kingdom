@@ -187,4 +187,5 @@ function enterDream(){document.getElementById("dreamIntro").classList.add("hide"
 function toggleDreamMusic(){if(dreamMusicOn){dreamMusicOn=false;if(dreamGain){dreamGain.gain.setTargetAtTime(0,dreamAudio.currentTime,.3)}document.getElementById("musicBtn").textContent="🎵";return}
 try{dreamAudio=new (window.AudioContext||window.webkitAudioContext)();dreamGain=dreamAudio.createGain();dreamGain.gain.value=.018;dreamGain.connect(dreamAudio.destination);[174.6,220,261.6,329.6].forEach((f,i)=>{let o=dreamAudio.createOscillator(),g=dreamAudio.createGain();o.type="sine";o.frequency.value=f;o.connect(g);g.gain.value=.18/(i+1);g.connect(dreamGain);o.start();dreamOsc.push(o)});dreamMusicOn=true;document.getElementById("musicBtn").textContent="🔇";}catch(e){alert("تعذر تشغيل الصوت في هذا المتصفح.");}}
 function renderAll(){if(state.players.length){renderQuestion();renderKingdom();renderKnowledge();renderMap();renderShop();renderHost()}renderAdmin()}
-</script></body></html>
+</script><script src="shared/offline.js"></script>
+</body></html>

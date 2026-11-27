@@ -1,0 +1,16 @@
+{
+  "name": "مملكة أمينة للمذاكرة",
+  "short_name": "مملكة أمينة",
+  "description": "صفحات مذاكرة الصف الرابع الابتدائي — تشتغل من غير إنترنت",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./study-kingdom/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f2ff",
+  "theme_color": "#7b61c9",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
