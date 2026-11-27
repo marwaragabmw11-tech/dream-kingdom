@@ -57,7 +57,7 @@
     switch (q.t) {
       case 'mcq': return 'abcd'[q.a] + ') ' + esc(q.o[q.a]);
       case 'tf': return q.a ? '✔ True' : '✘ False' + (q.fix ? ' — ' + esc(q.fix) : '');
-      case 'fill': return esc(q.a);
+      case 'fill': return esc(q.a) + (q.alt && q.alt.length ? ' <small>(or ' + q.alt.map(esc).join(' / ') + ')</small>' : '');
       case 'match': return q.L.map((l, i) => `${i + 1} → ${'abcde'[q.a[i]]}`).join(' · ');
       case 'odd': return esc(q.o[q.a]) + (q.why ? ' — ' + esc(q.why) : '');
       case 'sort': return q.g.map((g, k) => `<b>${esc(g)}:</b> ` + q.items.filter((_, i) => q.a[i] === k || q.a[i] === 2).map(esc).join(', ')).join('<br>');
@@ -85,7 +85,7 @@
     const box = H('div', 'chips'); let pick = -1;
     q.o.forEach((o, i) => { const c = H('button', 'chip', esc(o)); c.onclick = () => { if (b.locked) return; pick = i; [...box.children].forEach(x => x.classList.remove('sel')); c.classList.add('sel'); b.check(); }; box.appendChild(c); });
     b.body.append(H('div', 'mini', 'Choose the word that fits:'), box);
-    const ok = () => q.o[pick] === q.a;
+    const ok = () => q.o[pick] === q.a || (q.alt || []).includes(q.o[pick]);   /* alt: كلمات ترتيب زي Then / Next / After that بتنفع مكان بعض */
     return { check: () => pick < 0 ? null : (mark(box.children[pick], ok()), ok()), show: () => mark(box.children[q.o.indexOf(q.a)], true), noBtn: true, reset: () => [...box.children].forEach(c => c.classList.remove('bad', 'sel')) };
   };
   W.odd = (q, b) => W.mcq(Object.assign({}, q, { o: q.o }), b);

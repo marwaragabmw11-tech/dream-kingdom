@@ -82,7 +82,7 @@ heba: 'My name is Heba. I went to the Egyptian Museum last Friday with my family
 {t:'fill',q:'We also …… bottles and plastic to protect nature.',o:['trees','clean','recycle','help','school'],a:'recycle'},
 {t:'fill',q:'Some students plant …… around the building.',o:['trees','clean','recycle','help','school'],a:'trees'},
 {t:'fill',q:'We all …… each other.',o:['trees','clean','recycle','help','school'],a:'help'},
-{t:'fill',q:'…… to make our …… better.',o:['trees','clean','recycle','help','school'],a:'school'},
+{t:'fill',q:'We all help each other to make our …… better.',o:['trees','clean','recycle','help','school'],a:'school'},
 {t:'mcq',q:'Habiba drew a …… with smoke.',o:['house','factory','book','park'],a:1,p:'cleanair'},
 {t:'mcq',q:'Our teacher …… the project.',o:['ate','wrote','liked','read'],a:2,p:'cleanair'},
 {t:'self',q:'What was the class project about?',model:'It was about clean air.',p:'cleanair'},
