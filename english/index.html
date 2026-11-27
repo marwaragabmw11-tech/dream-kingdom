@@ -76,6 +76,8 @@ h2{font-size:23px;margin:6px 0 10px}h3{font-size:18px;margin:6px 0}
 .models{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
 .back{border:0;background:none;color:var(--brand);font-weight:800;padding:0;margin-bottom:6px;font-size:16px}
 .printb{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.item.uexam{border:2.5px solid #ff7a59;background:#fff4ef}
+.usec{margin:18px 0 6px;padding:4px 12px;background:#f1eee8;border-radius:10px;font-size:17px}
 .srch{width:100%;font:inherit;border:3px solid var(--line);border-radius:14px;padding:8px 12px;background:var(--card);color:var(--ink)}
 #welcome{position:fixed;inset:0;z-index:50;background:rgba(20,20,40,.55);display:flex;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
 #welcome .wbox{background:var(--card);border-radius:26px;max-width:520px;width:100%;max-height:90vh;overflow:auto;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
@@ -195,7 +197,39 @@ V.exams = () => {
   app.appendChild(H('h2', '', '🏆 Exams'));
   const fin = H('div', 'section', '<h3>🎲 Surprise final exam</h3>'); fin.appendChild(bi('A new exam every time, from all the questions of all units: 10 choose · 8 true/false · 4 complete · 1 match.', 'امتحان جديد كل مرة من كل أسئلة الوحدات: 10 اختيار · 8 صح وغلط · 4 أكمل · 1 توصيل.', 'mini'));
   const fb = H('button', 'btn', '🎲 Start a final exam'); fb.onclick = () => go('final'); fin.appendChild(fb); app.appendChild(fin);
-  UNITS.forEach(u => { app.appendChild(H('div', 'uhead', `${u.emoji} Unit ${u.n}: ${u.en}`)).style.background = u.color; const Lst = H('div', 'list'); SETS.filter(s => s.unit === u.n && s.kind !== 'ex').forEach(s => Lst.appendChild(setItem(s, 'exams'))); app.appendChild(Lst); });
+  UNITS.forEach(u => { app.appendChild(H('div', 'uhead', `${u.emoji} Unit ${u.n}: ${u.en}`)).style.background = u.color; const Lst = H('div', 'list');
+    const ux = unitExam(u.n), ub = H('button', 'item uexam', `<b>📝</b><div><span style="display:block">Unit ${u.n} — Full exam</span><small>${L('All the unit questions in one exam', 'كل أسئلة الوحدة في امتحان واحد')} · ${ux.length} questions · 🖨️</small></div>`); ub.onclick = () => go('uexam', u.n); Lst.appendChild(ub);
+    SETS.filter(s => s.unit === u.n && s.kind !== 'ex').forEach(s => Lst.appendChild(setItem(s, 'exams'))); app.appendChild(Lst); });
+};
+/* ---------- 📝 امتحان الوحدة: كل أسئلة الوحدة (التدريبات + الاختبارات + المراجعة) من غير تكرار، مرتبة زي الامتحان ---------- */
+function unitExam(n) {
+  const seen = new Set(), all = [];
+  SETS.filter(s => s.unit === n && s.kind !== 'model' && !(s.kind === 'month' && !/^u\d+r$/.test(s.id))).forEach(s => s.qs.forEach((q, i) => {
+    const k = q.t + '|' + String(q.q || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() + '|' + (q.o || q.items || q.L || []).join('|') + '|' + (q.p || '');
+    if (seen.has(k)) return; seen.add(k); all.push({ q, s, i });
+  }));
+  const noP = x => !x.q.p, ORDER = ['mcq', 'odd', 'fill', 'tf', 'match', 'sort'];
+  const out = [];
+  ORDER.forEach(t => {
+    let g = all.filter(x => noP(x) && x.q.t === t);
+    if (t === 'fill') { const banks = []; g.forEach(x => { const b = x.q.o.join('|'); if (!banks.includes(b)) banks.push(b); }); g = [].concat(...banks.map(b => g.filter(x => x.q.o.join('|') === b))); }
+    out.push(...g);
+  });
+  const pas = []; all.filter(x => !noP(x)).forEach(x => { if (!pas.includes(x.q.p)) pas.push(x.q.p); });
+  pas.forEach((p, k) => all.filter(x => x.q.p === p).forEach((x, j) => out.push(Object.assign({}, x, { q: Object.assign({}, x.q, { sec: `Reading ${k + 1}: Read, then answer:`, p: j ? undefined : x.q.p }), orig: x.q }))));
+  out.push(...all.filter(x => noP(x) && !ORDER.includes(x.q.t)).map(x => Object.assign({}, x, { q: Object.assign({}, x.q, { sec: 'Writing:' }), orig: x.q })));
+  return out;
+}
+V.uexam = (n) => {
+  const u = UNITS[n - 1], ex = unitExam(n);
+  back('Exams', () => go('exams'));
+  app.appendChild(H('h2', '', `📝 Unit ${n} — Full exam`));
+  app.appendChild(H('div', 'mini', `${esc(u.en)} · ${ex.length} questions`));
+  app.appendChild(bi('Every question of the unit (tasks, weekly quizzes and the review) — no repeats. Grammar &amp; vocabulary first, then reading, then writing.', 'كل أسئلة الوحدة (التدريبات والاختبارات الأسبوعية والمراجعة) من غير تكرار: القواعد والكلمات الأول، وبعدين القطع، وبعدين الكتابة.', 'mini'));
+  const pr = H('div', 'printb'), p = H('button', 'btn', '🖨️ ' + L('Print the unit exam', 'اطبعي امتحان الوحدة')); p.onclick = () => E.print(ex.map(x => x.q), `Unit ${n} — Full exam`, `English · Primary 4 · Term 1 · Unit ${n}: ${u.en}`); pr.appendChild(p); app.appendChild(pr);
+  const box = H('div'); app.appendChild(box);
+  let last = null;
+  ex.forEach((x, k) => { const sec = x.q.sec || { mcq: 'Choose the correct answer:', odd: 'Cross out the odd word:', fill: 'Complete:', tf: 'Put (✓) or (✗):', match: 'Match:', sort: 'Classify:' }[x.q.t]; if (sec !== last) { box.appendChild(H('h3', 'usec', esc(sec))); last = sec; } box.appendChild(E.card(x.orig || x.q, `set:${x.s.id}:${x.i}`, k + 1, { unit: x.s.unit, lesson: x.s.lesson, lessons: x.s.lessons })); });
 };
 function runList(qs, keyBase, ctxOf, box) { qs.forEach((q, i) => box.appendChild(E.card(q, keyBase + i, i + 1, ctxOf(q)))); }
 V.set = (id, tab) => {
