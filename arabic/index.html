@@ -146,6 +146,8 @@ h3{font-size:19px;margin:4px 0 8px}
 #welcome h2{text-align:center}#welcome p{margin:8px 0}
 @media (max-width:420px){.opts{grid-template-columns:1fr}.opts.two{grid-template-columns:1fr 1fr}.hero img{width:90px;height:90px}.pcards.three{grid-template-columns:1fr}}
 .printb{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.item.uexam{border:2.5px solid var(--brand2);background:color-mix(in srgb,var(--brand2) 8%,var(--card));text-align:start}
+.usec{margin:18px 0 6px;padding:4px 12px;background:color-mix(in srgb,var(--brand) 12%,transparent);border-radius:10px;font-size:17px}
 .wt{width:100%;border-collapse:collapse;margin:6px 0 12px;font-size:17px}.wt th,.wt td{border:1px solid var(--line,#ddd);padding:6px 8px;text-align:right}.wt th{background:color-mix(in srgb,var(--acc,#e9a23b) 20%,transparent)}
 .passage{margin:6px 0 8px;border:2px dashed #e9a23b;border-radius:14px;padding:6px 10px;background:color-mix(in srgb,#e9a23b 8%,transparent)}.passage summary{cursor:pointer;font-weight:700}.passage div{margin-top:6px;line-height:2}
 .hero{background:linear-gradient(135deg,#e9a23b,#c9742b)}
@@ -184,6 +186,7 @@ h3{font-size:19px;margin:4px 0 8px}
 <script src="a3.js"></script>
 <script src="a_rev.js"></script>
 <script src="../shared/print.js"></script>
+<script src="../shared/uexam_ar.js"></script>
 <script src="aprint.js"></script>
 <script>window.SUNITS = AUNITS; window.SQ = AQ; window.SMONTH = AMONTH; window.SKEYS = AKEYS;</script>
 <script>
@@ -213,6 +216,7 @@ function go(v, a, b) {
 }
 const back = (label, fn) => { const b = H('button', 'back', '→ ' + label); b.onclick = fn; app.appendChild(b); };
 const V = {};
+const uexamBtn = UEXAM_AR.mount({ V, H, E, go: (...a) => go(...a), back: (...a) => back(...a), app, WEEKS, SUNITS, SMONTH, print: (...a) => SPRINT(...a), brand: 'واحة أمينة للعربي · الصف الرابع · الترم الأول' });
 const ML = k => k === 'تدريبات' ? 'تدريبات الكتاب' : `مجموعة (${k})`;
 V.home = () => {
   const n = E.count();
@@ -256,6 +260,7 @@ V.unit = (id) => {
     c.append(hd, ways, body); app.appendChild(c); show('story');
   });
   const s = H('div', 'section', '<h3>📝 كويزات الوحدة دي</h3>');
+  s.appendChild(uexamBtn(id));
   WEEKS.filter(w => w.unit.id === id).forEach(w => { const b = H('button', 'btn ghost', `${w.title} <small>(ص ${w.page})</small>`); b.style.margin = '4px'; b.onclick = () => go('week', w.id); s.appendChild(b); });
   app.appendChild(s);
 };
@@ -268,6 +273,7 @@ V.keys = () => {
 V.quiz = () => {
   app.appendChild(H('h2', '', '📝 كويزات الأسبوع'));
   app.appendChild(H('div', 'mini', 'كل أسبوع فيه تدريبات الكتاب + مجموعات التقييم الأسبوعي (أ، ب، ج) زي كتاب الأداءات بالظبط 🌟'));
+  const ux = H('div', 'section', '<h3>📝 امتحان الوحدة كامل (للحل أو الطباعة)</h3>'); const uxl = H('div', 'list'); SUNITS.forEach(u => uxl.appendChild(uexamBtn(u.id))); ux.appendChild(uxl); app.appendChild(ux);
   const L = H('div', 'list');
   WEEKS.forEach((w, i) => { const tq = totalQ(w), got = E.count('w:' + w.id + ':');
     const b = H('button', 'item', `<b>${w.unit.emoji}</b><div><span>الأسبوع ${i + 1}: ${w.title}</span><small>صفحة ${w.page} في كتاب الأداءات</small><div class="prog"><i style="width:${got / tq * 100}%"></i></div></div><span class="pill">${got}/${tq} ⭐</span>`);
