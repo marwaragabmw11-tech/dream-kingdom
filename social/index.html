@@ -146,6 +146,8 @@ h3{font-size:19px;margin:4px 0 8px}
 #welcome h2{text-align:center}#welcome p{margin:8px 0}
 @media (max-width:420px){.opts{grid-template-columns:1fr}.opts.two{grid-template-columns:1fr 1fr}.hero img{width:90px;height:90px}.pcards.three{grid-template-columns:1fr}}
 .printb{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.item.uexam{border:2.5px solid var(--brand2);background:color-mix(in srgb,var(--brand2) 8%,var(--card));text-align:start}
+.usec{margin:18px 0 6px;padding:4px 12px;background:color-mix(in srgb,var(--brand) 12%,transparent);border-radius:10px;font-size:17px}
 </style>
 </head>
 <body>
@@ -183,6 +185,7 @@ h3{font-size:19px;margin:4px 0 8px}
 <script src="sm2.js"></script>
 <script src="sm3.js"></script>
 <script src="../shared/print.js"></script>
+<script src="../shared/uexam_ar.js"></script>
 <script src="sprint.js"></script>
 <script>
 (function(){
@@ -211,6 +214,7 @@ function go(v, a, b) {
 }
 const back = (label, fn) => { const b = H('button', 'back', '→ ' + label); b.onclick = fn; app.appendChild(b); };
 const V = {};
+const uexamBtn = UEXAM_AR.mount({ V, H, E, go: (...a) => go(...a), back: (...a) => back(...a), app, WEEKS, SUNITS, SMONTH, print: (...a) => SPRINT(...a), brand: 'رحلة أمينة في الدراسات · الصف الرابع · الترم الأول' });
 V.home = () => {
   const n = E.count();
   app.appendChild(H('div', 'hero', `<img src="img/explorer.webp" alt=""><div><b class="big">أهلاً يا مستكشفة أمينة! 🎒</b><p>معاكي <b>${n}</b> نجمة ⭐ ${n ? '— كمّلي، مشمش فخور بيكي!' : '— يلا نجمع أول نجمة!'}</p><p style="font-size:15px;opacity:.95">النهارده هنستكشف إيه؟ 🗺️</p></div>`));
@@ -252,6 +256,7 @@ V.unit = (id) => {
     c.append(hd, ways, body); app.appendChild(c); show('story');
   });
   const s = H('div', 'section', '<h3>📝 كويزات الوحدة دي</h3>');
+  s.appendChild(uexamBtn(id));
   WEEKS.filter(w => w.unit.id === id).forEach(w => { const b = H('button', 'btn ghost', `${w.title} <small>(ص ${w.page})</small>`); b.style.margin = '4px'; b.onclick = () => go('week', w.id); s.appendChild(b); });
   app.appendChild(s);
 };
@@ -264,6 +269,7 @@ V.keys = () => {
 V.quiz = () => {
   app.appendChild(H('h2', '', '📝 كويزات الأسبوع'));
   app.appendChild(H('div', 'mini', 'كل كويز فيه 3 نماذج (أ، ب، ج) زي كتاب الأداءات بالظبط. ابدئي بنموذج (أ) 🌟'));
+  const ux = H('div', 'section', '<h3>📝 امتحان الوحدة كامل (للحل أو الطباعة)</h3>'); const uxl = H('div', 'list'); SUNITS.forEach(u => uxl.appendChild(uexamBtn(u.id))); ux.appendChild(uxl); app.appendChild(ux);
   const L = H('div', 'list');
   WEEKS.forEach((w, i) => { const tq = totalQ(w), got = E.count('w:' + w.id + ':');
     const b = H('button', 'item', `<b>${w.unit.emoji}</b><div><span>الأسبوع ${i + 1}: ${w.title}</span><small>صفحة ${w.page} في كتاب الأداءات</small><div class="prog"><i style="width:${got / tq * 100}%"></i></div></div><span class="pill">${got}/${tq} ⭐</span>`);

@@ -1,5 +1,5 @@
 /* =====================================================================
-   📝 امتحان الوحدة كامل — للصفحات العربي الشكل (العربي · الدين)
+   📝 امتحان الوحدة كامل — للصفحات العربي الشكل (العربي · الدين · الدراسات)
    UEXAM_AR.build(unit, WEEKS, month) → [{ q, orig, key }]
      - كل أسئلة أسابيع/دروس الوحدة (تدريبات الكتاب + المجموعات) + مراجعة الوحدة
      - من غير تكرار، ومترتبة زي الامتحان:
@@ -45,7 +45,7 @@
   function mount(o) {
     const { V, H, E, back, app, WEEKS, SUNITS, SMONTH, print, brand } = o;
     const NTH = ['الأولى', 'الثانية', 'الثالثة', 'الرابعة', 'الخامسة'];
-    const monthOf = ui => SMONTH.find(m => m.id === 'r' + (ui + 1));
+    const monthOf = ui => SMONTH.find(m => m.id === 'r' + (ui + 1) || m.id === 'm' + (ui + 1));   /* مراجعة/تدريب شهري الوحدة */
     const examOf = id => { const ui = SUNITS.findIndex(u => u.id === id); return { u: SUNITS[ui], ui, list: build(SUNITS[ui], WEEKS, monthOf(ui)) }; };
     V.uexam = (id) => {
       const { u, ui, list } = examOf(id);

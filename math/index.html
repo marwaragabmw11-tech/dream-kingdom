@@ -43,6 +43,8 @@ h3{font-size:19px;margin:4px 0 8px}
 .tile b{display:block;font-size:40px;line-height:1.2}
 .tile span{font-weight:800;font-size:17px;display:block}
 .tile small{color:var(--soft);font-size:13px}
+.item.uexam{border:2.5px solid #ff7a59;background:#fff4ef}
+.usec{margin:18px 0 6px;padding:4px 12px;background:#f1eee8;border-radius:10px;font-size:17px}
 .units{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
 .unit{border:0;border-radius:var(--r);padding:14px;color:#fff;text-align:start;box-shadow:var(--sh);position:relative;overflow:hidden;min-height:118px}
 .unit b{font-size:34px;display:block;line-height:1.1}
@@ -462,6 +464,7 @@ V.unit = (id) => {
   const qs = WEEKS.filter(w => w.unit.id === id);
   if (qs.length) {
     const s = H('div', 'section', '<h3>📝 Quizzes for this unit</h3>');
+    s.appendChild(uexamBtn(id));
     qs.forEach(w => { const b = H('button', 'btn ghost', `<span style="display:block">${w.title.replace('Weekly Assessment: ', '')}</span><small>Book page ${w.page}</small>`); b.style.margin = '4px'; b.onclick = () => go('week', w.id); s.appendChild(b); });
     app.appendChild(s);
   }
@@ -493,8 +496,34 @@ V.times = () => {
   mk('🚀 Rocket game', '', '', TIMES.game);
 };
 
+/* ---------- 📝 Full unit exam: every weekly-assessment question of the unit (all models), no repeats ---------- */
+const UNTH = ['', 'Choose the correct answer:', 'Answer the following:'];
+function unitExam(id) {
+  const seen = new Set(), all = [];
+  WEEKS.filter(w => w.unit.id === id).forEach(w => Object.keys(w.models).forEach(k => w.models[k].forEach((q, i) => {
+    const key = q.t + '|' + String(q.q || '').replace(/<[^>]+>/g, '').toLowerCase().replace(/[^a-z0-9\u0621-\u064A]+/g, ' ').trim() + '|' + (q.o || []).join('|');
+    if (seen.has(key)) return; seen.add(key); all.push({ q, key: `w:${w.id}:${k}:${i}` });
+  })));
+  const grp = x => (x.q.t === 'mcq' || x.q.t === 'pick') ? 1 : 2;
+  const out = all.map((x, n) => [grp(x), n, x]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map(z => z[2]);
+  let last = 0;
+  return out.map(x => { const g = grp(x), pq = g !== last ? Object.assign({}, x.q, { sec: UNTH[g] }) : Object.assign({}, x.q, { sec: undefined }); last = g; return { q: x.q, pq, key: x.key }; });
+}
+const uexamBtn = id => { const u = UNITS.find(x => x.id === id), n = UNITS.indexOf(u) + 1, ex = unitExam(id);
+  const b = H('button', 'item uexam', `<b>📝</b><div><span style="display:block">Unit ${n} — Full exam</span><small>${u.en} · ${ex.length} questions · 🖨️</small></div>`); b.onclick = () => go('uexam', id); return b; };
+V.uexam = (id) => {
+  const u = UNITS.find(x => x.id === id), n = UNITS.indexOf(u) + 1, ex = unitExam(id);
+  back('All quizzes', () => go('quiz'));
+  app.appendChild(H('h2', '', `📝 Unit ${n} — Full exam`));
+  app.appendChild(E.tx(`${u.en} · ${ex.length} questions — every weekly-assessment question of the unit (Models A, B, C), no repeats.`, `${ex.length} سؤال — كل أسئلة التقييمات الأسبوعية للوحدة (النماذج A و B و C) من غير تكرار.`, 'mini'));
+  const pr = H('div', 'printb'), p = H('button', 'btn', '🖨️ ' + L('Print the unit exam', 'اطبعي امتحان الوحدة'));
+  p.onclick = () => MPRINT(ex.map(x => x.pq), `Unit ${n} — Full exam`, `Amina’s Math Kitchen · Grade 4 · Term 1 · Unit ${n}: ${u.en}`); pr.appendChild(p); app.appendChild(pr);
+  const box = H('div'); app.appendChild(box);
+  let last = null; ex.forEach((x, k) => { if (x.pq.sec && x.pq.sec !== last) { box.appendChild(H('h3', 'usec', x.pq.sec)); last = x.pq.sec; } box.appendChild(E.card(x.q, x.key, k + 1)); });
+};
 V.quiz = () => {
   app.appendChild(H('h2', '', '📝 Weekly quizzes'));
+  { const ux = H('div', 'section', '<h3>📝 Full unit exams (solve or print)</h3>'); const uxl = H('div', 'list'); UNITS.forEach(u => { if (WEEKS.some(w => w.unit.id === u.id)) uxl.appendChild(uexamBtn(u.id)); }); ux.appendChild(uxl); app.appendChild(ux); }
   app.appendChild(E.tx('Each quiz has 3 models, exactly like the book: Model A, Model B and Model C. Start with Model A 🌟', 'كل كويز فيه 3 نماذج زي الكتاب بالظبط: Model A و Model B و Model C. ابدأي بـ Model A 🌟', 'mini'));
   const L2 = H('div', 'list');
   WEEKS.forEach((w, i) => {

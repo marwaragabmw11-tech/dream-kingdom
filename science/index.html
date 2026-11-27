@@ -171,6 +171,11 @@ C.forEach((_,c)=>{
 const stagesOf=c=>STAGES.filter(s=>s.ch==c);
 const chQ=c=>Q.map((_,i)=>i).filter(i=>Q[i][0]==c);
 const monthQ=m=>Q.map((_,i)=>i).filter(i=>Q[i][9]==m);
+/* 📝 امتحان الوحدة كامل: الوحدات = نفس تقسيم التقييمات الشهرية (الفصول 1–3 · 4–5 · 6–8)
+   كل أسئلة الفصول دي (أسئلة الكتاب + التقييم الشهري) من غير تكرار، ومترتبة: Choose ← Complete ← باقي الأنواع */
+const UNITS_SC=[{n:1,chs:[0,1,2]},{n:2,chs:[3,4]},{n:3,chs:[5,6,7]}];
+const unitQ=k=>{const seen=new Set(),out=[];UNITS_SC[k].chs.forEach(c=>chQ(c).forEach(i=>{const key=String(Q[i][3]).toLowerCase().replace(/^(complete|choose)[^:]*:\s*/,'').replace(/[^a-z0-9]+/g,' ').trim();if(seen.has(key))return;seen.add(key);out.push(i)}));
+ const rank=i=>Q[i][4].length>1?0:Q[i][1]=='Complete'?1:2;return out.map((i,k)=>[rank(i),k,i]).sort((a,b)=>a[0]-b[0]||a[1]-b[1]).map(x=>x[2])};
 const nOk=p=>Object.keys(p.ok).length;
 const mast=(p,c)=>{const ids=chQ(c);return Math.round(ids.filter(i=>p.ok[i]).length/ids.length*100)};
 const starsTotal=p=>Object.values(p.st).reduce((a,b)=>a+b,0);
@@ -279,9 +284,12 @@ function home(){const p=P(),nb=Object.keys(p.bad).length,built=BLD.filter(b=>lvO
  tile('parents','👪',tr('Parents Corner','ركن الأهل'),tr('Progress & weak points','التقدم ونقاط الضعف'),'#ffffff',null,true)+'</div>'}
 
 function map(){const p=P();return '<h2>🗺️ '+tr('Adventure Map','خريطة المغامرة')+'</h2><p class="note">'+tr('Each land is one chapter of your book. The monthly assessments are the bosses!','كل أرض فصل من كتابك، والتقييمات الشهرية هي الوحوش!')+'</p>'+
+ uexamCard()+
  ROUTE.map(([t,k])=>{if(t=='l'){const l=LANDS[k],ss=stagesOf(k),m=mast(p,k);return '<button class="land" data-go="land" data-arg="'+k+'"><span class="em" style="background:'+l.bg+'">'+l.e+'</span><span class="tx"><b>'+(k+1)+'. '+tr(l.en,l.ar)+'</b><small class="ltr">'+C[k]+'</small><small>⭐ '+landStars(p,k)+'/'+ss.length*3+' · 🧠 '+m+'%'+(landDone(p,k)?' · ✅':'')+'</small><span class="bar"><i style="width:'+m+'%"></i></span></span></button>'}
   const b=BOSSES[k];return '<button class="land boss" data-a="boss" data-i="'+b.m+'"><span class="em" style="background:rgba(255,255,255,.15)">'+b.e+'</span><span class="tx"><b>'+tr(b.en,b.ar)+(p.boss[b.m]?' ✅':'')+'</b><small>📅 '+tr('Monthly Assessment '+b.m+' · chapters '+b.chs,'التقييم الشهري '+b.m+' · الفصول '+b.chs)+'</small><small>❤️❤️❤️ · '+tr('hit it 10 times to win','اضربيه 10 مرات لتفوزي')+'</small></span></button><div class="row" style="justify-content:flex-end;margin:-4px 0 10px"><button class="mini" data-a="print" data-t="m" data-i="'+b.m+'">🖨️ '+tr('Print monthly assessment '+b.m,'اطبعي التقييم الشهري '+b.m)+'</button></div>'}).join('')}
 
+function uexamCard(){return '<div class="card uexam"><h3>📝 '+tr('Full unit exams','امتحان الوحدة كامل')+'</h3><p class="note">'+tr('Every question of the unit\'s chapters (book + monthly assessment), no repeats.','كل أسئلة فصول الوحدة (الكتاب + التقييم الشهري) من غير تكرار.')+'</p>'+
+ UNITS_SC.map((u,k)=>'<div class="row"><b class="ltr" style="flex:1">Unit '+u.n+' · Ch '+(u.chs[0]+1)+'–'+(u.chs[u.chs.length-1]+1)+' ('+unitQ(k).length+' Q)</b><button class="mini" data-a="uexam" data-t="print" data-i="'+k+'">🖨️ '+tr('Print','اطبعي')+'</button><button class="mini" data-a="uexam" data-t="play" data-i="'+k+'">▶ '+tr('Solve','حلّي')+'</button></div>').join('')+'</div>'}
 function land(){const p=P(),c=+VA.arg,l=LANDS[c],ss=stagesOf(c);
  return '<div class="top"><button class="hb" data-go="map">⬅</button><span class="grow"></span></div><section class="hero" style="background:'+l.bg+'"><div class="av">'+l.e+'</div><div><h2>'+tr(l.en,l.ar)+'</h2><p class="ltr">'+C[c]+'</p><div class="pills"><span>⭐ '+landStars(p,c)+'/'+ss.length*3+'</span><span>🧠 '+mast(p,c)+'%</span></div></div></section><button class="land" data-a="papert" style="background:'+(p.paper?'#fff7e0':'#fff')+'"><span class="em" style="background:#fff3d6">✍️</span><span class="tx"><b>'+tr('Paper mode: ','وضع الورقة: ')+(p.paper?'ON ✅':'OFF')+'</b><small>'+tr('Open questions are answered on paper and checked by Mum: up to +30 🪙','تُكتب إجابات الأسئلة المفتوحة على الورقة وتصحّحها ماما: حتى +30 🪙')+'</small></span></button><div class="path">'+
  ss.map((s,k)=>{const st=p.st[s.id]||0,lock=k>0&&!(p.st[ss[k-1].id]>0);const parts=s.label.split(' · ');const nm=s.label=='Starter'?tr('Starter','البداية'):(parts[1]||parts[0]);const sub=s.label=='Starter'?tr('Book questions','أسئلة من الكتاب'):parts[0];
@@ -434,6 +442,7 @@ document.addEventListener('click',e=>{
  else if(a=='setpin'){const v=($('#pinSet')||{}).value.trim();G.pin=v;save();draw();toast(v?tr('Referee code saved','تم حفظ رمز الحَكَم'):tr('Referee code removed','تم حذف رمز الحَكَم'))}
  else if(a=='quit'){if(RUN&&RUN.k>0&&!confirm(tr('Leave this round?','هل تريدين الخروج من هذه الجولة؟')))return;clearInterval(TIMER);TIMER=null;const s=RUN&&RUN.mode=='stage'?STAGES.find(x=>x.id==RUN.stage):null;RUN=null;s?go('land',{arg:s.ch}):go(V=='play'?'home':V)}
  else if(a=='stage'){if(b.dataset.lock){toast('🔒 '+tr('Get at least 1 star in the stage before.','احصلي على نجمة واحدة على الأقل في المرحلة السابقة.'));return}const s=STAGES.find(x=>x.id==i);startRun({mode:'stage',paper:P().paper,stage:s.id,title:LANDS[s.ch].e+' '+(s.label=='Starter'?'Starter':s.label.split(' · ').pop()),ids:s.ids})}
+ else if(a=='uexam'){const k=+i,u=UNITS_SC[k],ids=unitQ(k),ttl='Unit '+u.n+' — Full exam (Chapters '+u.chs.map(c=>c+1).join(', ')+')';if(t=='print')SCIPRINT(ids,ttl,'Science Kingdom · Grade 4 · Term 1 · '+u.chs.map(c=>C[c]).join(' · '));else startRun({mode:'review',paper:P().paper,title:'📝 Unit '+u.n,ids})}
  else if(a=='boss'){const bb=BOSSES[+i-1];startRun({mode:'boss',boss:+i,title:bb.e+' '+tr(bb.en,bb.ar),ids:monthQ(+i)})}
  else if(a=='light')startRun({mode:'light',title:'⚡ '+tr('Lightning Round','جولة البرق'),ids:[]});
  else if(a=='spell')spellNew();else if(a=='tl')tl(+i);else if(a=='tlb'){const k=SPL.typed.pop();if(k!=null)SPL.tiles[k].u=false;draw()}else if(a=='tls'){SPL.show=true;TTS.say(SPL.ws[SPL.k]);draw()}else if(a=='tln'){SPL.k++;if(SPL.k<SPL.ws.length)spellWord();draw()}
